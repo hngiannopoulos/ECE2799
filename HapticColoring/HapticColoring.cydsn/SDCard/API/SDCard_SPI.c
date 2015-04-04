@@ -2,7 +2,7 @@
 *****************************************************************************
   FILENAME: `$INSTANCE_NAME`_SPI.c
   Version `$CY_MAJOR_VERSION`.`$CY_MINOR_VERSION`
-
+  
 
   DESCRIPTION: SDCard User Module software implementation file
                for the low level SPI hardware.
@@ -11,8 +11,8 @@
         arguments and observe the associated "Registers are volatile" policy.
         This means it is the caller's responsibility to preserve any values
         in the X and A registers that are still needed after the API functions
-        returns. For Large Memory Model devices it is also the caller's
-        responsibility to perserve any value in the CUR_PP, IDX_PP, MVR_PP and
+        returns. For Large Memory Model devices it is also the caller's 
+        responsibility to perserve any value in the CUR_PP, IDX_PP, MVR_PP and 
         MVW_PP registers. Even though some of these registers may not be modified
         now, there is no guarantee that will remain the case in future releases.
 -----------------------------------------------------------------------------
@@ -44,11 +44,11 @@
 ;
 ;  RETURNS:  none
 ;
-;  SIDE EFFECTS:
+;  SIDE EFFECTS: 
 ;    The A and X registers may be modified by this or future implementations
 ;    of this function.  The same is true for all RAM page pointer registers in
 ;    the Large Memory Model.  When necessary, it is the calling function's
-;    responsibility to perserve their values across calls to fastcall16
+;    responsibility to perserve their values across calls to fastcall16 
 ;    functions.
 ;
 ;  THEORY of OPERATION or PROCEDURE:
@@ -58,11 +58,11 @@
 */
 void  `$INSTANCE_NAME`_InitHdwr(uint8 bConfiguration)
 {
-    `$INSTANCE_NAME`_SD_CS_Write(0);
-    `$INSTANCE_NAME`_SD_Clock_SetDividerRegister(0, 1);
-    `$INSTANCE_NAME`_SPIM_Start();
-    `$INSTANCE_NAME`_SPIM_SpiUartClearTxBuffer();
-    `$INSTANCE_NAME`_SPIM_SpiUartClearRxBuffer();
+	`$INSTANCE_NAME`_SD_CS_Write(0);
+	`$INSTANCE_NAME`_SD_Clock_SetDividerRegister(0, 1);
+	`$INSTANCE_NAME`_SPIM_Start();
+	`$INSTANCE_NAME`_SPIM_SpiUartClearTxBuffer();
+	`$INSTANCE_NAME`_SPIM_SpiUartClearRxBuffer();
 }
 
 /*
@@ -78,11 +78,11 @@ void  `$INSTANCE_NAME`_InitHdwr(uint8 bConfiguration)
 ;
 ;  RETURNS:  none
 ;
-;  SIDE EFFECTS:
+;  SIDE EFFECTS: 
 ;    The A and X registers may be modified by this or future implementations
 ;    of this function.  The same is true for all RAM page pointer registers in
 ;    the Large Memory Model.  When necessary, it is the calling function's
-;    responsibility to perserve their values across calls to fastcall16
+;    responsibility to perserve their values across calls to fastcall16 
 ;    functions.
 ;
 ;  THEORY of OPERATION or PROCEDURE:
@@ -91,9 +91,9 @@ void  `$INSTANCE_NAME`_InitHdwr(uint8 bConfiguration)
 */
 void  `$INSTANCE_NAME`_UnInitHdwr(void)
 {
-    `$INSTANCE_NAME`_SD_CS_Write(1);
-    `$INSTANCE_NAME`_Select(0);
-    `$INSTANCE_NAME`_SPIM_Stop();
+	`$INSTANCE_NAME`_SD_CS_Write(1);
+	`$INSTANCE_NAME`_Select(0);
+	`$INSTANCE_NAME`_SPIM_Stop();
 }
 
 /*
@@ -112,11 +112,11 @@ void  `$INSTANCE_NAME`_UnInitHdwr(void)
 ;
 ;  RETURNS:  none
 ;
-;  SIDE EFFECTS:
+;  SIDE EFFECTS: 
 ;    The A and X registers may be modified by this or future implementations
 ;    of this function.  The same is true for all RAM page pointer registers in
 ;    the Large Memory Model.  When necessary, it is the calling function's
-;    responsibility to perserve their values across calls to fastcall16
+;    responsibility to perserve their values across calls to fastcall16 
 ;    functions.
 ;
 ;  THEORY of OPERATION or PROCEDURE:
@@ -126,16 +126,16 @@ void  `$INSTANCE_NAME`_UnInitHdwr(void)
 
 void  `$INSTANCE_NAME`_Select(uint8 bEnable)
 {
-    if(bEnable)
-        {
-        `$INSTANCE_NAME`_SD_CS_Write(0);
-        `$INSTANCE_NAME`_SD_PWR_Write(1);
-        }
-    else
-        {
-        `$INSTANCE_NAME`_SD_CS_Write(1);
-        `$INSTANCE_NAME`_SD_PWR_Write(0);
-        }
+	if(bEnable)
+		{
+		`$INSTANCE_NAME`_SD_CS_Write(0);
+		`$INSTANCE_NAME`_SD_PWR_Write(1);
+		}
+	else
+		{
+		`$INSTANCE_NAME`_SD_CS_Write(1);
+		`$INSTANCE_NAME`_SD_PWR_Write(0);
+		}
 }
 
 /*
@@ -153,11 +153,11 @@ void  `$INSTANCE_NAME`_Select(uint8 bEnable)
 ;
 ;  RETURNS:  none
 ;
-;  SIDE EFFECTS:
+;  SIDE EFFECTS: 
 ;    The A and X registers may be modified by this or future implementations
 ;    of this function.  The same is true for all RAM page pointer registers in
 ;    the Large Memory Model.  When necessary, it is the calling function's
-;    responsibility to perserve their values across calls to fastcall16
+;    responsibility to perserve their values across calls to fastcall16 
 ;    functions.
 ;
 ;  THEORY of OPERATION or PROCEDURE:
@@ -166,12 +166,12 @@ void  `$INSTANCE_NAME`_Select(uint8 bEnable)
 */
 void  `$INSTANCE_NAME`_SendTxData(uint8 bTxData)
 {
-    `$INSTANCE_NAME`_SPIM_SpiUartWriteTxData((uint32) bTxData);
+	`$INSTANCE_NAME`_SPIM_SpiUartWriteTxData((uint32) bTxData);
 }
 
 /*
 ;-----------------------------------------------------------------------------
-;  FUNCTION NAME: `$INSTANCE_NAME`_WriteBuff256(uint8 * sRamBuff)
+;  FUNCTION NAME: `$INSTANCE_NAME`_WriteBuff256(char * sRamBuff)
 ;
 ;  DESCRIPTION:
 ;     Writes a 256 byte buffer to the SPI port
@@ -186,11 +186,11 @@ void  `$INSTANCE_NAME`_SendTxData(uint8 bTxData)
 ;
 ;  RETURNS:  none
 ;
-;  SIDE EFFECTS:
+;  SIDE EFFECTS: 
 ;    The A and X registers may be modified by this or future implementations
 ;    of this function.  The same is true for all RAM page pointer registers in
 ;    the Large Memory Model.  When necessary, it is the calling function's
-;    responsibility to perserve their values across calls to fastcall16
+;    responsibility to perserve their values across calls to fastcall16 
 ;    functions.
 ;
 ;
@@ -198,15 +198,15 @@ void  `$INSTANCE_NAME`_SendTxData(uint8 bTxData)
 ;     Writes data to the TX buffer register.
 ;
 */
-void  `$INSTANCE_NAME`_WriteBuff256(uint8 * sRamBuff)
+void  `$INSTANCE_NAME`_WriteBuff256(char * sRamBuff)
 {
-    uint32 i, temp;
-
-    for (i=0; i<256; i++) {
-        `$INSTANCE_NAME`_SPIM_SpiUartWriteTxData((uint32)sRamBuff[i]);
-        while(! (`$INSTANCE_NAME`_SPIM_SpiUartGetRxBufferSize() > 0));
-        temp = `$INSTANCE_NAME`_SPIM_SpiUartReadRxData();
-    }
+	uint32 i, temp;
+	for(i=0; i<256; i++)
+	{
+		`$INSTANCE_NAME`_SPIM_SpiUartWriteTxData((uint32)sRamBuff[i]);
+		while(! (`$INSTANCE_NAME`_SPIM_SpiUartGetRxBufferSize() > 0));
+		temp = `$INSTANCE_NAME`_SPIM_SpiUartReadRxData();
+	}
 }
 
 /*
@@ -227,11 +227,11 @@ void  `$INSTANCE_NAME`_WriteBuff256(uint8 * sRamBuff)
 ;
 ;  RETURNS:  none
 ;
-;  SIDE EFFECTS:
+;  SIDE EFFECTS: 
 ;    The A and X registers may be modified by this or future implementations
 ;    of this function.  The same is true for all RAM page pointer registers in
 ;    the Large Memory Model.  When necessary, it is the calling function's
-;    responsibility to perserve their values across calls to fastcall16
+;    responsibility to perserve their values across calls to fastcall16 
 ;    functions.
 ;
 ;
@@ -239,15 +239,15 @@ void  `$INSTANCE_NAME`_WriteBuff256(uint8 * sRamBuff)
 ;     Writes n data byte to the TX buffer register.
 ;
 */
-void  `$INSTANCE_NAME`_WriteBuff(uint8 * sRamBuff, uint8 bCnt)
+void  `$INSTANCE_NAME`_WriteBuff(char * sRamBuff, uint8 bCnt)
 {
-    uint32 i, temp;
-
-    for (i=0; i<bCnt; i++) {
-        `$INSTANCE_NAME`_SPIM_SpiUartWriteTxData((uint32)sRamBuff[i]);
-        while(! (`$INSTANCE_NAME`_SPIM_SpiUartGetRxBufferSize() > 0));
-        temp = `$INSTANCE_NAME`_SPIM_SpiUartReadRxData();
-    }
+	uint32 i, temp;
+	for(i=0; i<bCnt; i++)
+	{
+		`$INSTANCE_NAME`_SPIM_SpiUartWriteTxData((uint32)sRamBuff[i]);
+		while(! (`$INSTANCE_NAME`_SPIM_SpiUartGetRxBufferSize() > 0));
+		temp = `$INSTANCE_NAME`_SPIM_SpiUartReadRxData();
+	}
 }
 
 /*
@@ -269,11 +269,11 @@ void  `$INSTANCE_NAME`_WriteBuff(uint8 * sRamBuff, uint8 bCnt)
 ;
 ;  RETURNS:  none
 ;
-;  SIDE EFFECTS:
+;  SIDE EFFECTS: 
 ;    The A and X registers may be modified by this or future implementations
 ;    of this function.  The same is true for all RAM page pointer registers in
 ;    the Large Memory Model.  When necessary, it is the calling function's
-;    responsibility to perserve their values across calls to fastcall16
+;    responsibility to perserve their values across calls to fastcall16 
 ;    functions.
 ;
 ;
@@ -281,20 +281,20 @@ void  `$INSTANCE_NAME`_WriteBuff(uint8 * sRamBuff, uint8 bCnt)
 ;     Writes data to the TX buffer register.
 ;
 */
-void  `$INSTANCE_NAME`_ReadBuff(uint8 * sRamBuff, uint8 bCnt)
+void  `$INSTANCE_NAME`_ReadBuff(char * sRamBuff, uint8 bCnt)
 {
-    uint32 i;
-
-    for (i=0; i<bCnt; i++) {
-        `$INSTANCE_NAME`_SPIM_SpiUartWriteTxData(0xFF);
-        while(! (`$INSTANCE_NAME`_SPIM_SpiUartGetRxBufferSize() > 0));
-        sRamBuff[i] = (uint8) `$INSTANCE_NAME`_SPIM_SpiUartReadRxData();
-    }
+	uint32 i;
+	for(i=0; i<bCnt; i++)
+	{
+		`$INSTANCE_NAME`_SPIM_SpiUartWriteTxData(0xFF);
+		while(! (`$INSTANCE_NAME`_SPIM_SpiUartGetRxBufferSize() > 0));
+		sRamBuff[i] = (char) `$INSTANCE_NAME`_SPIM_SpiUartReadRxData();
+	}
 }
 
 /*
 ;-----------------------------------------------------------------------------
-;  FUNCTION NAME: `$INSTANCE_NAME`_ReadBuff256(uint8 * sRamBuff)
+;  FUNCTION NAME: `$INSTANCE_NAME`_ReadBuff256(char * sRamBuff)
 ;
 ;  DESCRIPTION:
 ;     Reads 256 bytes into a buffer from the SPI port
@@ -309,11 +309,11 @@ void  `$INSTANCE_NAME`_ReadBuff(uint8 * sRamBuff, uint8 bCnt)
 ;
 ;  RETURNS:  none
 ;
-;  SIDE EFFECTS:
+;  SIDE EFFECTS: 
 ;    The A and X registers may be modified by this or future implementations
 ;    of this function.  The same is true for all RAM page pointer registers in
 ;    the Large Memory Model.  When necessary, it is the calling function's
-;    responsibility to perserve their values across calls to fastcall16
+;    responsibility to perserve their values across calls to fastcall16 
 ;    functions.
 ;
 ;
@@ -321,15 +321,15 @@ void  `$INSTANCE_NAME`_ReadBuff(uint8 * sRamBuff, uint8 bCnt)
 ;     Reads data from the TX buffer register.
 ;
 */
-void  `$INSTANCE_NAME`_ReadBuff256(uint8 * sRamBuff)
+void  `$INSTANCE_NAME`_ReadBuff256(char * sRamBuff)
 {
-    uint32 i;
-
-    for (i=0; i<256; i++) {
-        `$INSTANCE_NAME`_SPIM_SpiUartWriteTxData(0xFF);
-        while(! (`$INSTANCE_NAME`_SPIM_SpiUartGetRxBufferSize() > 0));
-        sRamBuff[i] = (uint8) `$INSTANCE_NAME`_SPIM_SpiUartReadRxData();
-    }
+	uint32 i;
+	for(i=0; i<256; i++)
+	{
+		`$INSTANCE_NAME`_SPIM_SpiUartWriteTxData(0xFF);
+		while(! (`$INSTANCE_NAME`_SPIM_SpiUartGetRxBufferSize() > 0));
+		sRamBuff[i] = (char) `$INSTANCE_NAME`_SPIM_SpiUartReadRxData();
+	}
 }
 
 /*
@@ -347,11 +347,11 @@ void  `$INSTANCE_NAME`_ReadBuff256(uint8 * sRamBuff)
 ;  RETURNS:
 ;     bRxData - returned in A.
 ;
-;  SIDE EFFECTS:
+;  SIDE EFFECTS: 
 ;    The A and X registers may be modified by this or future implementations
 ;    of this function.  The same is true for all RAM page pointer registers in
 ;    the Large Memory Model.  When necessary, it is the calling function's
-;    responsibility to perserve their values across calls to fastcall16
+;    responsibility to perserve their values across calls to fastcall16 
 ;    functions.
 ;
 ;  THEORY of OPERATION or PROCEDURE:
@@ -359,9 +359,9 @@ void  `$INSTANCE_NAME`_ReadBuff256(uint8 * sRamBuff)
 */
 uint8  `$INSTANCE_NAME`_bReadRxData(void)
 {
-    uint8 buf;
-    buf = (uint8) `$INSTANCE_NAME`_SPIM_SpiUartReadRxData();
-    return(buf);
+	uint8 buf;
+	buf = (uint8) `$INSTANCE_NAME`_SPIM_SpiUartReadRxData();
+	return(buf);
 }
 
 /*
@@ -379,11 +379,11 @@ uint8  `$INSTANCE_NAME`_bReadRxData(void)
 ;     uint8  bStatus - transmit status data.  Use the defined bit masks.
 ;        Returned in Accumulator.
 ;
-;  SIDE EFFECTS:
+;  SIDE EFFECTS: 
 ;    The A and X registers may be modified by this or future implementations
 ;    of this function.  The same is true for all RAM page pointer registers in
 ;    the Large Memory Model.  When necessary, it is the calling function's
-;    responsibility to perserve their values across calls to fastcall16
+;    responsibility to perserve their values across calls to fastcall16 
 ;    functions.
 ;
 ;  THEORY of OPERATION or PROCEDURE:
@@ -392,12 +392,9 @@ uint8  `$INSTANCE_NAME`_bReadRxData(void)
 */
 uint8  `$INSTANCE_NAME`_bReadStatus(void)
 {
-    uint8 stat;
-
-    stat = `$INSTANCE_NAME`_SPIM_SpiUartGetRxBufferSize();
-
-    return(stat);
+	uint8 stat;
+	stat = `$INSTANCE_NAME`_SPIM_SpiUartGetRxBufferSize();
+	return(stat);
 }
 
-// ============================================================================
-
+// End of File `$INSTANCE_NAME`_SPI.c

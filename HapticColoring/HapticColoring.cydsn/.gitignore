@@ -10,3 +10,6 @@
 *.cydsn/codegentemp
 *.cydsn/DP8051
 *.cydsn/Generated_Source
+
+*.cydsn/Generated_Source/(chip name)/*
+!.cydsn/Generated_Source/(chip name)/*.hex

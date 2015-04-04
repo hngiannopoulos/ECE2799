@@ -2,7 +2,7 @@
 //*****************************************************************************
 //  FILENAME: `$INSTANCE_NAME`_FS.c
 //  Version `$CY_MAJOR_VERSION`.`$CY_MINOR_VERSION`
-//
+//  
 //
 //  DESCRIPTION: SDCard User Module C Language source file
 //               for the PSoC family of devices
@@ -11,16 +11,16 @@
 //  The original source for this user module was purchased from
 //  Efficient Computer Systems, LLC.
 //-----------------------------------------------------------------------------
-//
+//      
 //  Copyright 2003-2006   Efficient Computer Systems, LLC
 //  Licensed only for use on any Cypress PSOC Mixed-Signal Controllers.
 //  All rights reserved
-//
+//      
 //-----------------------------------------------------------------------------
-//
+//   
 //         Created 12-04-03   By: Lee W. Morin and Herb Winters
-//  1.00   Release 04-24-06   By: Lee Morin, Herb Winters, Eric Curtis
-//
+//  1.00   Release 04-24-06   By: Lee Morin, Herb Winters, Eric Curtis   
+//   
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
 //  Copyright (c) Cypress Semiconductor 2013-14. All Rights Reserved.
@@ -28,62 +28,61 @@
 //*****************************************************************************
 
 #include "device.h"
-#include "`$INSTANCE_NAME`_SPI.h"                                   // Low level API
-#include "`$INSTANCE_NAME`_FS.h"                                    // Low level file system
-#include "`$INSTANCE_NAME`.h"                                       // User level API
+#include "`$INSTANCE_NAME`_SPI.h" // Low level API
+#include "`$INSTANCE_NAME`_FS.h"  // Low level file system
+#include "`$INSTANCE_NAME`.h"     // User level API
 
-uint32  `$INSTANCE_NAME`_MemoryStart=0;                             // Start of actual memory area (boot sector)
-uint8   `$INSTANCE_NAME`_FileError[`$INSTANCE_NAME`_MAXFILES];      // Current error flags for file
-uint32  `$INSTANCE_NAME`_CurSize[`$INSTANCE_NAME`_MAXFILES+1];      // Current file size (in bytes) (+1 for FAT32 DIR)
-uint32  `$INSTANCE_NAME`_CurOffset[`$INSTANCE_NAME`_MAXFILES+1];    // Current offset into file     (+1 for FAT32 DIR)
+ulong   `$INSTANCE_NAME`_MemoryStart=0;            // Start of actual memory area (boot sector)
+uchar   `$INSTANCE_NAME`_FileError[`$INSTANCE_NAME`_MAXFILES];     // Current error flags for file
+ulong   `$INSTANCE_NAME`_CurSize[`$INSTANCE_NAME`_MAXFILES+1];     // Current file size (in bytes) (+1 for FAT32 DIR)
+ulong   `$INSTANCE_NAME`_CurOffset[`$INSTANCE_NAME`_MAXFILES+1];   // Current offset into file     (+1 for FAT32 DIR)
 #ifdef ENABLE_FILESYSTEM
-uint32  `$INSTANCE_NAME`_CurDir[`$INSTANCE_NAME`_MAXFILES];         // Current directory entry address
+ulong   `$INSTANCE_NAME`_CurDir[`$INSTANCE_NAME`_MAXFILES];        // Current directory entry address
 #ifdef ENABLE_FAT32
-uint32  `$INSTANCE_NAME`_CurStart[`$INSTANCE_NAME`_MAXFILES+1];     // Starting Fat value for file  (+1 for FAT32 DIR)
-uint32  `$INSTANCE_NAME`_CurFat[`$INSTANCE_NAME`_MAXFILES+1];       // Current Fat value of cluster (+1 for FAT32 DIR)
+ulong   `$INSTANCE_NAME`_CurStart[`$INSTANCE_NAME`_MAXFILES+1];    // Starting Fat value for file  (+1 for FAT32 DIR)
+ulong   `$INSTANCE_NAME`_CurFat[`$INSTANCE_NAME`_MAXFILES+1];      // Current Fat value of cluster (+1 for FAT32 DIR)
 #else
-uint16  `$INSTANCE_NAME`_CurStart[`$INSTANCE_NAME`_MAXFILES+1];     // Starting Fat value for file  (+1 for FAT16 DIR)
-uint16  `$INSTANCE_NAME`_CurFat[`$INSTANCE_NAME`_MAXFILES+1];       // Current Fat value of cluster (+1 for FAT16 DIR)
+uint    `$INSTANCE_NAME`_CurStart[`$INSTANCE_NAME`_MAXFILES+1];    // Starting Fat value for file  (+1 for FAT16 DIR)
+uint    `$INSTANCE_NAME`_CurFat[`$INSTANCE_NAME`_MAXFILES+1];      // Current Fat value of cluster (+1 for FAT16 DIR)
 #endif
-uint8   `$INSTANCE_NAME`_CurSect[`$INSTANCE_NAME`_MAXFILES+1];      // Current sector of the current cluster (+1 for FAT32 DIR)
-uint8   `$INSTANCE_NAME`_CurAttr[`$INSTANCE_NAME`_MAXFILES];        // Current file attributes - Bits 6 and seven are unused
-                                                                    // 0=Read Only, 1=Hidden, 2=System, 3=Volume Label, 4=SubDir, 5=Archive)
-uint8   `$INSTANCE_NAME`_FileMode[`$INSTANCE_NAME`_MAXFILES];       // Current Mode bits = "r"=0, "w"=1, "a"=2, "+"=3, DirtyDirFlag=4, Reserved=5,6,7
-uint16  `$INSTANCE_NAME`_DirSize = 512;                             // Current directory size (defaults to 512)
-uint32  `$INSTANCE_NAME`_EmptyFat = 2;                              // Location to start search for an empty FAT entry (Default to first FAT entry)
-uint8   `$INSTANCE_NAME`_ClusterSize;                               // Cluster size in sectors
-uint8   `$INSTANCE_NAME`_FatEntrySize=2;                            // Size of a FAT entry - defaults to FAT16
-uint32  `$INSTANCE_NAME`_Fat1Start;                                 // Start of 1st FAT Table (in bytes)
-uint32  `$INSTANCE_NAME`_Fat2Start;                                 // Start of 2nd FAT Table (in bytes)
-uint32  `$INSTANCE_NAME`_DirStart;                                  // Start of Root directory structure
+uchar   `$INSTANCE_NAME`_CurSect[`$INSTANCE_NAME`_MAXFILES+1];     // Current sector of the current cluster (+1 for FAT32 DIR)
+uchar   `$INSTANCE_NAME`_CurAttr[`$INSTANCE_NAME`_MAXFILES];       // Current file attributes - Bits 6 and seven are unused
+                                 // 0=Read Only, 1=Hidden, 2=System, 3=Volume Label, 4=SubDir, 5=Archive)
+uchar   `$INSTANCE_NAME`_FileMode[`$INSTANCE_NAME`_MAXFILES];      // Current Mode bits = "r"=0, "w"=1, "a"=2, "+"=3, DirtyDirFlag=4, Reserved=5,6,7
+uint    `$INSTANCE_NAME`_DirSize = 512;           // Current directory size (defaults to 512)
+ulong   `$INSTANCE_NAME`_EmptyFat = 2;            // Location to start search for an empty FAT entry (Default to first FAT entry)
+uchar   `$INSTANCE_NAME`_ClusterSize;             // Cluster size in sectors
+uchar   `$INSTANCE_NAME`_FatEntrySize=2;          // Size of a FAT entry - defaults to FAT16
+ulong   `$INSTANCE_NAME`_Fat1Start;               // Start of 1st FAT Table (in bytes)
+ulong   `$INSTANCE_NAME`_Fat2Start;               // Start of 2nd FAT Table (in bytes)
+ulong   `$INSTANCE_NAME`_DirStart;                // Start of Root directory structure
 #endif
-uint32  `$INSTANCE_NAME`_BuffLoc = 0;                               // Location of data stored in the read/write buffer (used in `$INSTANCE_NAME`_flush)
-uint8   `$INSTANCE_NAME`_DirtyFlag=0;                               // Dirty flag 0=Clean 1=Data Dirty 2=Directory Dirty
-uint8   `$INSTANCE_NAME`_CardType = 0;                              // Card Type:    0=None,   1=MMC,    2=SD (lower nibble)
-                                                                    // Fat Type:     0=None,   10=FAT12, 40=FAT16, 60=FAT16, B0=FAT32 (upper nibble)
-uint32   `$INSTANCE_NAME`_DataStart;                                // Start of Data area
+ulong   `$INSTANCE_NAME`_BuffLoc = 0;             // Location of data stored in the read/write buffer (used in `$INSTANCE_NAME`_flush)
+uchar   `$INSTANCE_NAME`_DirtyFlag=0;             // Dirty flag 0=Clean 1=Data Dirty 2=Directory Dirty
+uchar   `$INSTANCE_NAME`_CardType = 0;            // Card Type:    0=None,   1=MMC,    2=SD (lower nibble)
+                                                  // Fat Type:     0=None,   10=FAT12, 40=FAT16, 60=FAT16, B0=FAT32 (upper nibble)
+ulong   `$INSTANCE_NAME`_DataStart;               // Start of Data area
 #ifdef ENABLE_FAT32
-uint32  `$INSTANCE_NAME`_DirFat;                                    // Starting FAT entry of the root directory for FAT 32 file systems
-uint32  `$INSTANCE_NAME`_FatEnd=0xFFFF;                             // Value of the end of a FAT chain - default FAT 16
+ulong   `$INSTANCE_NAME`_DirFat;                  // Starting FAT entry of the root directory for FAT 32 file systems
+ulong   `$INSTANCE_NAME`_FatEnd=0xFFFF;           // Value of the end of a FAT chain - default FAT 16 
 #else
-uint16  `$INSTANCE_NAME`_DirFat;                                    // Starting FAT of the root directory for FAT 16 file systems (set to zer0)
-uint16  `$INSTANCE_NAME`_FatEnd=0xFFFF;                             // Value of the end of a FAT chain - default FAT 16
+uint    `$INSTANCE_NAME`_DirFat;                  // Starting FAT of the root directory for FAT 16 file systems (set to zer0)
+uint    `$INSTANCE_NAME`_FatEnd=0xFFFF;           // Value of the end of a FAT chain - default FAT 16
 #endif
 
-uint32  `$INSTANCE_NAME`_Address;                                   // Temporary address variable used so calls don't have to put longs on the stack
-uint8 * `$INSTANCE_NAME`_Buffer1;                                   // Temporary 32 byte buffer pointer for data reads and writes
-uint8 * `$INSTANCE_NAME`_Buffer2;                                   // second Temporary 32 byte buffer pointer for data reads and writes
+ulong   `$INSTANCE_NAME`_Address;                 // Temporary address variable used so calls don't have to put longs on the stack
+uchar   *`$INSTANCE_NAME`_Buffer1;                // Temporary 32 byte buffer pointer for data reads and writes
+uchar   *`$INSTANCE_NAME`_Buffer2;                // second Temporary 32 byte buffer pointer for data reads and writes
 
-uint8   `$INSTANCE_NAME`_Speed = 0;                                 // Speed at which the card is running 0=400KHz, 1=2MHz, 2=12Mhz
+uchar   `$INSTANCE_NAME`_Speed = 0;               // Speed at which the card is running 0=400KHz, 1=2MHz, 2=12Mhz
 
-uint8   `$INSTANCE_NAME`_SectBuf1[256];
-uint8   `$INSTANCE_NAME`_SectBuf2[256];
+uchar    `$INSTANCE_NAME`_SectBuf1[256];
+uchar    `$INSTANCE_NAME`_SectBuf2[256];
+// Constant Global variables
+const uchar `$INSTANCE_NAME`_CmdStr00[6]  = {0x40, 0x00, 0x00, 0x00, 0x00, 0x95};      // Command 00 - Go Idle State
+const uchar `$INSTANCE_NAME`_BlankDir[32] = {'F','I','L','E','N','A','M','E','E','X','T',0x20,0x18,0x4F,0xAC,0x4E,0x36,0x31,0x36,0x31,0,0,0x86,0x7B,0x30,0x31,0,0,0,0,0,0};
 
-// = Constant Global variables
-uint8   `$INSTANCE_NAME`_CmdStr00[6]  = {0x40, 0x00, 0x00, 0x00, 0x00, 0x95};      // Command 00 - Go Idle State
-uint8   `$INSTANCE_NAME`_BlankDir[32] = {'F','I','L','E','N','A','M','E','E','X','T',0x20,0x18,0x4F,0xAC,0x4E,0x36,0x31,0x36,0x31,0,0,0x86,0x7B,0x30,0x31,0,0,0,0,0,0};
-
-uint8   rbuff;
+uint8 rbuff;
 
 //=================================================================================================
 //      MMC/SD CARD COMMANDS - LIB Card command Functions
@@ -91,7 +90,7 @@ uint8   rbuff;
 
 
 //-------------------------------------------------------------------------------------------------
-// FUNCTION NAME:   void `$INSTANCE_NAME`_Start(void)
+// FUNCTION NAME:   void `$INSTANCE_NAME`_Start( uchar *Buf1, uchar *Buf2)
 //
 // DESCRIPTION:
 //   This function initializes the two 256 byte buffer pointers and initializes
@@ -113,12 +112,12 @@ uint8   rbuff;
 //
 //-------------------------------------------------------------------------------------------------
 
-void `$INSTANCE_NAME`_Start(void)
+void `$INSTANCE_NAME`_Start( void )  
 {
-    `$INSTANCE_NAME`_Buffer1 = `$INSTANCE_NAME`_SectBuf1;
-    `$INSTANCE_NAME`_Buffer2 = `$INSTANCE_NAME`_SectBuf2;
-    // Initialize SPI module
-    `$INSTANCE_NAME`_InitHdwr(0x00);   // Start SPI Master module
+     `$INSTANCE_NAME`_Buffer1 = `$INSTANCE_NAME`_SectBuf1;
+     `$INSTANCE_NAME`_Buffer2 = `$INSTANCE_NAME`_SectBuf2;
+     // Initialize SPI module
+     `$INSTANCE_NAME`_InitHdwr(0x00);   // Start SPI Master module
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -142,8 +141,8 @@ void `$INSTANCE_NAME`_Start(void)
 
 void `$INSTANCE_NAME`_Stop(void)
 {
-    `$INSTANCE_NAME`_Buffer1 = (uint8 *)0xFF;
-    `$INSTANCE_NAME`_Buffer2 = (uint8 *)0xFF;
+    `$INSTANCE_NAME`_Buffer1 = (uchar *)0xFF;
+    `$INSTANCE_NAME`_Buffer2 = (uchar *)0xFF;
     // Disable SPI modules
     `$INSTANCE_NAME`_UnInitHdwr();         // Stop SPI Master module
     // Former SPI lines should be forced high.
@@ -151,7 +150,7 @@ void `$INSTANCE_NAME`_Stop(void)
 
 
 //-------------------------------------------------------------------------------------------------
-// FUNCTION NAME:   uint8 `$INSTANCE_NAME`_fclose(uint8 Fptr)
+// FUNCTION NAME:   uchar `$INSTANCE_NAME`_fclose(uchar Fptr)
 //
 // DESCRIPTION:
 //   Closes the file, clears the file open data, and clears the FileError flags
@@ -159,7 +158,7 @@ void `$INSTANCE_NAME`_Stop(void)
 //
 //-------------------------------------------------------------------------------------------------
 //
-//  ARGUMENTS:
+//  ARGUMENTS: 
 //    Fptr: File pointer index
 //
 //  RETURNS:
@@ -174,38 +173,39 @@ void `$INSTANCE_NAME`_Stop(void)
 //-------------------------------------------------------------------------------------------------
 #ifdef ENABLE_FILESYSTEM
 
-uint8 `$INSTANCE_NAME`_fclose(uint8 Fptr)
+uchar `$INSTANCE_NAME`_fclose(uchar Fptr)
 {
-
-    uint8   flag=`$INSTANCE_NAME`_FPE|`$INSTANCE_NAME`_EOF;         // Temp error flag (Set to failure)
-
-    if (Fptr<`$INSTANCE_NAME`_MAXFILES) {            // Is the file pointer valid?
-        // Close file - pointer is valid
-
+   
+   uchar   flag=`$INSTANCE_NAME`_FPE|`$INSTANCE_NAME`_EOF;         // Temp error flag (Set to failure)
+   
+   if(Fptr<`$INSTANCE_NAME`_MAXFILES)             // Is the file pointer valid?
+   {
+      // Close file - pointer is valid
+      
 #ifdef ENABLE_WRITE
-        if ((`$INSTANCE_NAME`_FileMode[Fptr]&0x0F) != 1)    // If file was writeable do a flush
-            `$INSTANCE_NAME`_fflush(Fptr);
+      if((`$INSTANCE_NAME`_FileMode[Fptr]&0x0F) != 1)    // If file was writeable do a flush
+         `$INSTANCE_NAME`_fflush(Fptr);
 #endif
+      
+      `$INSTANCE_NAME`_CurDir[Fptr] = 0;          // Clear file information
+      `$INSTANCE_NAME`_CurStart[Fptr] = 0;
+      `$INSTANCE_NAME`_CurFat[Fptr] = 0;
+      `$INSTANCE_NAME`_CurSize[Fptr] = 0;
+      `$INSTANCE_NAME`_CurOffset[Fptr]= 0;
+      `$INSTANCE_NAME`_CurSect[Fptr] = 0;
+      `$INSTANCE_NAME`_CurAttr[Fptr] = 0;   
+      
+      `$INSTANCE_NAME`_FileMode[Fptr] = 0;        // Clear file mode
+      `$INSTANCE_NAME`_FileError[Fptr] = 0;       // Clear any file errors
+      flag=`$INSTANCE_NAME`_FileError[Fptr];      // Copy file error flag for return
+   }
 
-        `$INSTANCE_NAME`_CurDir[Fptr] = 0;          // Clear file information
-        `$INSTANCE_NAME`_CurStart[Fptr] = 0;
-        `$INSTANCE_NAME`_CurFat[Fptr] = 0;
-        `$INSTANCE_NAME`_CurSize[Fptr] = 0;
-        `$INSTANCE_NAME`_CurOffset[Fptr]= 0;
-        `$INSTANCE_NAME`_CurSect[Fptr] = 0;
-        `$INSTANCE_NAME`_CurAttr[Fptr] = 0;
-
-        `$INSTANCE_NAME`_FileMode[Fptr] = 0;        // Clear file mode
-        `$INSTANCE_NAME`_FileError[Fptr] = 0;       // Clear any file errors
-        flag=`$INSTANCE_NAME`_FileError[Fptr];      // Copy file error flag for return
-    }
-
-    return(flag);
+   return(flag);
 }
 #endif
 
 //-------------------------------------------------------------------------------------------------
-// FUNCTION NAME:   uint8 `$INSTANCE_NAME`_fopen(uint8 Filename[], uint8 Mode[])
+// FUNCTION NAME:   uchar `$INSTANCE_NAME`_fopen(uchar Filename[], const uchar Mode[])
 //
 // DESCRIPTION:
 //   Opens the file "Filename" and returns a file pointer to that file.
@@ -229,130 +229,147 @@ uint8 `$INSTANCE_NAME`_fclose(uint8 Fptr)
 //-------------------------------------------------------------------------------------------------
 #ifdef ENABLE_FILESYSTEM
 
-uint8 `$INSTANCE_NAME`_fopen(uint8 Filename[], uint8 Mode[])
+uchar `$INSTANCE_NAME`_fopen(uchar Filename[], const uchar Mode[])
 {
-    uint8   Fptr;              // Pointer of file to use
-    uint8   x=0;               // Temp counter
-    uint8   status=0;          // Status indicator
-    uint8   xFilename[13];     // Temp filename so original is not corrupted
+   uchar   Fptr;              // Pointer of file to use
+   uchar   x=0;               // Temp counter
+   uchar   status=0;          // Status indicator
+   uchar   xFilename[13];     // Temp filename so original is not corrupted
+      
+   for (Fptr=0; Fptr<`$INSTANCE_NAME`_MAXFILES; Fptr++)
+   {
+      if(`$INSTANCE_NAME`_CurStart[Fptr] == 0)
+         break;
+   }
+   if(Fptr<`$INSTANCE_NAME`_MAXFILES)
+   {
+      // === Start parsing Mode string ===
+      // Parse file mode bits and check validity
+      `$INSTANCE_NAME`_FileMode[Fptr] = 0;            // Clear file mode bits
+      while(Mode[x] != 0)            // Loop until mode string is parsed
+      {
+         if(Mode[x] == 'r')
+         {
+            `$INSTANCE_NAME`_FileMode[Fptr] |= 0x01;  // If 'r' set the read mode bit
+            status++;                // Add one to status count
+         }
+         else if(Mode[x] == 'w')
+         {
+            `$INSTANCE_NAME`_FileMode[Fptr] |= 0x02;  // If 'w' set the write mode bit
+            status++;                // Add one to status count
+         }
+         else if(Mode[x] == 'a')
+         {
+            `$INSTANCE_NAME`_FileMode[Fptr] |= 0x04;  // If 'a' set the append mode bit
+            status++;                // Add one to status count
+         }
+         else if(Mode[x] == '+')
+            `$INSTANCE_NAME`_FileMode[Fptr] |= 0x08;     // If '+' set the add mode bit
+         
+         x++;                        // Do next character
+      }
 
-    for (Fptr=0; Fptr<`$INSTANCE_NAME`_MAXFILES; Fptr++) {
-        if (`$INSTANCE_NAME`_CurStart[Fptr] == 0)
-            break;
-    }
-    if (Fptr<`$INSTANCE_NAME`_MAXFILES) {
-        // === Start parsing Mode string ===
-        // Parse file mode bits and check validity
-        `$INSTANCE_NAME`_FileMode[Fptr] = 0;            // Clear file mode bits
-        while (Mode[x] != 0) {           // Loop until mode string is parsed
-            if (Mode[x] == 'r') {
-                `$INSTANCE_NAME`_FileMode[Fptr] |= 0x01;  // If 'r' set the read mode bit
-                status++;                // Add one to status count
+      // Check that only one of the r, w, or a bits was set 
+      if(status != 1)
+      {
+         // Set error bit - invalid value
+         `$INSTANCE_NAME`_FileMode[Fptr] = 0;         // Error - Clear file mode bits
+         status = `$INSTANCE_NAME`_FAIL;
+      }
+      else
+           status = 0;               // No error - clear status
+      // === Done  parsing Mode string ===
+
+      // Copy filename from Filename to xFilename (copy is modified to match DIR format)
+      x=0;
+      while(Filename[x]!=0)
+      {
+         xFilename[x] = Filename[x]; // Copy the filename string
+         x++;
+      } 
+      xFilename[x] = 0;              // Terminate the string
+
+      // xFilename is now ready to be parsed and processed
+      status = `$INSTANCE_NAME`_ParseFilename(xFilename);      // Parse the filename
+      if(status==0)                  // If the filename is valid, copy it to the buffer
+      {
+         for(x=0; x<12; x++)
+         {
+            `$INSTANCE_NAME`_Buffer2[x] = xFilename[x];
+         }
+      }
+
+      // Filename parsed - if no errors (status OK) , attempt to open file
+      if(status==0)                           // If no errors proceed
+      {
+         `$INSTANCE_NAME`_FileError[Fptr] &= ~`$INSTANCE_NAME`_FNF;             // Clear the File Not Found flag bit
+         `$INSTANCE_NAME`_FindFile(Fptr, 0);                   // Get file info using filename
+         if((`$INSTANCE_NAME`_FileError[Fptr] & `$INSTANCE_NAME`_FNF)!= 0)      // If file was not found
+         {
+            if((`$INSTANCE_NAME`_FileMode[Fptr] & 0x01) == 1)  // Is the mode set to read?
+            {
+               Fptr = `$INSTANCE_NAME`_MAXFILES;               // Yes, no file pointers available - Set error for open
             }
-            else if(Mode[x] == 'w') {
-                `$INSTANCE_NAME`_FileMode[Fptr] |= 0x02;  // If 'w' set the write mode bit
-                status++;                // Add one to status count
-            }
-            else if(Mode[x] == 'a') {
-                `$INSTANCE_NAME`_FileMode[Fptr] |= 0x04;  // If 'a' set the append mode bit
-                status++;                // Add one to status count
-            }
-            else if(Mode[x] == '+')
-                `$INSTANCE_NAME`_FileMode[Fptr] |= 0x08;     // If '+' set the add mode bit
-
-            x++;                        // Do next character
-        }
-
-        // Check that only one of the r, w, or a bits was set
-        if (status != 1) {
-            // Set error bit - invalid value
-            `$INSTANCE_NAME`_FileMode[Fptr] = 0;         // Error - Clear file mode bits
-            status = `$INSTANCE_NAME`_FAIL;
-        }
-        else
-            status = 0;               // No error - clear status
-        // === Done  parsing Mode string ===
-
-        // Copy filename from Filename to xFilename (copy is modified to match DIR format)
-        x=0;
-        while (Filename[x]!=0) {
-            xFilename[x] = Filename[x]; // Copy the filename string
-            x++;
-        }
-        xFilename[x] = 0;              // Terminate the string
-
-        // xFilename is now ready to be parsed and processed
-        status = `$INSTANCE_NAME`_ParseFilename(xFilename);      // Parse the filename
-        if (status==0) {                 // If the filename is valid, copy it to the buffer
-            for (x=0; x<12; x++) {
-                `$INSTANCE_NAME`_Buffer2[x] = xFilename[x];
-            }
-        }
-
-        // Filename parsed - if no errors (status OK) , attempt to open file
-        if (status==0) {                          // If no errors proceed
-            `$INSTANCE_NAME`_FileError[Fptr] &= ~`$INSTANCE_NAME`_FNF;             // Clear the File Not Found flag bit
-            `$INSTANCE_NAME`_FindFile(Fptr, 0);                   // Get file info using filename
-            if ((`$INSTANCE_NAME`_FileError[Fptr] & `$INSTANCE_NAME`_FNF)!= 0) {     // If file was not found
-                if ((`$INSTANCE_NAME`_FileMode[Fptr] & 0x01) == 1) { // Is the mode set to read?
-                    Fptr = `$INSTANCE_NAME`_MAXFILES;               // Yes, no file pointers available - Set error for open
-                }
-                else {
+            else
+            {
 
 #ifdef ENABLE_WRITE
 #ifdef ENABLE_WPROTECT
-                    if (`$INSTANCE_NAME`_WriteProtect()) {         // Is the card switch in the protect mode?
-                        Fptr = `$INSTANCE_NAME`_MAXFILES;            // Failure - write protected - Set error for open
-                    }
-                    else
+               if(`$INSTANCE_NAME`_WriteProtect())          // Is the card switch in the protect mode?
+               {
+                  Fptr = `$INSTANCE_NAME`_MAXFILES;            // Failure - write protected - Set error for open
+               }
+               else
 #endif
-                    {
-                        // Create new file (if write or append) and no file was found
-                        Fptr = `$INSTANCE_NAME`_NewFile(Fptr, `$INSTANCE_NAME`_Buffer2);    // Create new file using filename - if failure Fptr set to `$INSTANCE_NAME`_MAXFILES
-                        `$INSTANCE_NAME`_FileError[Fptr] &= ~`$INSTANCE_NAME`_FNF;          // Clear the File Not Found flag bit
-                    }
+               {
+                  // Create new file (if write or append) and no file was found
+                  Fptr = `$INSTANCE_NAME`_NewFile(Fptr, `$INSTANCE_NAME`_Buffer2);    // Create new file using filename - if failure Fptr set to `$INSTANCE_NAME`_MAXFILES          
+                  `$INSTANCE_NAME`_FileError[Fptr] &= ~`$INSTANCE_NAME`_FNF;          // Clear the File Not Found flag bit
+               }
 
-
+               
 #else
-                    Fptr = `$INSTANCE_NAME`_MAXFILES;               // Failure - not a valid mode - Set error for open
+               Fptr = `$INSTANCE_NAME`_MAXFILES;               // Failure - not a valid mode - Set error for open
 #endif
-                }
             }
-            else {
-                // If file was found, and write mode is set - zero the file, if in append mode - don't zero and set postion to one past end
-                if((`$INSTANCE_NAME`_FileMode[Fptr] & 0x01) != 1)   // Is the mode set to write or append?
+         }
+         else
+         {
+            // If file was found, and write mode is set - zero the file, if in append mode - don't zero and set postion to one past end
+            if((`$INSTANCE_NAME`_FileMode[Fptr] & 0x01) != 1)   // Is the mode set to write or append?
 #ifdef ENABLE_WRITE
 #ifdef ENABLE_WPROTECT
-                    if (`$INSTANCE_NAME`_WriteProtect())           // Is the card switch in the protect mode?
-                        Fptr = `$INSTANCE_NAME`_MAXFILES;             // Failure - write protected - Set error for open
-                    else
+               if(`$INSTANCE_NAME`_WriteProtect())           // Is the card switch in the protect mode?
+                  Fptr = `$INSTANCE_NAME`_MAXFILES;             // Failure - write protected - Set error for open
+               else
 #endif
-                    {
-                        if ((`$INSTANCE_NAME`_FileMode[Fptr] & 0x02) == 2) // Is the mode set to write?
-                            `$INSTANCE_NAME`_FileZero(Fptr, 0);           // Set file size to zero and delete FAT chain
-                        else
-                            `$INSTANCE_NAME`_fseek(Fptr, `$INSTANCE_NAME`_CurSize[Fptr]);   // Must be in append mode move offset to end of file + 1
-                    }
+               {
+                   if((`$INSTANCE_NAME`_FileMode[Fptr] & 0x02) == 2) // Is the mode set to write?
+                       `$INSTANCE_NAME`_FileZero(Fptr, 0);           // Set file size to zero and delete FAT chain
+                   else
+                       `$INSTANCE_NAME`_fseek(Fptr, `$INSTANCE_NAME`_CurSize[Fptr]);   // Must be in append mode move offset to end of file + 1
+               }
 #else
-                    Fptr = `$INSTANCE_NAME`_MAXFILES;             // Failure - not a valid mode - Set error for open
+                  Fptr = `$INSTANCE_NAME`_MAXFILES;             // Failure - not a valid mode - Set error for open
 
 #endif
-            }
-        }
-        else {
-            Fptr = `$INSTANCE_NAME`_MAXFILES;      // Failure - not a valid filename or mode - Set error for open
-        }
-    }
-
-    return(Fptr);               // Return pointer value to use to access file
+         }
+      }
+      else
+      {
+         Fptr = `$INSTANCE_NAME`_MAXFILES;      // Failure - not a valid filename or mode - Set error for open
+      }
+   }
+          
+   return(Fptr);               // Return pointer value to use to access file
 }
 #endif
 
 //-------------------------------------------------------------------------------------------------
-// FUNCTION NAME:    uint8 `$INSTANCE_NAME`_fgetc(uint8 Fptr)
+// FUNCTION NAME:    uchar `$INSTANCE_NAME`_fgetc(uchar Fptr)
 //
 // DESCRIPTION:
-//   Reads a single byte from a file indicated by [Fptr]and uses the CurOffset[Fptr]
+//   Reads a single byte from a file indicated by [Fptr]and uses the CurOffset[Fptr] 
 //   for the actual byte position (CurOffset[Fptr] is incremented after the read.)
 //
 //   (Must have an file pointer previously set by the `$INSTANCE_NAME`_FileOpen subroutine)
@@ -368,7 +385,7 @@ uint8 `$INSTANCE_NAME`_fopen(uint8 Filename[], uint8 Mode[])
 //
 //  SIDE EFFECTS:
 //
-//              ***   Global variables required   ***
+//              ***   Global variables required   ***     
 //    ClusterSize      - the size of a cluster on the current disk
 //
 //    CurFat[Fptr]     - contains the starting fat entry for the file
@@ -384,10 +401,10 @@ uint8 `$INSTANCE_NAME`_fopen(uint8 Filename[], uint8 Mode[])
 //
 //-------------------------------------------------------------------------------------------------
 
-uint8 `$INSTANCE_NAME`_fgetc(uint8 Fptr)
+uchar `$INSTANCE_NAME`_fgetc(uchar Fptr)
 {
-   uint16  offset;               // Temp offset of buffer index
-   uint8   Data = 0;            // Temp holder for data to return
+   uint   offset;               // Temp offset of buffer index
+   uchar   Data = 0;            // Temp holder for data to return
 
    if(Fptr<`$INSTANCE_NAME`_MAXFILES)            // Is the file pointer valid? If yes, continue. If no, do nothing and return a zero.
    {
@@ -400,7 +417,7 @@ uint8 `$INSTANCE_NAME`_fgetc(uint8 Fptr)
 #else
       {
          `$INSTANCE_NAME`_Address = `$INSTANCE_NAME`_CurOffset[Fptr]+`$INSTANCE_NAME`_MemoryStart;
-#endif
+#endif      
          // If the dirty flag is clear and the sector address match use the current buffer
          // instead of reading the card. (Pending write data could contain a different value.)
          if( ((`$INSTANCE_NAME`_DirtyFlag&0x01)!=0x01)||((`$INSTANCE_NAME`_Address & 0xFFFFFE00)!= `$INSTANCE_NAME`_BuffLoc) )
@@ -408,10 +425,10 @@ uint8 `$INSTANCE_NAME`_fgetc(uint8 Fptr)
             `$INSTANCE_NAME`_SetSize(1);                          // Set block length back to read a single byte from the file (1)
 
             // CMD17 - Read single block command
-            // Byte String = 0x51 (uint32 Address) 0xFF
+            // Byte String = 0x51 (ulong Address) 0xFF 
 
             `$INSTANCE_NAME`_Cmd(`$INSTANCE_NAME`_CMD17, `$INSTANCE_NAME`_Address);                 // Send CMD17 command string
-
+   
             // Check response
             if(`$INSTANCE_NAME`_CheckReply(0) != `$INSTANCE_NAME`_FAIL)            // Check for status good
             {
@@ -422,30 +439,30 @@ uint8 `$INSTANCE_NAME`_fgetc(uint8 Fptr)
                   // Send a null byte to shift for btye read
                   `$INSTANCE_NAME`_SendTxData( 0xFF );
                   `$INSTANCE_NAME`_XferWait();                            // Wait for transfer to complete
-
+            
                   // Send to standard output
                   Data = `$INSTANCE_NAME`_bReadRxData(); // Read the data byte and save it for the return
 
                   // Increase byte count by one
                   `$INSTANCE_NAME`_IncOffset(Fptr, 0);   // Position the next entry.
-
+                           
                }
                else
                   `$INSTANCE_NAME`_FileError[Fptr] |= `$INSTANCE_NAME`_CE;                 // Set status to Card Error - failed
             }
             else
                `$INSTANCE_NAME`_FileError[Fptr] |= `$INSTANCE_NAME`_CE;                    // Set status to Card Error - failed
-
+   
             `$INSTANCE_NAME`_EndCmd();                                    // Finish the command cycle
 
          }
          else
          {
-            offset = (uint16)(`$INSTANCE_NAME`_CurOffset[Fptr]) & 0x01FF;
+            offset = (uint)(`$INSTANCE_NAME`_CurOffset[Fptr]) & 0x01FF;
             if(offset < 256)      // Get the data in the correct buffer
                Data = `$INSTANCE_NAME`_Buffer1[offset];
             else
-               Data = `$INSTANCE_NAME`_Buffer2[offset-256];
+               Data = `$INSTANCE_NAME`_Buffer2[offset-256];         
 
             // Increase byte count by one
             `$INSTANCE_NAME`_IncOffset(Fptr, 0);    // Position the next entry (do not add fat).
@@ -460,14 +477,14 @@ uint8 `$INSTANCE_NAME`_fgetc(uint8 Fptr)
    return(Data);
 }
 //-------------------------------------------------------------------------------------------------
-// FUNCTION NAME:    uint8 `$INSTANCE_NAME`_fbgetc(uint8 Fptr)
+// FUNCTION NAME:    uchar `$INSTANCE_NAME`_fbgetc(uchar Fptr)
 //
 // DESCRIPTION:
-//   This faster buffered version of fgetc reads in an entire 512 byte buffer for faster
-//   access, but care must be used to do sequenced continuous reads, any read/write or
+//   This faster buffered version of fgetc reads in an entire 512 byte buffer for faster 
+//   access, but care must be used to do sequenced continuous reads, any read/write or  
 //   random access reads will cause severe slowdowns in data throughput.
 //
-//   Reads a single buffered byte from a file indicated by [Fptr]and uses the CurOffset[Fptr]
+//   Reads a single buffered byte from a file indicated by [Fptr]and uses the CurOffset[Fptr] 
 //   for the actual byte position (CurOffset[Fptr] is incremented after the read.)
 //
 //   (Must have an file pointer previously set by the `$INSTANCE_NAME`_FileOpen subroutine)
@@ -483,7 +500,7 @@ uint8 `$INSTANCE_NAME`_fgetc(uint8 Fptr)
 //
 //  SIDE EFFECTS:
 //
-//              ***   Global variables required   ***
+//              ***   Global variables required   ***     
 //    ClusterSize      - the size of a cluster on the current disk
 //
 //    CurFat[Fptr]     - contains the starting fat entry for the file
@@ -499,10 +516,10 @@ uint8 `$INSTANCE_NAME`_fgetc(uint8 Fptr)
 //
 //-------------------------------------------------------------------------------------------------
 
-uint8 `$INSTANCE_NAME`_fbgetc(uint8 Fptr)
+uchar `$INSTANCE_NAME`_fbgetc(uchar Fptr)
 {
-   uint16 offset;               // Temp offset of buffer index
-   uint8  Data = 0;             // Temp holder for data to return
+   uint   offset;               // Temp offset of buffer index
+   uchar  Data = 0;             // Temp holder for data to return
 
    if(Fptr<`$INSTANCE_NAME`_MAXFILES)            // Is the file pointer valid? If yes, continue. If no, do nothing and return a zero.
    {
@@ -513,7 +530,7 @@ uint8 `$INSTANCE_NAME`_fbgetc(uint8 Fptr)
 #else
       {
          `$INSTANCE_NAME`_Address = `$INSTANCE_NAME`_CurOffset[Fptr]+`$INSTANCE_NAME`_MemoryStart;
-#endif
+#endif      
          // Is the buffer location different from the read location?
          if( (`$INSTANCE_NAME`_Address & 0xFFFFFE00)!= `$INSTANCE_NAME`_BuffLoc )
          {
@@ -526,14 +543,14 @@ uint8 `$INSTANCE_NAME`_fbgetc(uint8 Fptr)
                  }
 #endif
               // Get the new read buffer to use
-              `$INSTANCE_NAME`_ReadSect(`$INSTANCE_NAME`_Address);  // Read new sector into the buffer
+              `$INSTANCE_NAME`_ReadSect(`$INSTANCE_NAME`_Address);	// Read new sector into the buffer
          }
 
-         offset = (uint16)(`$INSTANCE_NAME`_CurOffset[Fptr]) & 0x01FF;
+         offset = (uint)(`$INSTANCE_NAME`_CurOffset[Fptr]) & 0x01FF;
          if(offset < 256)               // Get the data in the correct buffer
              Data = `$INSTANCE_NAME`_Buffer1[offset];
          else
-             Data = `$INSTANCE_NAME`_Buffer2[offset-256];
+             Data = `$INSTANCE_NAME`_Buffer2[offset-256];			
 
          // Increase byte count by one
          `$INSTANCE_NAME`_IncOffset(Fptr, 0);            // Position the next entry (do not add FAT).
@@ -541,7 +558,7 @@ uint8 `$INSTANCE_NAME`_fbgetc(uint8 Fptr)
 #ifdef ENABLE_FILESYSTEM
          // Check for the end of file
          if(`$INSTANCE_NAME`_CurOffset[Fptr]==`$INSTANCE_NAME`_CurSize[Fptr])
-             `$INSTANCE_NAME`_FileError[Fptr] |= `$INSTANCE_NAME`_EOF;             // Set end of file flag if last character
+	         `$INSTANCE_NAME`_FileError[Fptr] |= `$INSTANCE_NAME`_EOF;             // Set end of file flag if last character
 #endif
       }
    }
@@ -549,10 +566,10 @@ uint8 `$INSTANCE_NAME`_fbgetc(uint8 Fptr)
 }
 
 //-------------------------------------------------------------------------------------------------
-// FUNCTION NAME:   uint8 `$INSTANCE_NAME`_fputc(uint8 Data, uint8 Fptr)
+// FUNCTION NAME:   uchar `$INSTANCE_NAME`_fputc(uchar Data, uchar Fptr)
 //
 // DESCRIPTION:
-//   Writes a single byte to the file indicated by [Fptr]and uses the `$INSTANCE_NAME`_CurOffset[Fptr]
+//   Writes a single byte to the file indicated by [Fptr]and uses the `$INSTANCE_NAME`_CurOffset[Fptr] 
 //   for the actual byte position (`$INSTANCE_NAME`_CurOffset[Fptr] is incremented after the write.)
 //   (Must have an file pointer previously set to write by the `$INSTANCE_NAME`_FileOpen subroutine)
 //   (If ENABLE_FILESYSTEM is undefined only the Fptr and CurOffset are used.)
@@ -567,9 +584,9 @@ uint8 `$INSTANCE_NAME`_fbgetc(uint8 Fptr)
 //
 //  SIDE EFFECTS:
 //
-//                 ***   Global variables required   ***
+//                 ***   Global variables required   ***     
 //    ClusterSize      - the size of a cluster on the current disk
-//
+//   
 //    CurFat[Fptr]     - contains the starting FAT entry for the file
 //    CurSize[Fptr]    - contains the size of the file
 //    CurOffset[Fptr]  - contains the current offset
@@ -582,13 +599,13 @@ uint8 `$INSTANCE_NAME`_fbgetc(uint8 Fptr)
 //-------------------------------------------------------------------------------------------------
 #ifdef ENABLE_WRITE
 
-uint8 `$INSTANCE_NAME`_fputc(uint8 Data, uint8 Fptr)
+uchar `$INSTANCE_NAME`_fputc(uchar Data, uchar Fptr)
 {
-   uint16  offset;                  // Temp offset value
-   uint8   status = `$INSTANCE_NAME`_FAIL;          // Set status to fail (until cleared by sucess)
+   uint   offset;                  // Temp offset value
+   uchar   status = `$INSTANCE_NAME`_FAIL;          // Set status to fail (until cleared by sucess)
 
 #ifdef ENABLE_WPROTECT
-   if(`$INSTANCE_NAME`_WriteProtect()==0)        // If write protect is on skip writes, flag error
+   if(`$INSTANCE_NAME`_WriteProtect()==0)        // If write protect is on skip writes, flag error   
 #endif
    {
       if(Fptr == `$INSTANCE_NAME`_MAXFILES)         // Is the file pointer valid? If yes, continue. If no, do nothing and return a zero.
@@ -623,15 +640,15 @@ uint8 `$INSTANCE_NAME`_fputc(uint8 Data, uint8 Fptr)
          // Address = (DataStart + ((((CurFat[Fptr] - 2) * ClusterSize) + CurSect[Fptr] ) * 512 ));
 
          `$INSTANCE_NAME`_GetAddress(Fptr, 0);         // Calculate sector address
-
+      
 #else
       else
       {
          `$INSTANCE_NAME`_Address = (`$INSTANCE_NAME`_CurOffset[Fptr] & 0xFFFFFE00)+`$INSTANCE_NAME`_MemoryStart;
-#endif
+#endif      
          // If the sector changes - update it, if it's dirty - flush it then update it.
          if(`$INSTANCE_NAME`_Address != `$INSTANCE_NAME`_BuffLoc)
-         {
+         { 
             if((`$INSTANCE_NAME`_DirtyFlag&0x01)==0x01)
             {
                `$INSTANCE_NAME`_WriteSect(`$INSTANCE_NAME`_BuffLoc);      // Flush buffer if data is dirty
@@ -641,12 +658,12 @@ uint8 `$INSTANCE_NAME`_fputc(uint8 Data, uint8 Fptr)
             `$INSTANCE_NAME`_BuffLoc = `$INSTANCE_NAME`_Address;          // Update the write location
          }
 
-         offset = (uint16)(`$INSTANCE_NAME`_CurOffset[Fptr]) & 0x01FF;
+         offset = (uint)(`$INSTANCE_NAME`_CurOffset[Fptr]) & 0x01FF;
          if(offset < 256)               // Save the data in the correct buffer
             `$INSTANCE_NAME`_Buffer1[offset] = Data;
          else
-            `$INSTANCE_NAME`_Buffer2[offset-256] = Data;
-
+            `$INSTANCE_NAME`_Buffer2[offset-256] = Data;         
+         
          `$INSTANCE_NAME`_DirtyFlag |= 0x01;             // Set the dirty data flag - Data modified
 
          // Increase byte count by one
@@ -661,13 +678,13 @@ uint8 `$INSTANCE_NAME`_fputc(uint8 Data, uint8 Fptr)
    else
       status = `$INSTANCE_NAME`_FAIL;                     // Write protect on - set fail
 #endif
-
+   
    return(status);
 }
 #endif
 
 //-------------------------------------------------------------------------------------------------
-// FUNCTION NAME:   uint8 `$INSTANCE_NAME`_fputs(char *str, uint8 Fptr)
+// FUNCTION NAME:   uchar `$INSTANCE_NAME`_fputs(char *str, uchar Fptr)
 //
 // DESCRIPTION:
 //   Writes a null terminated string to the file pointed to by Fptr.
@@ -684,9 +701,9 @@ uint8 `$INSTANCE_NAME`_fputc(uint8 Data, uint8 Fptr)
 //
 //  SIDE EFFECTS:
 //
-//                 ***   Global variables required   ***
+//                 ***   Global variables required   ***     
 //    ClusterSize      - the size of a cluster on the current disk
-//
+//   
 //    CurFat[Fptr]     - contains the starting FAT entry for the file
 //    CurSize[Fptr]    - contains the size of the file
 //    CurOffset[Fptr]  - contains the current offset
@@ -699,10 +716,10 @@ uint8 `$INSTANCE_NAME`_fputc(uint8 Data, uint8 Fptr)
 //-------------------------------------------------------------------------------------------------
 #ifdef ENABLE_WRITE
 
-uint8 `$INSTANCE_NAME`_fputs(uint8 *str, uint8 Fptr)
+uchar `$INSTANCE_NAME`_fputs(char *str, uchar Fptr)
 {
 
-   uint8   status = `$INSTANCE_NAME`_FAIL;                 // Set status to fail (until cleared by success)
+   uchar   status = `$INSTANCE_NAME`_FAIL;                 // Set status to fail (until cleared by success)
 
    while(*str != 0) {
       status = `$INSTANCE_NAME`_fputc(*str, Fptr);
@@ -710,13 +727,13 @@ uint8 `$INSTANCE_NAME`_fputs(uint8 *str, uint8 Fptr)
       if(status == `$INSTANCE_NAME`_FAIL)
          break;
    }
-
+   
    return(status);
 }
 #endif
 
 //-------------------------------------------------------------------------------------------------
-// FUNCTION NAME:   uint8 `$INSTANCE_NAME`_fputcs(const char *str, uint8 Fptr)
+// FUNCTION NAME:   uchar `$INSTANCE_NAME`_fputcs(const char *str, uchar Fptr)
 //
 // DESCRIPTION:
 //   Writes a null terminated const string to the file pointed to by Fptr.
@@ -733,9 +750,9 @@ uint8 `$INSTANCE_NAME`_fputs(uint8 *str, uint8 Fptr)
 //
 //  SIDE EFFECTS:
 //
-//                 ***   Global variables required   ***
+//                 ***   Global variables required   ***     
 //    ClusterSize      - the size of a cluster on the current disk
-//
+//   
 //    CurFat[Fptr]     - contains the starting FAT entry for the file
 //    CurSize[Fptr]    - contains the size of the file
 //    CurOffset[Fptr]  - contains the current offset
@@ -748,10 +765,10 @@ uint8 `$INSTANCE_NAME`_fputs(uint8 *str, uint8 Fptr)
 //-------------------------------------------------------------------------------------------------
 #ifdef ENABLE_WRITE
 
-uint8 `$INSTANCE_NAME`_fputcs(uint8 *str, uint8 Fptr)
+uchar `$INSTANCE_NAME`_fputcs(const char *str, uchar Fptr)
 {
 
-   uint8   status = `$INSTANCE_NAME`_FAIL;                  // Set status to fail (until cleared by sucess)
+   uchar   status = `$INSTANCE_NAME`_FAIL;                  // Set status to fail (until cleared by sucess)
 
    while(*str != 0) {
       status = `$INSTANCE_NAME`_fputc(*str, Fptr);
@@ -759,13 +776,13 @@ uint8 `$INSTANCE_NAME`_fputcs(uint8 *str, uint8 Fptr)
       if(status == `$INSTANCE_NAME`_FAIL)
          break;
    }
-
+   
    return(status);
 }
 #endif
 
 //-------------------------------------------------------------------------------------------------
-// FUNCTION NAME:   uint8 `$INSTANCE_NAME`_fputBuff(uint8 *buff, uint16 count, uint8 Fptr)
+// FUNCTION NAME:   uchar `$INSTANCE_NAME`_fputBuff(uchar *buff, uint count, uchar Fptr)
 //
 // DESCRIPTION:
 //   Writes a null terminated string to the file pointed to by Fptr.
@@ -782,9 +799,9 @@ uint8 `$INSTANCE_NAME`_fputcs(uint8 *str, uint8 Fptr)
 //
 //  SIDE EFFECTS:
 //
-//                 ***   Global variables required   ***
+//                 ***   Global variables required   ***     
 //    ClusterSize      - the size of a cluster on the current disk
-//
+//   
 //    CurFat[Fptr]     - contains the starting FAT entry for the file
 //    CurSize[Fptr]    - contains the size of the file
 //    CurOffset[Fptr]  - contains the current offset
@@ -797,60 +814,10 @@ uint8 `$INSTANCE_NAME`_fputcs(uint8 *str, uint8 Fptr)
 //-------------------------------------------------------------------------------------------------
 #ifdef ENABLE_WRITE
 
-uint8 `$INSTANCE_NAME`_fputBuff(uint8 *buff, uint16 count, uint8 Fptr)
+uchar `$INSTANCE_NAME`_fputBuff(uchar *buff, uint count, uchar Fptr)
 {
 
-   uint8 status  = `$INSTANCE_NAME`_FAIL;                      // Set status to fail (until cleared by sucess)
-
-   for( ; count > 0; count--) {
-      status = `$INSTANCE_NAME`_fputc(*buff, Fptr);
-      buff++;
-      if(status == `$INSTANCE_NAME`_FAIL)
-         break;
-   }
-
-   return(status);
-}
-#endif
-
-
-//-------------------------------------------------------------------------------------------------
-// FUNCTION NAME:   uint8 `$INSTANCE_NAME`_fputcBuff(const uint8 *buff, uint16 count, uint8 Fptr)
-//
-// DESCRIPTION:
-//   Writes a null terminated string to the file pointed to by Fptr.
-//   (Must have an file pointer previously set to write by the `$INSTANCE_NAME`_FileOpen subroutine)
-//   (If ENABLE_FILESYSTEM is undefined only the Fptr and CurOffset are used.)
-//
-//-------------------------------------------------------------------------------------------------
-//
-//  ARGUMENTS:
-//
-//  RETURNS:
-//    Returns the write status
-//
-//
-//  SIDE EFFECTS:
-//
-//                 ***   Global variables required   ***
-//    ClusterSize      - the size of a cluster on the current disk
-//
-//    CurFat[Fptr]     - contains the starting FAT entry for the file
-//    CurSize[Fptr]    - contains the size of the file
-//    CurOffset[Fptr]  - contains the current offset
-//    CurSect[Fptr]    - contains the current sector in use of a cluster
-//    Fptr             - pointer for which file to use, or index if no file system
-//
-//  THEORY of OPERATON or PROCEDURE:
-//
-//
-//-------------------------------------------------------------------------------------------------
-#ifdef ENABLE_WRITE
-
-uint8 `$INSTANCE_NAME`_fputcBuff(uint8 *buff, uint16 count, uint8 Fptr)
-{
-
-   uint8 status  = `$INSTANCE_NAME`_FAIL;                   // Set status to fail (until cleared by sucess)
+   uchar   status  = `$INSTANCE_NAME`_FAIL;                      // Set status to fail (until cleared by sucess)
 
    for( ;count > 0; count--) {
       status = `$INSTANCE_NAME`_fputc(*buff, Fptr);
@@ -858,7 +825,57 @@ uint8 `$INSTANCE_NAME`_fputcBuff(uint8 *buff, uint16 count, uint8 Fptr)
       if(status == `$INSTANCE_NAME`_FAIL)
          break;
    }
+   
+   return(status);
+}
+#endif
 
+
+//-------------------------------------------------------------------------------------------------
+// FUNCTION NAME:   uchar `$INSTANCE_NAME`_fputcBuff(const uchar *buff, uint count, uchar Fptr)
+//
+// DESCRIPTION:
+//   Writes a null terminated string to the file pointed to by Fptr.
+//   (Must have an file pointer previously set to write by the `$INSTANCE_NAME`_FileOpen subroutine)
+//   (If ENABLE_FILESYSTEM is undefined only the Fptr and CurOffset are used.)
+//
+//-------------------------------------------------------------------------------------------------
+//
+//  ARGUMENTS:
+//
+//  RETURNS:
+//    Returns the write status
+//
+//
+//  SIDE EFFECTS:
+//
+//                 ***   Global variables required   ***     
+//    ClusterSize      - the size of a cluster on the current disk
+//   
+//    CurFat[Fptr]     - contains the starting FAT entry for the file
+//    CurSize[Fptr]    - contains the size of the file
+//    CurOffset[Fptr]  - contains the current offset
+//    CurSect[Fptr]    - contains the current sector in use of a cluster
+//    Fptr             - pointer for which file to use, or index if no file system
+//
+//  THEORY of OPERATON or PROCEDURE:
+//
+//
+//-------------------------------------------------------------------------------------------------
+#ifdef ENABLE_WRITE
+
+uchar `$INSTANCE_NAME`_fputcBuff(const uchar *buff, uint count, uchar Fptr)
+{
+
+   uchar   status  = `$INSTANCE_NAME`_FAIL;                   // Set status to fail (until cleared by sucess)
+
+   for( ;count > 0; count--) {
+      status = `$INSTANCE_NAME`_fputc(*buff, Fptr);
+      buff++;
+      if(status == `$INSTANCE_NAME`_FAIL)
+         break;
+   }
+   
    return(status);
 }
 #endif
@@ -867,7 +884,7 @@ uint8 `$INSTANCE_NAME`_fputcBuff(uint8 *buff, uint16 count, uint8 Fptr)
 
 
 //-------------------------------------------------------------------------------------------------
-// FUNCTION NAME:   void `$INSTANCE_NAME`_fflush(uint8 Fptr)
+// FUNCTION NAME:   void `$INSTANCE_NAME`_fflush(uchar Fptr)
 //
 // DESCRIPTION:
 //    Writes buffers to a file and updates directory info if needed
@@ -887,17 +904,17 @@ uint8 `$INSTANCE_NAME`_fputcBuff(uint8 *buff, uint16 count, uint8 Fptr)
 //-------------------------------------------------------------------------------------------------
 #ifdef ENABLE_WRITE
 
-void `$INSTANCE_NAME`_fflush(uint8 Fptr)
+void `$INSTANCE_NAME`_fflush(uchar Fptr)
 {
-
+   
    if((`$INSTANCE_NAME`_DirtyFlag & 0x01) == 0x01 ) // If dirty data bit is set, write buffer back
    {
-      `$INSTANCE_NAME`_WriteSect(`$INSTANCE_NAME`_BuffLoc);
+      `$INSTANCE_NAME`_WriteSect(`$INSTANCE_NAME`_BuffLoc);   
       `$INSTANCE_NAME`_DirtyFlag = 0;               // Clear dirty flag
-   }
+   }    
 #ifdef ENABLE_FILESYSTEM
    if((`$INSTANCE_NAME`_FileMode[Fptr] & 0x10) == 0x10 ) // If dirty directory bit is set, update directory
-      `$INSTANCE_NAME`_UpdateDir(Fptr);
+      `$INSTANCE_NAME`_UpdateDir(Fptr);   
 #endif
 
 }
@@ -905,7 +922,7 @@ void `$INSTANCE_NAME`_fflush(uint8 Fptr)
 
 
 //-------------------------------------------------------------------------------------------------
-// FUNCTION NAME:   uint8 *  `$INSTANCE_NAME`_GetFilename(uint16 Entry)
+// FUNCTION NAME:   uchar *  `$INSTANCE_NAME`_GetFilename(uint Entry)
 //
 // DESCRIPTION:
 //   Gets the 'Entry' number valid filename from the root directory and returns a pointer to it.
@@ -916,7 +933,7 @@ void `$INSTANCE_NAME`_fflush(uint8 Fptr)
 //
 //  RETURNS:
 //    Pointer to the file name of the 'Entry' file.
-//    If returned pointer[0] = 0 then the file was not found
+//    If returned pointer[0] = 0 then the file was not found 
 //
 //  SIDE EFFECTS:
 //    Note: it uses both Buffer1 (all) and Buffer2 (16-28)
@@ -927,25 +944,25 @@ void `$INSTANCE_NAME`_fflush(uint8 Fptr)
 //-------------------------------------------------------------------------------------------------
 #ifdef ENABLE_FILESYSTEM
 
-uint8 *  `$INSTANCE_NAME`_GetFilename(uint16 Entry)
+uchar *  `$INSTANCE_NAME`_GetFilename(uint Entry)
 {
-   uint8   x;                         // Temp loop variable
-
+   uchar   x;                         // Temp loop variable
+   
    if((Entry>=1)&&(Entry<=`$INSTANCE_NAME`_DirSize))   // Is the entry number valid?
    {
       `$INSTANCE_NAME`_FindFile(`$INSTANCE_NAME`_MAXFILES, Entry);      // Yes, Get just the filename, not file info
       if(`$INSTANCE_NAME`_Buffer1[0]!=0)               // File name found?
-      {
+      {   
          // If the file was found - copy the filename, '.', extension, and add null to the end and
          // put it at Buffer2[16], then copy the raw filename to Buffer2[0] for the quick open feature
          for(x=0; x<8; x++)           // Copy the filename
          {
-            `$INSTANCE_NAME`_Buffer2[x+16] = `$INSTANCE_NAME`_Buffer1[x];
+            `$INSTANCE_NAME`_Buffer2[x+16] = `$INSTANCE_NAME`_Buffer1[x];               
          }
          `$INSTANCE_NAME`_Buffer2[24] = '.';           // Add the dot
          for(x=8; x<11; x++)          // Copy the extension
          {
-            `$INSTANCE_NAME`_Buffer2[x+17] = `$INSTANCE_NAME`_Buffer1[x];
+            `$INSTANCE_NAME`_Buffer2[x+17] = `$INSTANCE_NAME`_Buffer1[x];               
          }
          `$INSTANCE_NAME`_Buffer2[28] = 0;             // Add the terminating null
       }
@@ -954,13 +971,13 @@ uint8 *  `$INSTANCE_NAME`_GetFilename(uint16 Entry)
    }
    else
       `$INSTANCE_NAME`_Buffer2[16]=0;                  // File number not valid - put null at start of filename buffer
-
-   return(&`$INSTANCE_NAME`_Buffer2[16]);
+   
+   return(&`$INSTANCE_NAME`_Buffer2[16]);      
 }
 #endif
 
 //-------------------------------------------------------------------------------------------------
-// FUNCTION NAME:   uint8 `$INSTANCE_NAME`_InitCard(void)
+// FUNCTION NAME:   uchar `$INSTANCE_NAME`_InitCard(void)
 //
 // DESCRIPTION:
 //   Initialize MMC/SD card and get card information (must be done any time a new card is inserted)
@@ -981,58 +998,58 @@ uint8 *  `$INSTANCE_NAME`_GetFilename(uint16 Entry)
 //
 //-------------------------------------------------------------------------------------------------
 
-uint8 `$INSTANCE_NAME`_InitCard(void)
+uchar `$INSTANCE_NAME`_InitCard(void)
 {
-   uint8   loop;                                                        // Temp counter/loop variable
-   uint8   status;                                                      // Temp status value
-   uint32   TmpClkIn;                                                   // Temp storage for default project settings.
+   uchar   loop;														// Temp counter/loop variable
+   uchar   status;														// Temp status value
+   uint32   TmpClkIn;													// Temp storage for default project settings.
 
    // Backup the initial register setting for use in future
    TmpClkIn = `$INSTANCE_NAME`_SD_Clock_GetDividerRegister();
-
+   
    // Set clock in to 32Khz oscillator for use under 400Khz (Must run slowly until card initialized as SD or MMC)
-   `$INSTANCE_NAME`_Speed = 0;                                          // Indicate Slow Speed Clock
-   `$INSTANCE_NAME`_SD_Clock_SetDividerRegister(1499, 1);                   // Set divider to 48Mhz/1500 = 32Khz
-
+   `$INSTANCE_NAME`_Speed = 0;											// Indicate Slow Speed Clock
+   `$INSTANCE_NAME`_SD_Clock_SetDividerRegister(1499, 1);					// Set divider to 48Mhz/1500 = 32Khz
+   
    // Wait at least 1 ms after power up before attempting to do anything with the card
-   `$INSTANCE_NAME`_Wait2();                                            // Wait at least 1 ms
+   `$INSTANCE_NAME`_Wait2();                       						// Wait at least 1 ms
 
    // Send out a string of at least 74 clocked highs (10 or more 0xFF characters) previous to sending commands
-   for(loop=0; loop<10; loop++)                                         // Loop through the a series of 0xFF's to set data line
+   for(loop=0; loop<10; loop++)   										// Loop through the a series of 0xFF's to set data line
    {
       // Send a null byte to shift for btye read
-      `$INSTANCE_NAME`_SendTxData( 0xFF );
-      `$INSTANCE_NAME`_XferWait();                                      // Wait for transfer to complete
-      rbuff = `$INSTANCE_NAME`_bReadRxData();
+	  `$INSTANCE_NAME`_SendTxData( 0xFF );  
+      `$INSTANCE_NAME`_XferWait();                 						// Wait for transfer to complete
+	  rbuff = `$INSTANCE_NAME`_bReadRxData();
    }
 
    // Set card to SPI mode - Set `$INSTANCE_NAME`_SELECT  (SD Card pin 1) low and then send CMD(0) Reset
    // If the CS line is low then a mode R1 SPI response is generated.
    // Status bits 0=Idle, 1=Erase Reset, 2=Illegal CMD, 3=CRC Error, 4=Erase_Seq_Error, 5=Address Error, 6=Param Error
-   status = `$INSTANCE_NAME`_Cmd_00();                                  // Issue card reset commannd and return status
+   status = `$INSTANCE_NAME`_Cmd_00();             						// Issue card reset commannd and return status
 
    // Test for SD card comptibility
    // The SD Card must be polled with a ACMD(41) until it's init is finished
-   loop = 255;                                                          // Set number of tries until you timeout
-   status = `$INSTANCE_NAME`_FAIL;                                      // Initialize status to non zero value
-   while((status != 0) && (loop>0))                                     // Loop until status is good, or a timeout occurs
+   loop = 255;                      									// Set number of tries until you timeout
+   status = `$INSTANCE_NAME`_FAIL;                   					// Initialize status to non zero value   
+   while((status != 0) && (loop>0)) 									// Loop until status is good, or a timeout occurs
    {
-      if(`$INSTANCE_NAME`_Cmd_55()==0);                                 // Issue the App command and do SD OP COND command if it passes
-         status = `$INSTANCE_NAME`_ACmd_41();                           // See if SD OP COND passed, if so then it is an SD card
-      loop--;                                                           // Decrement loop until 0, then timeout
-      if(loop == 0)                                                     // If loop is zero, then set status to failed
+      if(`$INSTANCE_NAME`_Cmd_55()==0);              					// Issue the App command and do SD OP COND command if it passes
+         status = `$INSTANCE_NAME`_ACmd_41();        					// See if SD OP COND passed, if so then it is an SD card
+      loop--;                       									// Decrement loop until 0, then timeout
+      if(loop == 0)                 									// If loop is zero, then set status to failed
          status = `$INSTANCE_NAME`_FAIL;
    }
 
-   if(status==`$INSTANCE_NAME`_FAIL)                                    // If the SD init failed, try the MMC init
+   if(status==`$INSTANCE_NAME`_FAIL)   									// If the SD init failed, try the MMC init
    {
       // The MMC Card must be polled with a CMD(1) until it's init is finished
-      loop = 255;                                                       // Set number of tries until you timeout
-      status = 0;                                                       // Reset Status
-      while((`$INSTANCE_NAME`_Cmd_01() != 0) && (loop>0))               // Loop until status is good, or a timeout occurs
+      loop = 255;                   									// Set number of tries until you timeout
+      status = 0;                   									// Reset Status   
+      while((`$INSTANCE_NAME`_Cmd_01() != 0) && (loop>0))   			// Loop until status is good, or a timeout occurs
       {
-         loop--;                                                        // Decrement loop until 0, then timeout
-         if(loop == 0)                                                  // If loop is zero, then set status to zero for failed
+         loop--;                    									// Decrement loop until 0, then timeout
+         if(loop == 0)              									// If loop is zero, then set status to zero for failed
             status = `$INSTANCE_NAME`_FAIL;
       }
 
@@ -1055,14 +1072,14 @@ uint8 `$INSTANCE_NAME`_InitCard(void)
 
    // Set clock back to original settings used in project
    `$INSTANCE_NAME`_SD_Clock_SetDividerRegister(TmpClkIn, 1);
-   `$INSTANCE_NAME`_Speed = 1;                                          // set clock back to fast setting
+   `$INSTANCE_NAME`_Speed = 1;                       					// set clock back to fast setting
 
-   `$INSTANCE_NAME`_MemoryStart = `$INSTANCE_NAME`_GetTable();          // Get starting location of memory area
+   `$INSTANCE_NAME`_MemoryStart = `$INSTANCE_NAME`_GetTable();        	// Get starting location of memory area
 
 #ifdef ENABLE_FILESYSTEM
-   if((`$INSTANCE_NAME`_CardType&`$INSTANCE_NAME`_XCARD) != 0)          // If card passed operational testing, then finish card init
-      `$INSTANCE_NAME`_GetBoot(`$INSTANCE_NAME`_MemoryStart);           // Get boot sector information and load it into buffer
-
+   if((`$INSTANCE_NAME`_CardType&`$INSTANCE_NAME`_XCARD) != 0)        	// If card passed operational testing, then finish card init
+      `$INSTANCE_NAME`_GetBoot(`$INSTANCE_NAME`_MemoryStart);         	// Get boot sector information and load it into buffer
+      
     // If card failed, or FAT type is missing, clear card structure information
     if( ((`$INSTANCE_NAME`_CardType & `$INSTANCE_NAME`_XCARD) == 0)|| ((`$INSTANCE_NAME`_CardType & `$INSTANCE_NAME`_XFAT) == 0) )
    {
@@ -1072,7 +1089,7 @@ uint8 `$INSTANCE_NAME`_InitCard(void)
       `$INSTANCE_NAME`_Fat2Start=0;
       `$INSTANCE_NAME`_DirStart=0;
       `$INSTANCE_NAME`_DataStart=0;
-      `$INSTANCE_NAME`_EmptyFat=2;                                      // Location to start search for an empty FAT entry (Default to first FAT entry)
+      `$INSTANCE_NAME`_EmptyFat=2;                   					// Location to start search for an empty FAT entry (Default to first FAT entry)
    }
 #endif
 
@@ -1080,7 +1097,7 @@ uint8 `$INSTANCE_NAME`_InitCard(void)
 }
 
 //-------------------------------------------------------------------------------------------------
-// FUNCTION NAME:   uint8 `$INSTANCE_NAME`_fseek(uint8 Fptr, uint32 Offset)
+// FUNCTION NAME:   uchar `$INSTANCE_NAME`_fseek(uchar Fptr, ulong Offset)
 //
 // DESCRIPTION:
 //   Sets the file position offset for the next character read and updates the file info to match
@@ -1101,17 +1118,17 @@ uint8 `$INSTANCE_NAME`_InitCard(void)
 //
 //-------------------------------------------------------------------------------------------------
 
-uint8 `$INSTANCE_NAME`_fseek(uint8 Fptr, uint32 Offset)
+uchar `$INSTANCE_NAME`_fseek(uchar Fptr, ulong Offset)
 {
-   uint8   flag=`$INSTANCE_NAME`_FPE;                 // Temp error flag variable (Set to FPE in case bad pointer)
+   uchar   flag=`$INSTANCE_NAME`_FPE;                 // Temp error flag variable (Set to FPE in case bad pointer)
 #ifdef ENABLE_FILESYSTEM
-   uint32 Clusters;                   // Number of clusters into the file
-   uint32   x;                        // Loop variable large enough for any possible count
+   ulong Clusters;                   // Number of clusters into the file
+   ulong   x;                        // Loop variable large enough for any possible count
 
    Clusters = (Offset/(`$INSTANCE_NAME`_ClusterSize * 512));   // Figure out number of clusters into the file
 #endif
 
-
+   
    if(Fptr<`$INSTANCE_NAME`_MAXFILES)                   // Is the file pointer valid?
    {
 #ifdef ENABLE_FILESYSTEM
@@ -1123,16 +1140,16 @@ uint8 `$INSTANCE_NAME`_fseek(uint8 Fptr, uint32 Offset)
          {
             // Get starting FAT entry for file
             `$INSTANCE_NAME`_CurFat[Fptr] = `$INSTANCE_NAME`_CurStart[Fptr];
-
+            
             // Calculate the current FAT entry
             for(x=0; x<Clusters; x++)
             {
                `$INSTANCE_NAME`_NextFat(Fptr);         // Get next Fat entry in the chain
             }
-
+            
             // Calculate the current sector
             `$INSTANCE_NAME`_CurSect[Fptr]=( (Offset / 512) - (Clusters * `$INSTANCE_NAME`_ClusterSize) );
-
+            
             // Save the new offset
             `$INSTANCE_NAME`_CurOffset[Fptr] = Offset;
          }
@@ -1145,7 +1162,7 @@ uint8 `$INSTANCE_NAME`_fseek(uint8 Fptr, uint32 Offset)
 #else
       // Save the new offset
       `$INSTANCE_NAME`_CurOffset[Fptr] = Offset;
-      `$INSTANCE_NAME`_FileError[Fptr] &= ~`$INSTANCE_NAME`_PRE;   // Clear the Parameter Range
+      `$INSTANCE_NAME`_FileError[Fptr] &= ~`$INSTANCE_NAME`_PRE;   // Clear the Parameter Range         
 #endif
       flag=`$INSTANCE_NAME`_FileError[Fptr];      // Copy file errors to flag for return
    }
@@ -1153,7 +1170,7 @@ uint8 `$INSTANCE_NAME`_fseek(uint8 Fptr, uint32 Offset)
 }
 
 //-------------------------------------------------------------------------------------------------
-// FUNCTION NAME:   uint8 `$INSTANCE_NAME`_Present(void)
+// FUNCTION NAME:   uchar `$INSTANCE_NAME`_Present(void)
 //
 // DESCRIPTION:
 //   Check if card is present.
@@ -1163,8 +1180,8 @@ uint8 `$INSTANCE_NAME`_fseek(uint8 Fptr, uint32 Offset)
 //  ARGUMENTS: NA
 //
 //  RETURNS:
-//   1 => Card is present in the socket
-//   0 => Card is not present in the socket
+//   1 => Card is present in the socket 
+//   0 => Card is not present in the socket 
 //
 //
 //  SIDE EFFECTS:
@@ -1175,9 +1192,9 @@ uint8 `$INSTANCE_NAME`_fseek(uint8 Fptr, uint32 Offset)
 //-------------------------------------------------------------------------------------------------
 #if (`$INSTANCE_NAME`_ENABLE_PRESENT )
 
-uint8 `$INSTANCE_NAME`_Present(void)
+uchar `$INSTANCE_NAME`_Present(void)
 {
-   uint8   CardIn;
+   uchar   CardIn;
    CardIn = 0;   // Default, card is not present
 
    if((`$INSTANCE_NAME`_CPPort & `$INSTANCE_NAME`_CPMask) == 0) {     // Looks like card is present...
@@ -1194,7 +1211,7 @@ uint8 `$INSTANCE_NAME`_Present(void)
 
 
 //-------------------------------------------------------------------------------------------------
-// FUNCTION NAME:   uint8 `$INSTANCE_NAME`_WriteProtect(void)
+// FUNCTION NAME:   uchar `$INSTANCE_NAME`_WriteProtect(void)
 //
 // DESCRIPTION:
 //   Returns write protect status.
@@ -1215,9 +1232,9 @@ uint8 `$INSTANCE_NAME`_Present(void)
 //-------------------------------------------------------------------------------------------------
 #if (`$INSTANCE_NAME`_ENABLE_WPROTECT)
 
-uint8 `$INSTANCE_NAME`_WriteProtect(void)
+uchar `$INSTANCE_NAME`_WriteProtect(void)
 {
-   uint8   wProtect;
+   uchar   wProtect;
    wProtect = 0;   // Default, card is not write protected.
 
    if((`$INSTANCE_NAME`_WPPort & `$INSTANCE_NAME`_WPMask) != 0) {     // Looks like card is write protected...
@@ -1233,7 +1250,7 @@ uint8 `$INSTANCE_NAME`_WriteProtect(void)
 
 
 //-------------------------------------------------------------------------------------------------
-// FUNCTION NAME:   uint16 `$INSTANCE_NAME`_GetFileCount(void)
+// FUNCTION NAME:   uint `$INSTANCE_NAME`_GetFileCount(void)
 //
 // DESCRIPTION:
 //   Returns the number of valid files in the directory
@@ -1253,18 +1270,18 @@ uint8 `$INSTANCE_NAME`_WriteProtect(void)
 //-------------------------------------------------------------------------------------------------
 #ifdef ENABLE_FILESYSTEM
 
-uint16 `$INSTANCE_NAME`_GetFileCount(void)
+uint `$INSTANCE_NAME`_GetFileCount(void)
 {
    // Call FindFile with invalid file number and illegal file pointer, does not update file info,
    // and when no match is found the total number of valid files is returned as a default.
-
+   
    return(`$INSTANCE_NAME`_FindFile(`$INSTANCE_NAME`_MAXFILES, 0xFFFE));   // Return number of valid files found
 }
 #endif
 
 
 //-------------------------------------------------------------------------------------------------
-// FUNCTION NAME:   uint32 `$INSTANCE_NAME`_GetFileSize(uint8 Fptr)
+// FUNCTION NAME:   ulong `$INSTANCE_NAME`_GetFileSize(uchar Fptr)
 //
 // DESCRIPTION:
 //    Returns the size of the file pointed to,  zero means an error occurred
@@ -1286,21 +1303,21 @@ uint16 `$INSTANCE_NAME`_GetFileCount(void)
 //-------------------------------------------------------------------------------------------------
 #ifdef ENABLE_FILESYSTEM
 
-uint32 `$INSTANCE_NAME`_GetFileSize(uint8 Fptr)
+ulong `$INSTANCE_NAME`_GetFileSize(uchar Fptr)
 {
    // Returns the size of the file pointed to,  zero means an error occurred
-
-   uint32 size=0;                  // Temp variable for size (Set to failure condition)
-
+   
+   ulong size=0;                  // Temp variable for size (Set to failure condition)
+   
    if(Fptr<`$INSTANCE_NAME`_MAXFILES)              // Is the file pointer valid?
       size=`$INSTANCE_NAME`_CurSize[Fptr];         // Yes, get size value
-
+   
    return(size);                  // Return size of file
 }
 #endif
 
 //-------------------------------------------------------------------------------------------------
-// FUNCTION NAME:   void `$INSTANCE_NAME`_clearerr(uint8 Fptr)
+// FUNCTION NAME:   void `$INSTANCE_NAME`_clearerr(uchar Fptr)
 //
 // DESCRIPTION:
 //   Clear the error flags for the given file.
@@ -1319,7 +1336,7 @@ uint32 `$INSTANCE_NAME`_GetFileSize(uint8 Fptr)
 //
 //-------------------------------------------------------------------------------------------------
 
-void `$INSTANCE_NAME`_clearerr(uint8 Fptr)
+void `$INSTANCE_NAME`_clearerr(uchar Fptr)
 {
    if(Fptr<`$INSTANCE_NAME`_MAXFILES)               // Is this a valid file pointer?
       `$INSTANCE_NAME`_FileError[Fptr]=0;           // Yes, clear file error flags
@@ -1327,7 +1344,7 @@ void `$INSTANCE_NAME`_clearerr(uint8 Fptr)
 
 
 //-------------------------------------------------------------------------------------------------
-// FUNCTION NAME:   uint8 `$INSTANCE_NAME`_feof(uint8 Fptr)
+// FUNCTION NAME:   uchar `$INSTANCE_NAME`_feof(uchar Fptr)
 //
 // DESCRIPTION:
 //   Returns a zero for no EOF, non-zero for EOF (End Of File)
@@ -1338,7 +1355,7 @@ void `$INSTANCE_NAME`_clearerr(uint8 Fptr)
 //    Fptr => File pointer
 //
 //  RETURNS:
-//   zero     => No EOF,
+//   zero     => No EOF, 
 //   non-zero => EOF (End Of File)
 //
 //  SIDE EFFECTS:
@@ -1349,22 +1366,22 @@ void `$INSTANCE_NAME`_clearerr(uint8 Fptr)
 //-------------------------------------------------------------------------------------------------
 #ifdef ENABLE_FILESYSTEM
 
-uint8 `$INSTANCE_NAME`_feof(uint8 Fptr)
+uchar `$INSTANCE_NAME`_feof(uchar Fptr)
 {
    // Returns a zero for no EOF, non-zero for EOF (End Of File)
-
-   uint8 flag=`$INSTANCE_NAME`_EOF;                 // Temp flag variable
-
+   
+   uchar flag=`$INSTANCE_NAME`_EOF;                 // Temp flag variable
+   
    if(Fptr<`$INSTANCE_NAME`_MAXFILES)               // Is this a valid file pointer?
       flag=`$INSTANCE_NAME`_FileError[Fptr]&`$INSTANCE_NAME`_EOF;    // Yes, get EOF flag
-
+      
    return(flag);                   // Return EOF status
 }
 #endif
 
 
 //-------------------------------------------------------------------------------------------------
-// FUNCTION NAME:   uint8 `$INSTANCE_NAME`_ferror(uint8 Fptr)
+// FUNCTION NAME:   uchar `$INSTANCE_NAME`_ferror(uchar Fptr)
 //
 // DESCRIPTION:
 //   Returns error status.
@@ -1386,20 +1403,20 @@ uint8 `$INSTANCE_NAME`_feof(uint8 Fptr)
 //
 //-------------------------------------------------------------------------------------------------
 
-uint8 `$INSTANCE_NAME`_ferror(uint8 Fptr)
+uchar `$INSTANCE_NAME`_ferror(uchar Fptr)
 {
-
-   uint8 flag=`$INSTANCE_NAME`_FPE;                 // Temp error flag variable (Set failure)
-
+   
+   uchar flag=`$INSTANCE_NAME`_FPE;                 // Temp error flag variable (Set failure)
+   
    if(Fptr<`$INSTANCE_NAME`_MAXFILES)               // Is this a valid file pointer?
       flag=`$INSTANCE_NAME`_FileError[Fptr];        // Yes, get flags
-
+      
    return(flag);                   // Return file error status
 }
 
 
 //-------------------------------------------------------------------------------------------------
-// FUNCTION NAME:   uint32 `$INSTANCE_NAME`_ftell(uint8 Fptr)
+// FUNCTION NAME:   ulong `$INSTANCE_NAME`_ftell(uchar Fptr)
 //
 // DESCRIPTION:
 //   Returns file position offset value of the next character to read
@@ -1419,18 +1436,18 @@ uint8 `$INSTANCE_NAME`_ferror(uint8 Fptr)
 //
 //-------------------------------------------------------------------------------------------------
 
-uint32 `$INSTANCE_NAME`_ftell(uint8 Fptr)
+ulong `$INSTANCE_NAME`_ftell(uchar Fptr)
 {
-   uint32 position=0xFFFFFFFF;       // Temp position variable (Set to failure condition)
-
+   ulong position=0xFFFFFFFF;       // Temp position variable (Set to failure condition)
+   
    if(Fptr<`$INSTANCE_NAME`_MAXFILES)                // Is this a valid file pointer?
-      position=`$INSTANCE_NAME`_CurOffset[Fptr];     // Yes, Save position information
-
+      position=`$INSTANCE_NAME`_CurOffset[Fptr];     // Yes, Save position information      
+      
    return(position);                // Return file position (offset)
 }
 
 //-------------------------------------------------------------------------------------------------
-// FUNCTION NAME:   uint8 `$INSTANCE_NAME`_Remove(uint8 * Filename)
+// FUNCTION NAME:   uchar `$INSTANCE_NAME`_Remove(uchar * Filename)
 //
 // DESCRIPTION:
 //   Deletes the file from the directory and closes it
@@ -1453,12 +1470,12 @@ uint32 `$INSTANCE_NAME`_ftell(uint8 Fptr)
 #ifdef ENABLE_WRITE
 #ifdef ENABLE_FILEREMOVE
 
-uint8 `$INSTANCE_NAME`_Remove(uint8 * Filename)
+uchar `$INSTANCE_NAME`_Remove(uchar * Filename)
 {
-   uint8   status = `$INSTANCE_NAME`_FAIL;            // Temp status (defaults to failed
-   uint8   Fptr;                     // Temp file pointer
-
-   Fptr = `$INSTANCE_NAME`_fopen(Filename, (uint8 *)"r");   // Open file by filename for Read
+   uchar   status = `$INSTANCE_NAME`_FAIL;            // Temp status (defaults to failed
+   uchar   Fptr;                     // Temp file pointer
+   
+   Fptr = `$INSTANCE_NAME`_fopen(Filename, "r");   // Open file by filename for Read
    if(Fptr < `$INSTANCE_NAME`_MAXFILES)               // Open sucessful?
    {
                                      // Open Successful, delete file
@@ -1466,7 +1483,7 @@ uint8 `$INSTANCE_NAME`_Remove(uint8 * Filename)
       status = `$INSTANCE_NAME`_FileZero(Fptr, 1);    // Call FileZero with the delete option selected
       `$INSTANCE_NAME`_fclose(Fptr);               // Close the file when finished
    }
-
+   
    return(status);                   // Return status of delete
 }
 #endif
@@ -1474,7 +1491,7 @@ uint8 `$INSTANCE_NAME`_Remove(uint8 * Filename)
 #endif
 
 //-------------------------------------------------------------------------------------------------
-// FUNCTION NAME:   uint8 `$INSTANCE_NAME`_Rename(uint8 * OldFilename, uint8 * NewFilename)
+// FUNCTION NAME:   uchar `$INSTANCE_NAME`_Rename(uchar * OldFilename, uchar * NewFilename)
 //
 // DESCRIPTION:
 //   Renames a file by altering the directory entry (changes buffer contents)
@@ -1486,7 +1503,7 @@ uint8 `$INSTANCE_NAME`_Remove(uint8 * Filename)
 //    NewFilename => New file name.
 //
 //  RETURNS:
-//    Copy status
+//    Copy status  
 //
 //  SIDE EFFECTS:
 //     Note: Filenames must be stored external to Buffer1 or Buffer2 (13 char each)
@@ -1499,14 +1516,14 @@ uint8 `$INSTANCE_NAME`_Remove(uint8 * Filename)
 #ifdef ENABLE_WRITE
 #ifdef ENABLE_FILERENAME
 
-uint8 `$INSTANCE_NAME`_Rename(uint8 * OldFilename, uint8 * NewFilename)
+uchar `$INSTANCE_NAME`_Rename(uchar * OldFilename, uchar * NewFilename)
 {
-
-   uint8 x;               // Temp loop counter
-   uint8 status=0;        // Local status variable
-   uint8 Fptr;            // Temp file pointer
-   uint8 * Dptr;          // Temp Directory entry pointer
-   uint8 xFilename[13];   // Temp filename as parse corrupts the original
+   
+   uchar x;               // Temp loop counter
+   uchar status=0;        // Local status variable
+   uchar Fptr;            // Temp file pointer
+   uchar * Dptr;          // Temp Directory entry pointer
+   uchar xFilename[13];   // Temp filename as parse corrupts the original
 
    // Copy filename from Filename to xFilename (copy is modified to match DIR format)
    x=0;
@@ -1514,19 +1531,19 @@ uint8 `$INSTANCE_NAME`_Rename(uint8 * OldFilename, uint8 * NewFilename)
    {
       xFilename[x] = NewFilename[x];        // Copy the new filename string
       x++;
-   }
+   } 
    xFilename[x] = 0;                        // Terminate the string
 
    status = `$INSTANCE_NAME`_ParseFilename(xFilename);       // Convert the copy of the new filename to 8x3 dir version
-
+   
    if(status == 0)                          // If new filename is valid - proceed
    {
       // Check to see if new filename already exists
-      Fptr = `$INSTANCE_NAME`_fopen(NewFilename, (uint8 *)"r");    // Open file by filename for Read to see if it already exists
+      Fptr = `$INSTANCE_NAME`_fopen(NewFilename, "r");    // Open file by filename for Read to see if it already exists
       if(Fptr==`$INSTANCE_NAME`_MAXFILES)                    // Did the open succeed? No - then continue, Yes - failure, file already exists
       {
          // Now see if the old filename can be opened
-         Fptr = `$INSTANCE_NAME`_fopen(OldFilename, (uint8 *)"r"); // Open file by filename for Read
+         Fptr = `$INSTANCE_NAME`_fopen(OldFilename, "r"); // Open file by filename for Read
          if(Fptr!=`$INSTANCE_NAME`_MAXFILES)                 // Did the open succeed?
          {
             // Yes, change the filename
@@ -1556,7 +1573,7 @@ uint8 `$INSTANCE_NAME`_Rename(uint8 * OldFilename, uint8 * NewFilename)
 #endif
 
 //-------------------------------------------------------------------------------------------------
-// FUNCTION NAME:   uint8 `$INSTANCE_NAME`_Copy(uint8 * OldFilename, uint8 * NewFilename)
+// FUNCTION NAME:   uchar `$INSTANCE_NAME`_Copy(uchar * OldFilename, uchar * NewFilename)
 //
 // DESCRIPTION:
 //   Copies a file from old filename to new filename
@@ -1581,16 +1598,16 @@ uint8 `$INSTANCE_NAME`_Rename(uint8 * OldFilename, uint8 * NewFilename)
 #ifdef ENABLE_WRITE
 #ifdef ENABLE_FILECOPY
 
-uint8 `$INSTANCE_NAME`_Copy(uint8 * OldFilename, uint8 * NewFilename)
+uchar `$INSTANCE_NAME`_Copy(uchar * OldFilename, uchar * NewFilename)
 {
-   uint8 status=0;                        // Local status variable
-   uint8 Fptr,Fptr2;                      // Temp file pointers
+   uchar status=0;                        // Local status variable
+   uchar Fptr,Fptr2;                      // Temp file pointers
 
-   Fptr = `$INSTANCE_NAME`_fopen(OldFilename, (uint8 *)"r");     // Open file by filename for Read
+   Fptr = `$INSTANCE_NAME`_fopen(OldFilename, "r");     // Open file by filename for Read
    if(Fptr < `$INSTANCE_NAME`_MAXFILES)                    // Did the open succeed?
    {
       // Yes, try to copy the file
-      Fptr2 = `$INSTANCE_NAME`_fopen(NewFilename, (uint8 *)"w"); // Open second file by filename for Write
+      Fptr2 = `$INSTANCE_NAME`_fopen(NewFilename, "w"); // Open second file by filename for Write
       if(Fptr2 < `$INSTANCE_NAME`_MAXFILES)                // Open successful?
       {
          `$INSTANCE_NAME`_clearerr(Fptr);               // Clear error flags
@@ -1610,7 +1627,7 @@ uint8 `$INSTANCE_NAME`_Copy(uint8 * OldFilename, uint8 * NewFilename)
          `$INSTANCE_NAME`_CopyDir(Fptr, Fptr2);            // Copy directory information from file 1 to file 2
       }
       else
-      {
+      {   
          // File open failed - file does not exist or file error
          status = `$INSTANCE_NAME`_FAIL;
       }
@@ -1634,7 +1651,7 @@ uint8 `$INSTANCE_NAME`_Copy(uint8 * OldFilename, uint8 * NewFilename)
 
 
 //-------------------------------------------------------------------------------------------------
-// FUNCTION NAME:   void `$INSTANCE_NAME`_Cmd(uint8 CmdNum, uint32 Param)
+// FUNCTION NAME:   void `$INSTANCE_NAME`_Cmd(uchar CmdNum, ulong Param)
 //
 // DESCRIPTION:
 //    Send command to SD Card.
@@ -1651,26 +1668,26 @@ uint8 `$INSTANCE_NAME`_Copy(uint8 * OldFilename, uint8 * NewFilename)
 //    NOTE: Calling routine must parse any response and bring the select line high again
 //
 //    The data response routine and the closing of the SPI (setting select high)
-//    is the responsibility of the calling routine as the requirements differ from
+//    is the responsibility of the calling routine as the requirements differ from 
 //    command to command. (Use CmdEnd(); to close most routines.
 //
 //  THEORY of OPERATON or PROCEDURE:
 //
 //
 //-------------------------------------------------------------------------------------------------
-void `$INSTANCE_NAME`_Cmd(uint8 CmdNum, uint32 Param)
+void `$INSTANCE_NAME`_Cmd(uchar CmdNum, ulong Param)
 {
 
    // Send an 0xFF to insure data line is high before command sent
    `$INSTANCE_NAME`_SendTxData( 0xFF );
    `$INSTANCE_NAME`_XferWait();                        // Wait for transfer to complete
    rbuff = `$INSTANCE_NAME`_bReadRxData();
-
+   
    // Send an 0xFF to insure data line is high before command sent
    `$INSTANCE_NAME`_SendTxData( 0xFF );
    `$INSTANCE_NAME`_XferWait();                        // Wait for transfer to complete
    rbuff = `$INSTANCE_NAME`_bReadRxData();
-
+   
    `$INSTANCE_NAME`_Select(`$INSTANCE_NAME`_ENABLE);       // Set SD Card select line low (enables card for SPI)
 
    `$INSTANCE_NAME`_Wait();                           // Wait a minimum setup time for the high/low transition
@@ -1684,36 +1701,36 @@ void `$INSTANCE_NAME`_Cmd(uint8 CmdNum, uint32 Param)
    `$INSTANCE_NAME`_SendTxData((char) (Param>>24));   // Parameter MSB (Byte 3)
    `$INSTANCE_NAME`_XferWait();                        // Wait for transfer to complete
    rbuff = `$INSTANCE_NAME`_bReadRxData();
-
+   
    // Send a byte
    `$INSTANCE_NAME`_SendTxData((char) (Param>>16));   // Parameter     (Byte 2)
    `$INSTANCE_NAME`_XferWait();                        // Wait for transfer to complete
    rbuff = `$INSTANCE_NAME`_bReadRxData();
-
+   
    // Send a byte
    `$INSTANCE_NAME`_SendTxData((char) (Param>>8) );   // Parameter     (Byte 1)
    `$INSTANCE_NAME`_XferWait();                        // Wait for transfer to complete
    rbuff = `$INSTANCE_NAME`_bReadRxData();
-
+   
    // Send a byte
    `$INSTANCE_NAME`_SendTxData( (char) Param );      // Parameter LSB (Byte 0)
    `$INSTANCE_NAME`_XferWait();                        // Wait for transfer to complete
    rbuff = `$INSTANCE_NAME`_bReadRxData();
-
+   
    // Send an FF for the checksum byte
    `$INSTANCE_NAME`_SendTxData( 0xFF );            // Checksum and End Bit)
    `$INSTANCE_NAME`_XferWait();                        // Wait for transfer to complete
    rbuff = `$INSTANCE_NAME`_bReadRxData();
-
+   
    `$INSTANCE_NAME`_Wait();            // Wait a minimum setup time for the high/low transition
-
+   
    // The data response routine and the closing of the SPI (setting select high)
-   // is the responsibility of the calling routine as the requirements differ from
+   // is the responsibility of the calling routine as the requirements differ from 
    // command to command. (Use CmdEnd(); to close most routines.
 }
 
 //-------------------------------------------------------------------------------------------------
-// FUNCTION NAME:   uint8 `$INSTANCE_NAME`_GetR1(void)
+// FUNCTION NAME:   uchar `$INSTANCE_NAME`_GetR1(void)
 //
 // DESCRIPTION:
 //    Gets R1 command response (do not use for types (R1b, R2, or R3)
@@ -1733,21 +1750,21 @@ void `$INSTANCE_NAME`_Cmd(uint8 CmdNum, uint32 Param)
 //
 //-------------------------------------------------------------------------------------------------
 
-uint8 `$INSTANCE_NAME`_GetR1(void)
+uchar `$INSTANCE_NAME`_GetR1(void)
 {
-   uint8   status = 0;
+   uchar   status = 0;
    uint8 test1,test2,test3;
-
+   
    // Send a null byte to shift for btye read
    `$INSTANCE_NAME`_SendTxData( 0xFF );
    `$INSTANCE_NAME`_XferWait();                     // Wait for transfer to complete
    rbuff = `$INSTANCE_NAME`_bReadRxData();
    test1 = `$INSTANCE_NAME`_bReadRxData();
-
+   
    // Send a null byte to shift for btye read
    `$INSTANCE_NAME`_SendTxData( 0xFF );
    `$INSTANCE_NAME`_XferWait();                     // Wait for transfer to complete
-
+   
    // Status bits 0=Idle, 1=Erase Reset, 2=Illegal CMD, 3=CRC Error, 4=Erase_Seq_Error, 5=Address Error, 6=Param Error
    status = `$INSTANCE_NAME`_bReadRxData();      // Read the status register and return it
    test2 = `$INSTANCE_NAME`_bReadRxData();
@@ -1761,7 +1778,7 @@ uint8 `$INSTANCE_NAME`_GetR1(void)
 }
 
 //-------------------------------------------------------------------------------------------------
-// FUNCTION NAME:   uint16 `$INSTANCE_NAME`_GetR2(void)
+// FUNCTION NAME:   uint `$INSTANCE_NAME`_GetR2(void)
 //
 // DESCRIPTION:
 //   Gets R2 command response (do not use for types (R1, R1b, or R3)
@@ -1781,32 +1798,32 @@ uint8 `$INSTANCE_NAME`_GetR1(void)
 //
 //-------------------------------------------------------------------------------------------------
 
-uint16 `$INSTANCE_NAME`_GetR2(void)
+uint `$INSTANCE_NAME`_GetR2(void)
 {
    // Gets R2 command response (do not use for types (R1, R1b, or R3)
 
-   uint16  status = 0;
-   uint8   temp;                     // Variable for paritial result
-
+   uint   status = 0;
+   uchar   temp;                     // Variable for paritial result
+   
    // Send a null byte to shift for btye read
    `$INSTANCE_NAME`_SendTxData( 0xFF );
    `$INSTANCE_NAME`_XferWait();                       // Wait for transfer to complete
    rbuff = `$INSTANCE_NAME`_bReadRxData();
-
+   
    // Send a null byte to shift for btye read
    `$INSTANCE_NAME`_SendTxData( 0xFF );
    `$INSTANCE_NAME`_XferWait();                       // Wait for transfer to complete
-
+   
    // Status bits 0=Idle, 1=Erase Reset, 2=Illegal CMD, 3=CRC Error, 4=Erase_Seq_Error, 5=Address Error, 6=Param Error
    temp = `$INSTANCE_NAME`_bReadRxData();      // Read the status register and return it
-   status = ((uint16)temp)<<8;          // Put result in upper byte
-
+   status = ((uint)temp)<<8;          // Put result in upper byte
+   
    // Send a null byte to shift for btye read
    `$INSTANCE_NAME`_SendTxData( 0xFF );
    `$INSTANCE_NAME`_XferWait();                        // Wait for transfer to complete
-
+   
    // Status bits 0=Idle, 1=Erase Reset, 2=Illegal CMD, 3=CRC Error, 4=Erase_Seq_Error, 5=Address Error, 6=Param Error
-   status += (uint16)`$INSTANCE_NAME`_bReadRxData();   // Read the status register, add it to upper, and return it
+   status += (uint)`$INSTANCE_NAME`_bReadRxData();   // Read the status register, add it to upper, and return it
 
    return(status);
 }
@@ -1833,10 +1850,10 @@ uint16 `$INSTANCE_NAME`_GetR2(void)
 void  `$INSTANCE_NAME`_EndCmd(void)
 {
    // Send a null byte (Min 8 clock cycles required)
-   `$INSTANCE_NAME`_SendTxData( 0xFF );
+   `$INSTANCE_NAME`_SendTxData( 0xFF ); 
    `$INSTANCE_NAME`_XferWait();                    // Wait for transfer to complete
    rbuff = `$INSTANCE_NAME`_bReadRxData();
-
+         
    `$INSTANCE_NAME`_Select(`$INSTANCE_NAME`_DISABLE);    // Set SD Card select line high (disables card for SPI)
    `$INSTANCE_NAME`_Wait();                        // Wait a minimum setup time for the high/low transition
 }
@@ -1864,8 +1881,11 @@ void  `$INSTANCE_NAME`_EndCmd(void)
 
 void `$INSTANCE_NAME`_Wait(void)
 {
-    if(`$INSTANCE_NAME`_Speed == 0)            // Wait longer if the speed is slower
-        CyDelay(100);
+   uchar   x;               // Wait loop variable
+
+   if(`$INSTANCE_NAME`_Speed == 0)            // Wait longer if the speed is slower
+      CyDelay(100);
+	  //for(x=0; x<10; x++);   // Wait a minimum setup time
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -1890,15 +1910,17 @@ void `$INSTANCE_NAME`_Wait(void)
 
 void `$INSTANCE_NAME`_Wait2(void)
 {
-    CyDelay(200);
+   //uint   x;                    // Wait loop variable
+   //for(x=0; x<40000; x++);      // Wait a minimum setup time
+   CyDelay(200);
 }
 
 
 //-------------------------------------------------------------------------------------------------
-// FUNCTION NAME:   uint8 `$INSTANCE_NAME`_Cmd_00(void)
+// FUNCTION NAME:   uchar `$INSTANCE_NAME`_Cmd_00(void)
 //
 // DESCRIPTION:
-//    Sends the six byte reset command with 7 bit CRC of 0x95 (Byte String = 0x40 0x00 0x00 0x00 0x00 0x95)
+//    Sends the six byte reset command with 7 bit CRC of 0x95 (Byte String = 0x40 0x00 0x00 0x00 0x00 0x95) 
 //
 //-------------------------------------------------------------------------------------------------
 //
@@ -1915,45 +1937,47 @@ void `$INSTANCE_NAME`_Wait2(void)
 //
 //-------------------------------------------------------------------------------------------------
 
-uint8 `$INSTANCE_NAME`_Cmd_00(void)
+uchar `$INSTANCE_NAME`_Cmd_00(void)
 {
-    uint8   status = 0;
-    uint16  x;
+   uchar   status = 0;
+   uint   x;
 
-    for (x=0; x<2; x++) {
-        // Send a null byte to shift for byte read
-        `$INSTANCE_NAME`_SendTxData( 0xFF );
-        `$INSTANCE_NAME`_XferWait();               // Wait for transfer to complete
-        rbuff = `$INSTANCE_NAME`_bReadRxData();
-    }
+   for(x=0; x<2; x++)   
+   {
+      // Send a null byte to shift for byte read
+      `$INSTANCE_NAME`_SendTxData( 0xFF );
+      `$INSTANCE_NAME`_XferWait();               // Wait for transfer to complete
+	  rbuff = `$INSTANCE_NAME`_bReadRxData();
+   }
 
-    `$INSTANCE_NAME`_Wait2();                     // Wait for settling time
+   `$INSTANCE_NAME`_Wait2();                     // Wait for settling time
+   
+   `$INSTANCE_NAME`_Select(`$INSTANCE_NAME`_ENABLE);  // Set SD Card select line low (enables card for SPI)
 
-    `$INSTANCE_NAME`_Select(`$INSTANCE_NAME`_ENABLE);  // Set SD Card select line low (enables card for SPI)
+   `$INSTANCE_NAME`_Wait();                      // Wait for settling time
 
-    `$INSTANCE_NAME`_Wait();                      // Wait for settling time
+   for(x=0; x<6; x++)           // Loop through the command sequence
+   {
+      // Send a byte
+      `$INSTANCE_NAME`_SendTxData( `$INSTANCE_NAME`_CmdStr00[x] );
+      `$INSTANCE_NAME`_XferWait();               // Wait for transfer to complete
+	  rbuff = `$INSTANCE_NAME`_bReadRxData();
+   }
+   
+   // Status bits: 0=Idle, 1=Erase Reset, 2=Illegal CMD, 3=CRC Error, 4=Erase_Seq_Error, 5=Address Error, 6=Param Error
+   status = `$INSTANCE_NAME`_GetR1();            // Get the R1 command respnse   
 
-    for (x=0; x<6; x++) {                         // Loop through the command sequence
-        // Send a byte
-        `$INSTANCE_NAME`_SendTxData( `$INSTANCE_NAME`_CmdStr00[x] );
-        `$INSTANCE_NAME`_XferWait();               // Wait for transfer to complete
-        rbuff = `$INSTANCE_NAME`_bReadRxData();
-    }
+   `$INSTANCE_NAME`_EndCmd();                    // Finish the command cycle
 
-    // Status bits: 0=Idle, 1=Erase Reset, 2=Illegal CMD, 3=CRC Error, 4=Erase_Seq_Error, 5=Address Error, 6=Param Error
-    status = `$INSTANCE_NAME`_GetR1();            // Get the R1 command respnse
-
-    `$INSTANCE_NAME`_EndCmd();                    // Finish the command cycle
-
-    return(status);
+   return(status);
 }
 
 //-------------------------------------------------------------------------------------------------
-// FUNCTION NAME:   uint8 `$INSTANCE_NAME`_Cmd_01(void)
+// FUNCTION NAME:   uchar `$INSTANCE_NAME`_Cmd_01(void)
 //
 // DESCRIPTION:
 //    CMD1 - MMC operational condition command
-//    Byte String = 0x41 0x00 0x00 0x00 0x00 0xFF
+//    Byte String = 0x41 0x00 0x00 0x00 0x00 0xFF 
 //
 //-------------------------------------------------------------------------------------------------
 //
@@ -1970,26 +1994,27 @@ uint8 `$INSTANCE_NAME`_Cmd_00(void)
 //
 //-------------------------------------------------------------------------------------------------
 
-uint8 `$INSTANCE_NAME`_Cmd_01(void)
+uchar `$INSTANCE_NAME`_Cmd_01(void)
 {
-    uint8 status = 0;
 
-    `$INSTANCE_NAME`_Cmd(`$INSTANCE_NAME`_CMD1, `$INSTANCE_NAME`_NOARGS);               // Send CMD1 command string
+   uchar   status = 0;
 
-    // Status bits: 0=Idle, 1=Erase Reset, 2=Illegal CMD, 3=CRC Error, 4=Erase_Seq_Error, 5=Address Error, 6=Param Error
-    status = `$INSTANCE_NAME`_GetR1();                // Get the R1 command respnse
+   `$INSTANCE_NAME`_Cmd(`$INSTANCE_NAME`_CMD1, `$INSTANCE_NAME`_NOARGS);               // Send CMD1 command string
+   
+   // Status bits: 0=Idle, 1=Erase Reset, 2=Illegal CMD, 3=CRC Error, 4=Erase_Seq_Error, 5=Address Error, 6=Param Error
+   status = `$INSTANCE_NAME`_GetR1();                // Get the R1 command respnse   
 
-    `$INSTANCE_NAME`_EndCmd();                        // Finish the command cycle
+   `$INSTANCE_NAME`_EndCmd();                        // Finish the command cycle
 
-    return(status);
+   return(status);
 }
 
 //-------------------------------------------------------------------------------------------------
-// FUNCTION NAME:   uint8 `$INSTANCE_NAME`_ACmd_41(void)
+// FUNCTION NAME:   uchar `$INSTANCE_NAME`_ACmd_41(void)
 //
 // DESCRIPTION:
 //   ACMD41 - SD operational condition command
-//   Byte String = 0x69 0x00 0x00 0x00 0x00 0xFF
+//   Byte String = 0x69 0x00 0x00 0x00 0x00 0xFF 
 //
 //-------------------------------------------------------------------------------------------------
 //
@@ -2007,26 +2032,26 @@ uint8 `$INSTANCE_NAME`_Cmd_01(void)
 //
 //-------------------------------------------------------------------------------------------------
 
-uint8 `$INSTANCE_NAME`_ACmd_41(void)
+uchar `$INSTANCE_NAME`_ACmd_41(void)
 {
-    uint8 status = 0;
+   uchar   status = 0;
+   
+   `$INSTANCE_NAME`_Cmd(`$INSTANCE_NAME`_ACMD41, `$INSTANCE_NAME`_NOARGS);         // Send ACMD41 command string
 
-    `$INSTANCE_NAME`_Cmd(`$INSTANCE_NAME`_ACMD41, `$INSTANCE_NAME`_NOARGS);         // Send ACMD41 command string
+   // Status bits: 0=Idle, 1=Erase Reset, 2=Illegal CMD, 3=CRC Error, 4=Erase_Seq_Error, 5=Address Error, 6=Param Error
+   status = `$INSTANCE_NAME`_GetR1();            // Get the R1 command respnse   
 
-    // Status bits: 0=Idle, 1=Erase Reset, 2=Illegal CMD, 3=CRC Error, 4=Erase_Seq_Error, 5=Address Error, 6=Param Error
-    status = `$INSTANCE_NAME`_GetR1();            // Get the R1 command respnse
+   `$INSTANCE_NAME`_EndCmd();                    // Finish the command cycle
 
-    `$INSTANCE_NAME`_EndCmd();                    // Finish the command cycle
-
-    return(status);
+   return(status);
 }
 
 //-------------------------------------------------------------------------------------------------
-// FUNCTION NAME:   uint8 `$INSTANCE_NAME`_Cmd_55(void)
+// FUNCTION NAME:   uchar `$INSTANCE_NAME`_Cmd_55(void)
 //
 // DESCRIPTION:
 //   CMD55 - SD application command (next command is an ACMD)
-//   Byte String = 0x77 0x00 0x00 0x00 0x00 0xFF
+//   Byte String = 0x77 0x00 0x00 0x00 0x00 0xFF 
 //
 //-------------------------------------------------------------------------------------------------
 //
@@ -2043,26 +2068,26 @@ uint8 `$INSTANCE_NAME`_ACmd_41(void)
 //
 //-------------------------------------------------------------------------------------------------
 
-uint8 `$INSTANCE_NAME`_Cmd_55(void)
+uchar `$INSTANCE_NAME`_Cmd_55(void)
 {
-    uint8 status = 0;
+   uchar   status = 0;
 
-    `$INSTANCE_NAME`_Cmd(`$INSTANCE_NAME`_CMD55, `$INSTANCE_NAME`_NOARGS);         // Send CMD55 command string
+   `$INSTANCE_NAME`_Cmd(`$INSTANCE_NAME`_CMD55, `$INSTANCE_NAME`_NOARGS);         // Send CMD55 command string
 
-    // Status bits: 0=Idle, 1=Erase Reset, 2=Illegal CMD, 3=CRC Error, 4=Erase_Seq_Error, 5=Address Error, 6=Param Error
-    status = `$INSTANCE_NAME`_GetR1();           // Get the R1 command respnse
+   // Status bits: 0=Idle, 1=Erase Reset, 2=Illegal CMD, 3=CRC Error, 4=Erase_Seq_Error, 5=Address Error, 6=Param Error
+   status = `$INSTANCE_NAME`_GetR1();           // Get the R1 command respnse   
 
-    `$INSTANCE_NAME`_EndCmd();                   // Finish the command cycle
+   `$INSTANCE_NAME`_EndCmd();                   // Finish the command cycle
 
-    return(status);
+   return(status);
 }
 
 //-------------------------------------------------------------------------------------------------
-// FUNCTION NAME:   uint16 `$INSTANCE_NAME`_Cmd_13(void)
+// FUNCTION NAME:   uint `$INSTANCE_NAME`_Cmd_13(void)
 //
 // DESCRIPTION:
 //   CMD13 - Get card status command
-//   Byte String = 0x4D 0x00 0x00 0x00 0x00 0xFF
+//   Byte String = 0x4D 0x00 0x00 0x00 0x00 0xFF 
 //
 //-------------------------------------------------------------------------------------------------
 //
@@ -2079,25 +2104,25 @@ uint8 `$INSTANCE_NAME`_Cmd_55(void)
 //
 //-------------------------------------------------------------------------------------------------
 
-uint16 `$INSTANCE_NAME`_Cmd_13(void)
+uint `$INSTANCE_NAME`_Cmd_13(void)
 {
-    uint16   status = 0;
+   uint   status = 0;
 
-    // CMD13 - Get card status command
-    // Byte String = 0x4D 0x00 0x00 0x00 0x00 0xFF
+   // CMD13 - Get card status command
+   // Byte String = 0x4D 0x00 0x00 0x00 0x00 0xFF 
 
-    `$INSTANCE_NAME`_Cmd(`$INSTANCE_NAME`_CMD13, `$INSTANCE_NAME`_NOARGS);       // Send CMD55 command string
+   `$INSTANCE_NAME`_Cmd(`$INSTANCE_NAME`_CMD13, `$INSTANCE_NAME`_NOARGS);       // Send CMD55 command string
 
-    // Status bits: 0=Idle, 1=Erase Reset, 2=Illegal CMD, 3=CRC Error, 4=Erase_Seq_Error, 5=Address Error, 6=Param Error
-    status = `$INSTANCE_NAME`_GetR2();         // Get the R2 command respnse
+   // Status bits: 0=Idle, 1=Erase Reset, 2=Illegal CMD, 3=CRC Error, 4=Erase_Seq_Error, 5=Address Error, 6=Param Error
+   status = `$INSTANCE_NAME`_GetR2();         // Get the R2 command respnse   
 
-    `$INSTANCE_NAME`_EndCmd();                 // Finish the command cycle
+   `$INSTANCE_NAME`_EndCmd();                 // Finish the command cycle
 
-    return(status);
+   return(status);
 }
 
 //-------------------------------------------------------------------------------------------------
-// FUNCTION NAME:   uint32 `$INSTANCE_NAME`_GetTable(void)
+// FUNCTION NAME:   ulong `$INSTANCE_NAME`_GetTable(void)
 //
 // DESCRIPTION:
 //   Sends the sector read card command for the boot parameter table
@@ -2107,7 +2132,7 @@ uint16 `$INSTANCE_NAME`_Cmd_13(void)
 //  ARGUMENTS: NA
 //
 //  RETURNS:
-//     Returns zero for error - Boot sector address for success
+//     Returns zero for error - Boot sector address for success 
 //
 //
 //  SIDE EFFECTS:
@@ -2117,61 +2142,66 @@ uint16 `$INSTANCE_NAME`_Cmd_13(void)
 //
 //-------------------------------------------------------------------------------------------------
 
-uint32 `$INSTANCE_NAME`_GetTable(void)
+ulong `$INSTANCE_NAME`_GetTable(void)
 {
-    uint32  BootStart=0;             // Clear BootStart value
-    uint8   status = 0;
-    uint8   x;                       // Loop variables
+   ulong   BootStart=0;             // Clear BootStart value
+   uchar   status = 0;
+   uchar   x;                       // Loop variables
 
-    `$INSTANCE_NAME`_SetSize(64);                     // Set block length to 64 for partition table reads
+   `$INSTANCE_NAME`_SetSize(64);                     // Set block length to 64 for partition table reads
+   
+   // CMD17 - Read single block command
+   // Byte String = 0x51 (ulong Address) 0xFF 
 
-    // CMD17 - Read single block command
-    // Byte String = 0x51 (uint32 Address) 0xFF
+   `$INSTANCE_NAME`_Cmd(`$INSTANCE_NAME`_CMD17, 0x000001BE);          // Send CMD17 command string
 
-    `$INSTANCE_NAME`_Cmd(`$INSTANCE_NAME`_CMD17, 0x000001BE);          // Send CMD17 command string
+////LCD_Position(1, 0);
+////LCD_PrintString("CMD             ");
+////LCD_PrintInt8(0);
 
-    // = LCD_Position(1, 0);
-    // = LCD_PrintString("CMD             ");
-    // = LCD_PrintInt8(0);
+   // Check response
+   if(`$INSTANCE_NAME`_CheckReply(0) != `$INSTANCE_NAME`_FAIL)        // Check for status good
+   {
+      if(`$INSTANCE_NAME`_CheckReply(0xFE) != `$INSTANCE_NAME`_FAIL)  // Set check to Single Block Read data token
+      {
+                                    // Get first 64 bytes and save them
+   
+         `$INSTANCE_NAME`_ReadBuff(`$INSTANCE_NAME`_Buffer1, 32 );
+         `$INSTANCE_NAME`_ReadBuff(`$INSTANCE_NAME`_Buffer2, 32 );
+         
+         // Currently assume only one partition table here
+         
+         // Get starting sector of the disk (Boot Sector address)and convert from array
 
-    // Check response
-    if (`$INSTANCE_NAME`_CheckReply(0) != `$INSTANCE_NAME`_FAIL) {        // Check for status good
-        if (`$INSTANCE_NAME`_CheckReply(0xFE) != `$INSTANCE_NAME`_FAIL) { // Set check to Single Block Read data token
-                                                                          // Get first 64 bytes and save them
-            `$INSTANCE_NAME`_ReadBuff(`$INSTANCE_NAME`_Buffer1, 32 );
-            `$INSTANCE_NAME`_ReadBuff(`$INSTANCE_NAME`_Buffer2, 32 );
+////LCD_Position(1, 0);
+////LCD_PrintString("BUFFERfailnot   ");
+////LCD_PrintInt8(0);
 
-            // Currently assume only one partition table here
-            // Get starting sector of the disk (Boot Sector address)and convert from array
+         for(x=11; x>=8; x--)
+         {
+            BootStart <<=8; 
+            BootStart +=  `$INSTANCE_NAME`_Buffer1[x];
+         }
 
-            // = LCD_Position(1, 0);
-            // = LCD_PrintString("BUFFERfailnot   ");
-            // = LCD_PrintInt8(0);
+         BootStart <<=9;            // Multiply by sector size (512)
+      }
+      else
+         status = `$INSTANCE_NAME`_FAIL;             // Set status to failed
+   }
+   else
+      status = `$INSTANCE_NAME`_FAIL;                // Set status to failed
 
-            for (x=11; x>=8; x--) {
-                BootStart <<=8;
-                BootStart +=  `$INSTANCE_NAME`_Buffer1[x];
-            }
+////LCD_Position(1, 0);
+////LCD_PrintString("BUFFERfailyes   ");
+////LCD_PrintInt8(0);
 
-            BootStart <<=9;            // Multiply by sector size (512)
-        }
-        else
-            status = `$INSTANCE_NAME`_FAIL;             // Set status to failed
-    }
-    else
-        status = `$INSTANCE_NAME`_FAIL;                // Set status to failed
+   `$INSTANCE_NAME`_EndCmd();                        // Finish the command cycle
 
-    // = LCD_Position(1, 0);
-    // = LCD_PrintString("BUFFERfailyes   ");
-    // = LCD_PrintInt8(0);
+////LCD_Position(1, 0);
+////LCD_PrintString("BUFFERENDDDDD   ");
+////LCD_PrintInt8(0);
 
-    `$INSTANCE_NAME`_EndCmd();                        // Finish the command cycle
-
-    // = LCD_Position(1, 0);
-    // = LCD_PrintString("BUFFERENDDDDD   ");
-    // = LCD_PrintInt8(0);
-
-    return(BootStart);               // Zero on error, BootStart on success
+   return(BootStart);               // Zero on error, BootStart on success
 }
 
 //=================================================================================================
@@ -2179,10 +2209,10 @@ uint32 `$INSTANCE_NAME`_GetTable(void)
 //=================================================================================================
 
 //-------------------------------------------------------------------------------------------------
-// FUNCTION NAME:   uint8 `$INSTANCE_NAME`_GetBoot(uint32 BootStart)
+// FUNCTION NAME:   uchar `$INSTANCE_NAME`_GetBoot(ulong BootStart)
 //
 // DESCRIPTION:
-//   Sends the sector read card command for the boot sector (uses the value in BootStart)
+//   Sends the sector read card command for the boot sector (uses the value in BootStart) 
 //
 //-------------------------------------------------------------------------------------------------
 //
@@ -2223,148 +2253,166 @@ uint32 `$INSTANCE_NAME`_GetTable(void)
 //
 //  NOTE: For FAT 16 only the first 64 bytes (0x40) contain data necessary for disk access
 //        For FAT 32 access must be able to read 0x052
-//
+
 //
 //-------------------------------------------------------------------------------------------------
 #ifdef ENABLE_FILESYSTEM
 
-uint8 `$INSTANCE_NAME`_GetBoot(uint32 BootStart)
+uchar `$INSTANCE_NAME`_GetBoot(ulong BootStart)
 {
-    uint8   status = 0;
-    uint16  TempInt;                        // Temporary int for intermediate calculations
-    uint16  x;                              // Loop variable
-    uint32  TempLong = 0;                   // Temporary long for intermediate calculations
-    `$INSTANCE_NAME`_SetSize(512);          // Set block length to 512 for boot sector reads
+   uchar   status = 0;
+   uint    TempInt;       // Temporary int  for intermediate calculations
+   uint   x;              // Loop variable
+   ulong   TempLong = 0;  // Temporary long for intermediate calculations
+   `$INSTANCE_NAME`_SetSize(512);          // Set block length to 512 for boot sector reads
 
-    if (BootStart == 0)                      // Is boot address valid?
-        status = `$INSTANCE_NAME`_FAIL;                       // No, set error flag
-    else {
-        // CMD17 - Read single block command
-        // Byte String = 0x51 (uint32 Address) 0xFF
-        `$INSTANCE_NAME`_Cmd(`$INSTANCE_NAME`_CMD17, BootStart);               // Send CMD17 command string
+   if(BootStart == 0)                      // Is boot address valid?
+      status = `$INSTANCE_NAME`_FAIL;                       // No, set error flag
+   else
+   {
+      // CMD17 - Read single block command
+      // Byte String = 0x51 (ulong Address) 0xFF 
+      `$INSTANCE_NAME`_Cmd(`$INSTANCE_NAME`_CMD17, BootStart);               // Send CMD17 command string
+   
+      // Check response
+      if(`$INSTANCE_NAME`_CheckReply(0) != `$INSTANCE_NAME`_FAIL)            // Check for status good
+      {
+         if(`$INSTANCE_NAME`_CheckReply(0xFE) != `$INSTANCE_NAME`_FAIL)      // Set check to Single Block Read data token
+         {
+            // Get first 64 bytes and save them
+            `$INSTANCE_NAME`_ReadBuff256(`$INSTANCE_NAME`_Buffer1);
+            `$INSTANCE_NAME`_ReadBuff256(`$INSTANCE_NAME`_Buffer2);
+   
+            // Save the number of sectors pur cluster (number of sectors per FAT entry assigned)
+            `$INSTANCE_NAME`_ClusterSize = `$INSTANCE_NAME`_Buffer1[0x0D];   // Save cluster size
 
-        // Check response
-        if (`$INSTANCE_NAME`_CheckReply(0) != `$INSTANCE_NAME`_FAIL) {           // Check for status good
-            if (`$INSTANCE_NAME`_CheckReply(0xFE) != `$INSTANCE_NAME`_FAIL) {     // Set check to Single Block Read data token
-                // Get first 64 bytes and save them
-                `$INSTANCE_NAME`_ReadBuff256(`$INSTANCE_NAME`_Buffer1);
-                `$INSTANCE_NAME`_ReadBuff256(`$INSTANCE_NAME`_Buffer2);
+            // Calculate the start of the first FAT table (# of boot sectors * 512 plus Boot start address)
+            TempInt  =  `$INSTANCE_NAME`_Buffer1[0x0F];     // Get first byte of array (# of boot sectors)
+            TempInt <<= 8;                 // Put in upper byte
+            TempInt +=  `$INSTANCE_NAME`_Buffer1[0x0E];     // Add in lower byte to make an int
+            `$INSTANCE_NAME`_Fat1Start = ( ( (ulong) TempInt * 512) + BootStart );
 
-                // Save the number of sectors pur cluster (number of sectors per FAT entry assigned)
-                `$INSTANCE_NAME`_ClusterSize = `$INSTANCE_NAME`_Buffer1[0x0D];   // Save cluster size
-
-                // Calculate the start of the first FAT table (# of boot sectors * 512 plus Boot start address)
-                TempInt  =  `$INSTANCE_NAME`_Buffer1[0x0F];     // Get first byte of array (# of boot sectors)
-                TempInt <<= 8;                 // Put in upper byte
-                TempInt +=  `$INSTANCE_NAME`_Buffer1[0x0E];     // Add in lower byte to make an int
-                `$INSTANCE_NAME`_Fat1Start = ( ( (uint32) TempInt * 512) + BootStart );
-
-                // Double check FAT type info
-                if ((`$INSTANCE_NAME`_Buffer1[0x36]== 'F')&&(`$INSTANCE_NAME`_Buffer1[0x37]== 'A')&&(`$INSTANCE_NAME`_Buffer1[0x38]== 'T')) {
-                    if((`$INSTANCE_NAME`_Buffer1[0x39]== '1')&&(`$INSTANCE_NAME`_Buffer1[0x3A]== '2')) {
-                        if ((`$INSTANCE_NAME`_CardType & `$INSTANCE_NAME`_XFAT) != 0x10) {
-                            // If not a FAT12 file system - make it a FAT12
-                            `$INSTANCE_NAME`_CardType &= `$INSTANCE_NAME`_XCARD;
-                            `$INSTANCE_NAME`_CardType |= 0x10;
-                        }
-                    }
-                    else if ((`$INSTANCE_NAME`_Buffer1[0x39]== '1')&&(`$INSTANCE_NAME`_Buffer1[0x3A]== '6')) {
-                        // FAT16 file system - make it a FAT16
-                        `$INSTANCE_NAME`_CardType &= `$INSTANCE_NAME`_XCARD;
-                        `$INSTANCE_NAME`_CardType |= 0x40;
-                    }
-                    else {
-                        // If not a valid FAT file system - zero FAT type
-                        `$INSTANCE_NAME`_CardType &= `$INSTANCE_NAME`_XCARD;
-                    }
-                }
-                else if ((`$INSTANCE_NAME`_Buffer1[0x52]== 'F')&&(`$INSTANCE_NAME`_Buffer1[0x53]== 'A')&&(`$INSTANCE_NAME`_Buffer1[0x54]== 'T')) {
-                    if ((`$INSTANCE_NAME`_Buffer1[0x55]== '3')&&(`$INSTANCE_NAME`_Buffer1[0x56]== '2')) {
-                        if ((`$INSTANCE_NAME`_CardType & `$INSTANCE_NAME`_XFAT) != 0xB0) {
-                            // If not a FAT32 file system - make it a FAT32
-                            `$INSTANCE_NAME`_CardType &= `$INSTANCE_NAME`_XCARD;
-                            `$INSTANCE_NAME`_CardType |= 0xB0;
-                        }
-                    }
-                }
-                else {
-                    // If not a FAT file system - zero FAT type
-                    if ((`$INSTANCE_NAME`_CardType & `$INSTANCE_NAME`_XFAT) != 0)
-                        `$INSTANCE_NAME`_CardType &= `$INSTANCE_NAME`_XCARD;
-                }
-
-                // Set FAT size
-                `$INSTANCE_NAME`_FatEnd = 0xFFFF;               // Set to FAT16 FAT parameters
-                `$INSTANCE_NAME`_FatEntrySize = 2;
+            // Double check FAT type info
+            if( (`$INSTANCE_NAME`_Buffer1[0x36]== 'F')&&(`$INSTANCE_NAME`_Buffer1[0x37]== 'A')&&(`$INSTANCE_NAME`_Buffer1[0x38]== 'T') )
+            {
+               if( (`$INSTANCE_NAME`_Buffer1[0x39]== '1')&&(`$INSTANCE_NAME`_Buffer1[0x3A]== '2') )
+               {
+                  if((`$INSTANCE_NAME`_CardType & `$INSTANCE_NAME`_XFAT) != 0x10)
+                  {
+                     // If not a FAT12 file system - make it a FAT12
+                     `$INSTANCE_NAME`_CardType &= `$INSTANCE_NAME`_XCARD;
+                     `$INSTANCE_NAME`_CardType |= 0x10;
+                  }
+               }
+               else if( (`$INSTANCE_NAME`_Buffer1[0x39]== '1')&&(`$INSTANCE_NAME`_Buffer1[0x3A]== '6') )
+               {
+                  // FAT16 file system - make it a FAT16
+                  `$INSTANCE_NAME`_CardType &= `$INSTANCE_NAME`_XCARD;
+                  `$INSTANCE_NAME`_CardType |= 0x40;
+               }
+               else
+               {
+                  // If not a valid FAT file system - zero FAT type
+                  `$INSTANCE_NAME`_CardType &= `$INSTANCE_NAME`_XCARD;
+               }
+               
+            }
+            else if( (`$INSTANCE_NAME`_Buffer1[0x52]== 'F')&&(`$INSTANCE_NAME`_Buffer1[0x53]== 'A')&&(`$INSTANCE_NAME`_Buffer1[0x54]== 'T') )
+            {
+               if( (`$INSTANCE_NAME`_Buffer1[0x55]== '3')&&(`$INSTANCE_NAME`_Buffer1[0x56]== '2') )
+               {
+                  if((`$INSTANCE_NAME`_CardType & `$INSTANCE_NAME`_XFAT) != 0xB0)
+                  {
+                     // If not a FAT32 file system - make it a FAT32
+                     `$INSTANCE_NAME`_CardType &= `$INSTANCE_NAME`_XCARD;
+                     `$INSTANCE_NAME`_CardType |= 0xB0;
+                  }
+               }
+            }
+            else
+            {
+               // If not a FAT file system - zero FAT type
+               if((`$INSTANCE_NAME`_CardType & `$INSTANCE_NAME`_XFAT) != 0)
+                  `$INSTANCE_NAME`_CardType &= `$INSTANCE_NAME`_XCARD;
+            }
+            
+            // Set FAT size
+            `$INSTANCE_NAME`_FatEnd = 0xFFFF;               // Set to FAT16 FAT parameters
+            `$INSTANCE_NAME`_FatEntrySize = 2;   
 
 #ifdef ENABLE_FAT32
-            // If the file type is FAT32, set the parameters to match
-            if ((`$INSTANCE_NAME`_CardType & `$INSTANCE_NAME`_XFAT) == 0xB0) {
-                `$INSTANCE_NAME`_FatEnd = 0x0FFFFFFF;           // Set to FAT32 FAT parameters
-                `$INSTANCE_NAME`_FatEntrySize = 4;
-                `$INSTANCE_NAME`_DirSize = 0xFFFE;              // Set max directory size (for int value - 0xFFFF reserved)
-            }
-#endif
+         // If the file type is FAT32, set the parameters to match
+         if((`$INSTANCE_NAME`_CardType & `$INSTANCE_NAME`_XFAT) == 0xB0)
+         {
+            `$INSTANCE_NAME`_FatEnd = 0x0FFFFFFF;           // Set to FAT32 FAT parameters
+            `$INSTANCE_NAME`_FatEntrySize = 4;
+            `$INSTANCE_NAME`_DirSize = 0xFFFE;              // Set max directory size (for int value - 0xFFFF reserved)   
+         }
+#endif                        
             // If FAT12 or FAT6 use basic boot sector table and formula
-            if (((`$INSTANCE_NAME`_CardType & `$INSTANCE_NAME`_XFAT) == 0x10)||((`$INSTANCE_NAME`_CardType & `$INSTANCE_NAME`_XFAT) == 0x40)||((`$INSTANCE_NAME`_CardType & `$INSTANCE_NAME`_XFAT) == 0x60)) {
-                // Calculate the start of the Root Directory ( Fat size * # of Fats * 512 plus Fat start address)
-                TempInt  =  `$INSTANCE_NAME`_Buffer1[0x17];  // Get first byte of array (FAT size)
-                TempInt <<= 8;              // Put in upper byte
-                TempInt +=  `$INSTANCE_NAME`_Buffer1[0x16];  // Add in lower byte to make an int
-                if(`$INSTANCE_NAME`_Buffer1[0x10] >= 2)
-                    `$INSTANCE_NAME`_Fat2Start = `$INSTANCE_NAME`_Fat1Start + ((uint32)TempInt * 512);
-                `$INSTANCE_NAME`_DirStart = ( ( (uint32) TempInt * `$INSTANCE_NAME`_Buffer1[0x10] * 512 ) + `$INSTANCE_NAME`_Fat1Start );
-                `$INSTANCE_NAME`_DirFat = 0;                 // Root Directory value is fixed - Use DirStart and length of 512 entries
-                `$INSTANCE_NAME`_CurStart[`$INSTANCE_NAME`_MAXFILES] = 0;     // Set root FAT entry to zero - No FAT directory entry
+            if(((`$INSTANCE_NAME`_CardType & `$INSTANCE_NAME`_XFAT) == 0x10)||((`$INSTANCE_NAME`_CardType & `$INSTANCE_NAME`_XFAT) == 0x40)||((`$INSTANCE_NAME`_CardType & `$INSTANCE_NAME`_XFAT) == 0x60))
+            {            
+               // Calculate the start of the Root Directory ( Fat size * # of Fats * 512 plus Fat start address)
+               TempInt  =  `$INSTANCE_NAME`_Buffer1[0x17];  // Get first byte of array (FAT size)
+               TempInt <<= 8;              // Put in upper byte
+               TempInt +=  `$INSTANCE_NAME`_Buffer1[0x16];  // Add in lower byte to make an int
+               if(`$INSTANCE_NAME`_Buffer1[0x10] >= 2)
+                  `$INSTANCE_NAME`_Fat2Start = `$INSTANCE_NAME`_Fat1Start + ((ulong)TempInt * 512);
+               `$INSTANCE_NAME`_DirStart = ( ( (ulong) TempInt * `$INSTANCE_NAME`_Buffer1[0x10] * 512 ) + `$INSTANCE_NAME`_Fat1Start );
+               `$INSTANCE_NAME`_DirFat = 0;                 // Root Directory value is fixed - Use DirStart and length of 512 entries
+               `$INSTANCE_NAME`_CurStart[`$INSTANCE_NAME`_MAXFILES] = 0;     // Set root FAT entry to zero - No FAT directory entry
 
-                // Calculate start of data area (root size(usually 512) * entry size(32) plus Dir start
-                TempInt  =  `$INSTANCE_NAME`_Buffer1[0x12];  // Get first byte of array (Fat size)
-                TempInt <<= 8;              // Put in upper byte
-                TempInt +=  `$INSTANCE_NAME`_Buffer1[0x11];  // Add in lower byte to make an int
-                `$INSTANCE_NAME`_DataStart = ( ( (uint32) TempInt * 32 ) + `$INSTANCE_NAME`_DirStart );
+               // Calculate start of data area (root size(usually 512) * entry size(32) plus Dir start
+               TempInt  =  `$INSTANCE_NAME`_Buffer1[0x12];  // Get first byte of array (Fat size)
+               TempInt <<= 8;              // Put in upper byte
+               TempInt +=  `$INSTANCE_NAME`_Buffer1[0x11];  // Add in lower byte to make an int
+               `$INSTANCE_NAME`_DataStart = ( ( (ulong) TempInt * 32 ) + `$INSTANCE_NAME`_DirStart );
             }
 #ifdef ENABLE_FAT32
             // If FAT32 use new 32 bit boot sector table and formula
-            if ((`$INSTANCE_NAME`_CardType & `$INSTANCE_NAME`_XFAT) == 0xB0) {
-                // Calculate start of data area (Sectors per FAT * Number of FATs * Sector size) + Fat start
-                for (x=0x27; x>=0x24; x--) {
-                    TempLong <<= 8;             // Put in next upper byte
-                    TempLong +=  `$INSTANCE_NAME`_Buffer1[x];    // Add in next byte to make a long
-                }
+            if((`$INSTANCE_NAME`_CardType & `$INSTANCE_NAME`_XFAT) == 0xB0)
+            {            
+               // Calculate start of data area (Sectors per FAT * Number of FATs * Sector size) + Fat start
+               for(x=0x27; x>=0x24; x--)
+               {
+               TempLong <<= 8;             // Put in next upper byte
+               TempLong +=  `$INSTANCE_NAME`_Buffer1[x];    // Add in next byte to make a long
+               }
 
-                if(`$INSTANCE_NAME`_Buffer1[0x10] >= 2)
-                    `$INSTANCE_NAME`_Fat2Start = `$INSTANCE_NAME`_Fat1Start + (TempLong * 512);
-                `$INSTANCE_NAME`_DataStart = ( ( TempLong * `$INSTANCE_NAME`_Buffer1[0x10] * 512) + `$INSTANCE_NAME`_Fat1Start );
+               if(`$INSTANCE_NAME`_Buffer1[0x10] >= 2)
+                  `$INSTANCE_NAME`_Fat2Start = `$INSTANCE_NAME`_Fat1Start + (TempLong * 512);
+               `$INSTANCE_NAME`_DataStart = ( ( TempLong * `$INSTANCE_NAME`_Buffer1[0x10] * 512) + `$INSTANCE_NAME`_Fat1Start );
 
-                // Calculate the start of the Root Directory ((Fat entry - 2)* 512 plus Data start address)
-                // Note: In FAT32 the directory is actually a file using a FAT chain.
-                for (x=0x2F; x>=0x2C; x--) {
-                    TempLong <<= 8;             // Put in next upper byte
-                    TempLong +=  `$INSTANCE_NAME`_Buffer1[x];    // Add in next byte to make a long
-                }
+               // Calculate the start of the Root Directory ((Fat entry - 2)* 512 plus Data start address)
+               // Note: In FAT32 the directory is actually a file using a FAT chain.
+               for(x=0x2F; x>=0x2C; x--)
+               {
+               TempLong <<= 8;             // Put in next upper byte
+               TempLong +=  `$INSTANCE_NAME`_Buffer1[x];    // Add in next byte to make a long
+               }
 
-                `$INSTANCE_NAME`_DirFat   = TempLong;        // Root Directory starting FAT entry (directory size is length of FAT chain)
-                `$INSTANCE_NAME`_DirStart = ( ((TempLong - 2) * 512 ) + `$INSTANCE_NAME`_DataStart);
-                `$INSTANCE_NAME`_CurStart[`$INSTANCE_NAME`_MAXFILES] = TempLong;   // Set directory to root for start      // Set root FAT entry to zero - No FAT directory entry
+               `$INSTANCE_NAME`_DirFat   = TempLong;        // Root Directory starting FAT entry (directory size is length of FAT chain)
+               `$INSTANCE_NAME`_DirStart = ( ((TempLong - 2) * 512 ) + `$INSTANCE_NAME`_DataStart);               
+               `$INSTANCE_NAME`_CurStart[`$INSTANCE_NAME`_MAXFILES] = TempLong;   // Set directory to root for start      // Set root FAT entry to zero - No FAT directory entry
             }
 #endif
 
-        }
-        else
+         }
+         else
             status = `$INSTANCE_NAME`_FAIL;         // Set status to failed
-        }
-        else
-            status = `$INSTANCE_NAME`_FAIL;            // Set status to failed
-    }
+      }
+      else
+         status = `$INSTANCE_NAME`_FAIL;            // Set status to failed
+   }
+   
+   `$INSTANCE_NAME`_EndCmd();                       // Finish the command cycle
 
-    `$INSTANCE_NAME`_EndCmd();                       // Finish the command cycle
-
-    return(status);
+   return(status);
 }
 #endif
 
 //-------------------------------------------------------------------------------------------------
-// FUNCTION NAME:   uint8 `$INSTANCE_NAME`_CheckReply(uint8 check)
+// FUNCTION NAME:   uchar `$INSTANCE_NAME`_CheckReply(uchar check)
 //
 // DESCRIPTION:
 //   Checks reply with timeout
@@ -2384,11 +2432,11 @@ uint8 `$INSTANCE_NAME`_GetBoot(uint32 BootStart)
 //
 //-------------------------------------------------------------------------------------------------
 
-uint8 `$INSTANCE_NAME`_CheckReply(uint8 check)
+uchar `$INSTANCE_NAME`_CheckReply(uchar check)
 {
-   uint8   status = 0;                        // Set initial status
-   uint8   Timeout = 255;                     // Set number of tries until you timeout
-   uint8   Reply = check + 1;                 // Make sure check and Reply don't initially match
+   uchar   status = 0;                        // Set initial status
+   uchar   Timeout = 255;                     // Set number of tries until you timeout   
+   uchar   Reply = check + 1;                 // Make sure check and Reply don't initially match
 
    while((check != Reply) && (Timeout>0))     // Loop until check = Reply, or a timeout occurs
    {
@@ -2398,15 +2446,15 @@ uint8 `$INSTANCE_NAME`_CheckReply(uint8 check)
 
 ////LCD_Position(1, 0);
 ////LCD_PrintString("Check Reply");
-////LCD_PrintInt8(0);
+////LCD_PrintInt8(0);   
 
-      Reply = `$INSTANCE_NAME`_bReadRxData(); // Read the reply
+	  Reply = `$INSTANCE_NAME`_bReadRxData(); // Read the reply
 
 ////LCD_Position(1, 0);
 ////LCD_PrintString("Reply:");
 ////LCD_PrintInt8(Reply);
 
-      Timeout--;                              // Decrement loop until 0, then timeout
+	  Timeout--;                              // Decrement loop until 0, then timeout
       if(Timeout == 0)                        // If loop is zero, then set status for failed
          status = `$INSTANCE_NAME`_FAIL;
    }
@@ -2414,7 +2462,7 @@ uint8 `$INSTANCE_NAME`_CheckReply(uint8 check)
 }
 
 //-------------------------------------------------------------------------------------------------
-// FUNCTION NAME:   uint8 `$INSTANCE_NAME`_SetSize(uint32 size)
+// FUNCTION NAME:   uchar `$INSTANCE_NAME`_SetSize(ulong size)
 //
 // DESCRIPTION:   // REVIEW Get description
 //
@@ -2432,20 +2480,20 @@ uint8 `$INSTANCE_NAME`_CheckReply(uint8 check)
 //
 //-------------------------------------------------------------------------------------------------
 
-uint8 `$INSTANCE_NAME`_SetSize(uint32 size)
+uchar `$INSTANCE_NAME`_SetSize(ulong size)
 {
-   uint8  status = 0;
+   uchar  status = 0;
 
    // CMD16 - Set block size command
-   // Byte String = 0x50 0x00 0x00 0x00 0x00 0xFF
+   // Byte String = 0x50 0x00 0x00 0x00 0x00 0xFF 
 
    `$INSTANCE_NAME`_Cmd(`$INSTANCE_NAME`_CMD16, size);      // Send CMD16 command string
 
    // Status bits: 0=Idle, 1=Erase Reset, 2=Illegal CMD, 3=CRC Error, 4=Erase_Seq_Error, 5=Address Error, 6=Param Error
-   status = `$INSTANCE_NAME`_GetR1();      // Get the R1 command respnse
+   status = `$INSTANCE_NAME`_GetR1();      // Get the R1 command respnse   
 
    `$INSTANCE_NAME`_EndCmd();              // Finish the command cycle
-
+               
    return(status);
 }
 
@@ -2471,21 +2519,21 @@ uint8 `$INSTANCE_NAME`_SetSize(uint32 size)
 
 void `$INSTANCE_NAME`_XferWait(void)
 {
-    uint8 stat;
-
-    // Wait until transfer is complete
-    stat = `$INSTANCE_NAME`_bReadStatus();
-    while( !(stat > 0) )
-    {
-        stat = `$INSTANCE_NAME`_bReadStatus();
-    }
+	uint8 stat;
+	
+	// Wait until transfer is complete
+	stat = `$INSTANCE_NAME`_bReadStatus();
+	while( !(stat > 0) )
+	{
+		stat = `$INSTANCE_NAME`_bReadStatus();
+	}
 }
 
 //-------------------------------------------------------------------------------------------------
-// FUNCTION NAME:   void `$INSTANCE_NAME`_NextFat(uint8 Fptr)
+// FUNCTION NAME:   void `$INSTANCE_NAME`_NextFat(uchar Fptr)
 //
 // DESCRIPTION:
-//   Searches the FAT chain for the next cluster to be used in the file and updates the file
+//   Searches the FAT chain for the next cluster to be used in the file and updates the file 
 //   information CurFat to match. If last FAT entry in chain, write adds FAT, read does nothing.
 //
 //-------------------------------------------------------------------------------------------------
@@ -2504,12 +2552,12 @@ void `$INSTANCE_NAME`_XferWait(void)
 //-------------------------------------------------------------------------------------------------
 #ifdef ENABLE_FILESYSTEM
 
-void `$INSTANCE_NAME`_NextFat(uint8 Fptr)
+void `$INSTANCE_NAME`_NextFat(uchar Fptr)
 {
 #ifdef ENABLE_FAT32
-   uint32  SaveFat = `$INSTANCE_NAME`_CurFat[Fptr];      // Save current FAT entry
+   ulong  SaveFat = `$INSTANCE_NAME`_CurFat[Fptr];      // Save current FAT entry
 #else
-   uint16  SaveFat = `$INSTANCE_NAME`_CurFat[Fptr];      // Save current FAT entry
+   uint   SaveFat = `$INSTANCE_NAME`_CurFat[Fptr];      // Save current FAT entry
 #endif
 
    if(`$INSTANCE_NAME`_CurFat[Fptr]!= `$INSTANCE_NAME`_FatEnd)           // If not the last FAT entry, get the next FAT entry
@@ -2519,7 +2567,7 @@ void `$INSTANCE_NAME`_NextFat(uint8 Fptr)
       if( (`$INSTANCE_NAME`_CurFat[Fptr] == `$INSTANCE_NAME`_FatEnd)&&((`$INSTANCE_NAME`_FileMode[Fptr]& 0x01) != 0x01) )
       {
          `$INSTANCE_NAME`_CurFat[Fptr] = SaveFat;       // Restore original current FAT entry
-         `$INSTANCE_NAME`_AddFat(Fptr);                 // Add a new FAT entry to the chain
+         `$INSTANCE_NAME`_AddFat(Fptr);                 // Add a new FAT entry to the chain 
          `$INSTANCE_NAME`_CurFat[Fptr] = `$INSTANCE_NAME`_FatTrack(`$INSTANCE_NAME`_CurFat[Fptr]);   // Get next FAT entry number
       }
 #endif
@@ -2529,12 +2577,12 @@ void `$INSTANCE_NAME`_NextFat(uint8 Fptr)
 #endif
 
 //-------------------------------------------------------------------------------------------------
-// FUNCTION NAME:   uint32 `$INSTANCE_NAME`_FatTrack(uint32 FatNum)
-//                  uint16 `$INSTANCE_NAME`_FatTrack(uint16 FatNum)
+// FUNCTION NAME:   ulong `$INSTANCE_NAME`_FatTrack(ulong FatNum)
+//                   uint `$INSTANCE_NAME`_FatTrack(uint FatNum)
 //
 // DESCRIPTION:
-//   Searches the FAT chain for the next cluster to be used and returns the next FAT entry value.
-//   If the FatNum = 0; then a search is done for the first free FAT entry.
+//   Searches the FAT chain for the next cluster to be used and returns the next FAT entry value. 
+//   If the FatNum = 0; then a search is done for the first free FAT entry.   
 //
 //-------------------------------------------------------------------------------------------------
 //
@@ -2554,25 +2602,25 @@ void `$INSTANCE_NAME`_NextFat(uint8 Fptr)
 #ifdef ENABLE_FILESYSTEM
 
 #ifdef ENABLE_FAT32
-uint32 `$INSTANCE_NAME`_FatTrack(uint32 FatNum)
+ulong `$INSTANCE_NAME`_FatTrack(ulong FatNum)
 #else
-uint16 `$INSTANCE_NAME`_FatTrack(uint16 FatNum)
+uint `$INSTANCE_NAME`_FatTrack(uint FatNum)
 #endif
 {
-   // Searches the FAT chain for the next cluster to be used and returns the next FAT entry value.
-   // If the FatNum = 0; then a search is done for the first free FAT entry.
+   // Searches the FAT chain for the next cluster to be used and returns the next FAT entry value. 
+   // If the FatNum = 0; then a search is done for the first free FAT entry.   
 
 #ifdef ENABLE_FAT32
-   uint32  Nfat;           // Next FAT entry number
+   ulong  Nfat;           // Next FAT entry number
 #else
-   uint16  Nfat;           // Next FAT entry number
+   uint   Nfat;           // Next FAT entry number
 #endif
-   uint8   status = 0;
-   uint8   x;             // Loop variable (signed for check later)
-   uint8   Loop=1;        // Loop control
-   uint8   Tmp[4];        // Temp buffer
-   uint32   address;       // Temp address variable
-
+   uchar   status = 0;
+   uchar   x;             // Loop variable (signed for check later)
+   uchar   Loop=1;        // Loop control
+   uchar   Tmp[4];        // Temp buffer
+   ulong   address;       // Temp address variable
+   
    if(FatNum == 0)        // Set loop control to search until an unused FAT entry is found
    {
       Loop   = 2;         // Set loop to search for unused FAT entry
@@ -2595,8 +2643,8 @@ uint16 `$INSTANCE_NAME`_FatTrack(uint16 FatNum)
 #endif
 
       // CMD17 - Read single block command
-      // Byte String = 0x51 (uint32 Address) 0xFF
-
+      // Byte String = 0x51 (ulong Address) 0xFF 
+   
       `$INSTANCE_NAME`_Cmd(`$INSTANCE_NAME`_CMD17, address);             // Send CMD17 command string
 
       // Check response
@@ -2604,7 +2652,7 @@ uint16 `$INSTANCE_NAME`_FatTrack(uint16 FatNum)
       {
          if(`$INSTANCE_NAME`_CheckReply(0xFE) != `$INSTANCE_NAME`_FAIL)  // Set check to Single Block Read data token
          {
-
+         
             `$INSTANCE_NAME`_ReadBuff(Tmp, `$INSTANCE_NAME`_FatEntrySize );
 
             Nfat = 0;                  // Clear value before use
@@ -2613,7 +2661,7 @@ uint16 `$INSTANCE_NAME`_FatTrack(uint16 FatNum)
                Nfat <<=8;              // Shift to upper byte
                Nfat += Tmp[`$INSTANCE_NAME`_FatEntrySize-x];   // Add next byte
             }
-
+         
          }
          else
             status = `$INSTANCE_NAME`_FAIL;             // Set status to failed
@@ -2636,14 +2684,14 @@ uint16 `$INSTANCE_NAME`_FatTrack(uint16 FatNum)
       }
       else
          Loop = 0;               // Only one pass through the loop
-   }
+   }   
    return(Nfat);                 // Return next FAT entry (or first unused FAT entry)
 }
 #endif
 
 //-------------------------------------------------------------------------------------------------
-// FUNCTION NAME:   uint32 `$INSTANCE_NAME`_LastFat(uint8 Fptr)
-//                  uint16 `$INSTANCE_NAME`_LastFat(uint8 Fptr)
+// FUNCTION NAME:   ulong `$INSTANCE_NAME`_LastFat(uchar Fptr)
+//                   uint `$INSTANCE_NAME`_LastFat(uchar Fptr)
 //
 // DESCRIPTION:
 //   Returns the last FAT entry used in a file chain, returns zero if no FAT chain found
@@ -2665,25 +2713,25 @@ uint16 `$INSTANCE_NAME`_FatTrack(uint16 FatNum)
 #ifdef ENABLE_FILESYSTEM
 
 #ifdef ENABLE_FAT32
-uint32 `$INSTANCE_NAME`_LastFat(uint8 Fptr)
+ulong `$INSTANCE_NAME`_LastFat(uchar Fptr)
 #else
-uint16 `$INSTANCE_NAME`_LastFat(uint8 Fptr)
+uint `$INSTANCE_NAME`_LastFat(uchar Fptr)
 #endif
 {
-
+   
 #ifdef ENABLE_FAT32
-   uint32 Nfat;               // Temp next FAT entry variable
-   uint32 Cfat=0;             // Temp current FAT entry variable
+   ulong Nfat;               // Temp next FAT entry variable
+   ulong Cfat=0;             // Temp current FAT entry variable
 #else
-   uint16 Nfat;                // Temp next FAT entry variable
-   uint16 Cfat=0;              // Temp current entry FAT variable
+   uint Nfat;                // Temp next FAT entry variable
+   uint Cfat=0;              // Temp current entry FAT variable
 #endif
 
    if(`$INSTANCE_NAME`_CurStart[Fptr]!=0)     // Valid FAT entry?
    {
-      // Yes, seach the last FAT
+      // Yes, seach the last FAT   
       Nfat = `$INSTANCE_NAME`_CurFat[Fptr];   // Set next FAT entry to the current FAT entry (valid by default)
-
+   
       while(Nfat != `$INSTANCE_NAME`_FatEnd)
       {
          // Loop until the last FAT entry is reached
@@ -2696,7 +2744,7 @@ uint16 `$INSTANCE_NAME`_LastFat(uint8 Fptr)
 #endif
 
 //-------------------------------------------------------------------------------------------------
-// FUNCTION NAME:   uint8 `$INSTANCE_NAME`_NextSect(uint8 Fptr)
+// FUNCTION NAME:   uchar `$INSTANCE_NAME`_NextSect(uchar Fptr)
 //
 // DESCRIPTION:
 //   Increments the next cluster to be used in the file and the next FAT if necessary
@@ -2715,7 +2763,7 @@ uint16 `$INSTANCE_NAME`_LastFat(uint8 Fptr)
 //  SIDE EFFECTS:
 //    Note:   This routine will allow writes beyond the stated CurSize value as whole
 //            sectors must be written. Data values beyond file end are not guaranteed.
-//            Also be aware that a whole clusters are assigned not matter how little
+//            Also be aware that a whole clusters are assigned not matter how little 
 //            of last one is used, and total access is possible during file copies.
 //
 //  THEORY of OPERATON or PROCEDURE:
@@ -2724,10 +2772,10 @@ uint16 `$INSTANCE_NAME`_LastFat(uint8 Fptr)
 //-------------------------------------------------------------------------------------------------
 #ifdef ENABLE_FILESYSTEM
 
-uint8 `$INSTANCE_NAME`_NextSect(uint8 Fptr)
+uchar `$INSTANCE_NAME`_NextSect(uchar Fptr)
 {
-   uint8   status = 0;
-
+   uchar   status = 0;
+   
    if(`$INSTANCE_NAME`_CurSect[Fptr] < (`$INSTANCE_NAME`_ClusterSize -1))
       `$INSTANCE_NAME`_CurSect[Fptr]++;                 // If less than the last sector - increment sector
    else
@@ -2754,19 +2802,19 @@ uint8 `$INSTANCE_NAME`_NextSect(uint8 Fptr)
 
 
 //-------------------------------------------------------------------------------------------------
-// FUNCTION NAME:   uint8 `$INSTANCE_NAME`_FindFile(uint8 Fptr, uint16 FileNum)
+// FUNCTION NAME:   uchar `$INSTANCE_NAME`_FindFile(uchar Fptr, uint FileNum)
 //
 // DESCRIPTION:
-//   Finds a file in the root directory.
+//   Finds a file in the root directory. 
 //
 //-------------------------------------------------------------------------------------------------
 //
 //  ARGUMENTS:
-// Fptr    - If less than MAXFILES then the pointer is used for file info, if it equals maxfiles no
+// Fptr    - If less than MAXFILES then the pointer is used for file info, if it equals maxfiles no 
 //           file information is passed. (Used for just returning filenames)
 //
 // FileNum - If zero, it searches by filename, matching the first 11 characters in Buffer1 to Buffer2
-//           If non-zero it searches by file number, if number is greater than the number of
+//           If non-zero it searches by file number, if number is greater than the number of  
 //           files no match will be found. (Only valid files are counted). (A limit of 0xFFFE valid entries)
 //           If 0xFFFF it searches for the first unused directory entry (E5 or 00 for first character)
 //
@@ -2782,20 +2830,20 @@ uint8 `$INSTANCE_NAME`_NextSect(uint8 Fptr)
 //-------------------------------------------------------------------------------------------------
 #ifdef ENABLE_FILESYSTEM
 
-uint8 `$INSTANCE_NAME`_FindFile(uint8 Fptr, uint16 FileNum)
+uchar `$INSTANCE_NAME`_FindFile(uchar Fptr, uint FileNum)
 {
 
    // Sends the sector read card command for the Directory and reads directory entries into buffer 1 until
-   // Buffer1 it finds a match for the first 11 characters of Buffer2 and confirms that this is a
+   // Buffer1 it finds a match for the first 11 characters of Buffer2 and confirms that this is a 
    // valid filename. (not a sub-directory or a volume label).
-
-   uint8   match  = 0;   // Set to 1 if a match is found
-   uint8   end = 0;      // Flag for directory end found
-   uint8   x;            // Loop variables
-   uint16  y = 0;
-   uint16  files = 0;    // Current count of valid files
-   uint8   status = 0;   // Temp status variable
-
+   
+   uchar   match  = 0;   // Set to 1 if a match is found
+   uchar   end = 0;      // Flag for directory end found
+   uchar   x;            // Loop variables
+   uint    y = 0;
+   uint    files = 0;    // Current count of valid files
+   uchar   status = 0;   // Temp status variable
+   
 //   `$INSTANCE_NAME`_SetSize(32);        // Set block length to 32 for directory reads
 
 //  Directory Entry information - 32 bytes each for short file names (long filenames not supported)
@@ -2812,12 +2860,12 @@ uint8 `$INSTANCE_NAME`_FindFile(uint8 Fptr, uint16 FileNum)
 //   0x1A     2      Starting FAT entry in FAT table (first FAT entry is always 2 not 0)
 //   0x1C     4      File size (long)
 
-   if(`$INSTANCE_NAME`_CurStart[`$INSTANCE_NAME`_MAXFILES] != 0)
+   if(`$INSTANCE_NAME`_CurStart[`$INSTANCE_NAME`_MAXFILES] != 0)      
    {
       // Directory is FAT based - set up FAT values
       `$INSTANCE_NAME`_CurFat[`$INSTANCE_NAME`_MAXFILES] = `$INSTANCE_NAME`_CurStart[`$INSTANCE_NAME`_MAXFILES];
       `$INSTANCE_NAME`_CurSect[`$INSTANCE_NAME`_MAXFILES] = 0;
-      `$INSTANCE_NAME`_CurOffset[`$INSTANCE_NAME`_MAXFILES] = 0;
+      `$INSTANCE_NAME`_CurOffset[`$INSTANCE_NAME`_MAXFILES] = 0;   
    }
 
    while((match==0)&&(end==0))           // Search directory until match in Buffer2 is found
@@ -2828,20 +2876,20 @@ uint8 `$INSTANCE_NAME`_FindFile(uint8 Fptr, uint16 FileNum)
       {
          `$INSTANCE_NAME`_GetAddress(`$INSTANCE_NAME`_MAXFILES, 1);        // Calculate directory address
       }
-
+      
       `$INSTANCE_NAME`_SetSize(32);                       // Set block length to 32 for directory reads
-
+      
       // CMD17 - Read single block command
-      // Byte String = 0x51 (uint32 Address) 0xFF
+      // Byte String = 0x51 (ulong Address) 0xFF 
 
       `$INSTANCE_NAME`_Cmd(`$INSTANCE_NAME`_CMD17, `$INSTANCE_NAME`_Address);               // Send CMD17 command string
-
+   
       // Check response
       if(`$INSTANCE_NAME`_CheckReply(0) != `$INSTANCE_NAME`_FAIL)          // Check for status good
       {
          if(`$INSTANCE_NAME`_CheckReply(0xFE) != `$INSTANCE_NAME`_FAIL)    // Set check to Single Block Read data token
          {
-            // Get directory entry and save it
+            // Get directory entry and save it   
             `$INSTANCE_NAME`_ReadBuff(`$INSTANCE_NAME`_Buffer1, 32 );
 
          }
@@ -2871,7 +2919,7 @@ uint8 `$INSTANCE_NAME`_FindFile(uint8 Fptr, uint16 FileNum)
          {
             // Variable entry size - Fat based
             `$INSTANCE_NAME`_CurOffset[`$INSTANCE_NAME`_MAXFILES] += 0x20;    // Add directory size to offset
-            if(`$INSTANCE_NAME`_CurOffset[`$INSTANCE_NAME`_MAXFILES] >= 512)  // If more than a sector update
+            if(`$INSTANCE_NAME`_CurOffset[`$INSTANCE_NAME`_MAXFILES] >= 512)  // If more than a sector update 
             {
                `$INSTANCE_NAME`_CurOffset[`$INSTANCE_NAME`_MAXFILES] = 0;     // Reset count
                // Increment sector
@@ -2884,10 +2932,10 @@ uint8 `$INSTANCE_NAME`_FindFile(uint8 Fptr, uint16 FileNum)
                   if(`$INSTANCE_NAME`_CurFat[`$INSTANCE_NAME`_MAXFILES] == `$INSTANCE_NAME`_FatEnd)   // Was this the last FAT entry?
                      end=1;                 // Yes, end of directory chain
                }
-            }
+            }            
          }
-
-         // Check for valid filename - first character must be upper ASCII and attributes set to file
+            
+         // Check for valid filename - first character must be upper ASCII and attributes set to file 
          if((`$INSTANCE_NAME`_Buffer1[0]>='A')&&(`$INSTANCE_NAME`_Buffer1[0]<='Z')&&((`$INSTANCE_NAME`_Buffer1[0x0B] & 0x18) == 0))
          {
             files++;              // Valid filename - increment valid files
@@ -2906,7 +2954,7 @@ uint8 `$INSTANCE_NAME`_FindFile(uint8 Fptr, uint16 FileNum)
                if(files == FileNum)  // Does the file number match?
                   match = 1;         // Match found exit and save values
             }
-
+            
          }
          else if(FileNum == `$INSTANCE_NAME`_UNUSED)  // Check for unused entries?
          {
@@ -2921,17 +2969,17 @@ uint8 `$INSTANCE_NAME`_FindFile(uint8 Fptr, uint16 FileNum)
       else
          end=1;   // Read error - Set end of directory flag
    }
-
+      
    // Search complete - either file was found or it was not
-
+   
    if(Fptr<`$INSTANCE_NAME`_MAXFILES)                 // If true - set file information
    {
       `$INSTANCE_NAME`_FileError[Fptr] |= status;     // Set file error flags depending on status
 
-      if(match==1)
-      {
+      if(match==1)                                 
+      {            
          // Match found - Buffer1 contains valid data
-
+   
          // Get starting FAT location and convert it
 #ifdef ENABLE_FAT32
          if((`$INSTANCE_NAME`_CardType & `$INSTANCE_NAME`_XFAT) == 0xB0)   // FAT32 Values
@@ -2941,11 +2989,11 @@ uint8 `$INSTANCE_NAME`_FindFile(uint8 Fptr, uint16 FileNum)
             `$INSTANCE_NAME`_CurFat[Fptr] += `$INSTANCE_NAME`_Buffer1[0x14];   // Add next byte
             `$INSTANCE_NAME`_CurFat[Fptr] <<=8;               // Shift to upper byte
          }
-#endif
+#endif   
          `$INSTANCE_NAME`_CurFat[Fptr] += `$INSTANCE_NAME`_Buffer1[0x1B];      // Add next byte to starting FAT
          `$INSTANCE_NAME`_CurFat[Fptr] <<=8;                  // Shift to upper byte
          `$INSTANCE_NAME`_CurFat[Fptr] += `$INSTANCE_NAME`_Buffer1[0x1A];      // Add last byte
-
+      
          `$INSTANCE_NAME`_CurDir[Fptr] = `$INSTANCE_NAME`_Address;             // Copy the current directory entry address
          `$INSTANCE_NAME`_CurStart[Fptr] = `$INSTANCE_NAME`_CurFat[Fptr];      // Copy FAT info into current FAT start
 
@@ -2956,7 +3004,7 @@ uint8 `$INSTANCE_NAME`_FindFile(uint8 Fptr, uint16 FileNum)
          }
 
          `$INSTANCE_NAME`_CurAttr[Fptr]= `$INSTANCE_NAME`_Buffer1[0x0B];       // Copy file attribute byte
-
+                  
       }
       else
       {
@@ -2974,7 +3022,7 @@ uint8 `$INSTANCE_NAME`_FindFile(uint8 Fptr, uint16 FileNum)
 #endif
 
 //-------------------------------------------------------------------------------------------------
-// FUNCTION NAME:   uint8 `$INSTANCE_NAME`_WriteFileSect(uint8 Fptr)
+// FUNCTION NAME:   uchar `$INSTANCE_NAME`_WriteFileSect(uchar Fptr)
 //
 // DESCRIPTION:
 //   Routine that will write one sector to a file. Offset must be set to the beginning
@@ -2993,7 +3041,7 @@ uint8 `$INSTANCE_NAME`_FindFile(uint8 Fptr, uint16 FileNum)
 //    It DOES NOT check to see if the file is at least one sector long - non-zero.
 //    Must have an valid Fptr previously loaded by the `$INSTANCE_NAME`_fopen(Filename) subroutine.
 //
-//              ***   Global variables required   ***
+//              ***   Global variables required   ***     
 //    ClusterSize       - the size of a cluster on the current disk
 //    CurFat[Index]     - contains the starting fat entry for the file
 //    CurSize[Index]    - contains the size of the file
@@ -3008,9 +3056,9 @@ uint8 `$INSTANCE_NAME`_FindFile(uint8 Fptr, uint16 FileNum)
 #ifdef ENABLE_FILESYSTEM
 #ifdef ENABLE_WRITE
 
-uint8 `$INSTANCE_NAME`_WriteFileSect(uint8 Fptr)
+uchar `$INSTANCE_NAME`_WriteFileSect(uchar Fptr)
 {
-   uint8   status = 0;                 // command status
+   uchar   status = 0;                 // command status
 
    if((`$INSTANCE_NAME`_CurFat[Fptr] != `$INSTANCE_NAME`_FatEnd))
    {
@@ -3023,14 +3071,14 @@ uint8 `$INSTANCE_NAME`_WriteFileSect(uint8 Fptr)
    }
    else
       status = `$INSTANCE_NAME`_FAIL;                   // Error - Not a valid entry
-
+      
    return(status);
 }
 #endif
 #endif
 
 //-------------------------------------------------------------------------------------------------
-// FUNCTION NAME:   uint8 `$INSTANCE_NAME`_WriteSect(uint32 address)
+// FUNCTION NAME:   uchar `$INSTANCE_NAME`_WriteSect(ulong address)
 //
 // DESCRIPTION:
 //   Routine that will write one absolute sector. Address must be set to the beginning
@@ -3051,13 +3099,13 @@ uint8 `$INSTANCE_NAME`_WriteFileSect(uint8 Fptr)
 //
 //-------------------------------------------------------------------------------------------------
 
-uint8 `$INSTANCE_NAME`_WriteSect(uint32 address)
+uchar `$INSTANCE_NAME`_WriteSect(ulong address)
 {
-   uint8   status = 0;            // command status
-   uint16  y;                      // Loop variables
+   uchar   status = 0;            // command status
+   uint   y;                      // Loop variables
 
 #ifdef ENABLE_WPROTECT
-   if(`$INSTANCE_NAME`_WriteProtect()==0)       // If write protect is on skip writes, flag error
+   if(`$INSTANCE_NAME`_WriteProtect()==0)       // If write protect is on skip writes, flag error   
 #endif
    {
       `$INSTANCE_NAME`_SetSize(512);               // Set block length to a 512 sector (512)
@@ -3065,42 +3113,42 @@ uint8 `$INSTANCE_NAME`_WriteSect(uint32 address)
       // Write out one sector
 
       // CMD24 - Write single block command
-      // Byte String = 0x58 (uint32 Address) 0xFF
-
+      // Byte String = 0x58 (ulong Address) 0xFF
+      
       `$INSTANCE_NAME`_Cmd(`$INSTANCE_NAME`_CMD24, address);                         // Send CMD24 command string
 
       // Get the data response token
       `$INSTANCE_NAME`_SendTxData( 0xFF );
       `$INSTANCE_NAME`_XferWait();                                  // Wait for transfer to complete
       status = `$INSTANCE_NAME`_bReadRxData();     // Read the data response byte but ignore it.
-
+      
       // Check response
       if(`$INSTANCE_NAME`_CheckReply(0) != `$INSTANCE_NAME`_FAIL)                    // Check for status good
       {
          // Send an FE to the byte shift out
          `$INSTANCE_NAME`_SendTxData( 0xFE );
          `$INSTANCE_NAME`_XferWait();                               // Wait for transfer to complete
-         rbuff = `$INSTANCE_NAME`_bReadRxData();
+		 rbuff = `$INSTANCE_NAME`_bReadRxData();
 
-         // Write one sector at a time
+         // Write one sector at a time  
          `$INSTANCE_NAME`_WriteBuff256( `$INSTANCE_NAME`_Buffer1 ); // Write first half of sector
          `$INSTANCE_NAME`_WriteBuff256( `$INSTANCE_NAME`_Buffer2 ); // Write second half of sector
 
          // Send byte two of checksum
          `$INSTANCE_NAME`_SendTxData( 0xFF );
          `$INSTANCE_NAME`_XferWait();                               // Wait for transfer to complete
-         rbuff = `$INSTANCE_NAME`_bReadRxData();
+		 rbuff = `$INSTANCE_NAME`_bReadRxData();
 
          // Send Byte one of checksum
          `$INSTANCE_NAME`_SendTxData( 0xFF );
          `$INSTANCE_NAME`_XferWait();                               // Wait for transfer to complete
-         rbuff = `$INSTANCE_NAME`_bReadRxData();
-
+		 rbuff = `$INSTANCE_NAME`_bReadRxData();
+      
          // Get the data response token
          `$INSTANCE_NAME`_SendTxData( 0xFF );
          `$INSTANCE_NAME`_XferWait();                               // Wait for transfer to complete
          status = `$INSTANCE_NAME`_bReadRxData();  // Read the data response byte
-
+      
          if((status&0x0F)==5)                      // Was the token valid?
          {
 
@@ -3108,16 +3156,16 @@ uint8 `$INSTANCE_NAME`_WriteSect(uint32 address)
             `$INSTANCE_NAME`_SendTxData( 0xFF );
             `$INSTANCE_NAME`_XferWait();                            // Wait for transfer to complete
             status = `$INSTANCE_NAME`_bReadRxData();  // Read the data response byte but ignore it.
-
+      
             status=0;                              // Clear status before entering loop
             y=0x8000;                              // Set timeout value to 4X max time so far
-
+         
             while(( status == 0) && (y>0))         // Loop until status is non-zero, or a timeout occurs
             {
                // Send a null byte to shift for btye read
                `$INSTANCE_NAME`_SendTxData( 0xFF );
                `$INSTANCE_NAME`_XferWait();                         // Wait for transfer to complete
-
+   
                status = `$INSTANCE_NAME`_bReadRxData(); // Read the reply
                y--;                                // Decrement loop until 0, then timeout
             }
@@ -3131,7 +3179,7 @@ uint8 `$INSTANCE_NAME`_WriteSect(uint32 address)
       }
       else
          status = `$INSTANCE_NAME`_FAIL;               // Set status to failed
-
+      
       `$INSTANCE_NAME`_EndCmd();                       // Finish the command cycle
 
       `$INSTANCE_NAME`_BuffLoc = address;              // Update write location
@@ -3141,15 +3189,15 @@ uint8 `$INSTANCE_NAME`_WriteSect(uint32 address)
    else
       status = `$INSTANCE_NAME`_FAIL;                  // Write protect on - set fail
 #endif
-
+   
    return(status);
 }
 
 //-------------------------------------------------------------------------------------------------
-// FUNCTION NAME:   uint8 `$INSTANCE_NAME`_ReadFileSect(uint8 Fptr)
+// FUNCTION NAME:   uchar `$INSTANCE_NAME`_ReadFileSect(uchar Fptr)
 //
 // DESCRIPTION:
-//    Routine that will read one sector of a file.
+//    Routine that will read one sector of a file. 
 //
 //-------------------------------------------------------------------------------------------------
 //
@@ -3165,7 +3213,7 @@ uint8 `$INSTANCE_NAME`_WriteSect(uint32 address)
 //    It DOES NOT check to see if the file is at least one sector long - non-zero.
 //    Must have an valid Fptr previously loaded by the `$INSTANCE_NAME`_fopen(Filename) subroutine.
 //
-//              ***   Global variable required   ***
+//              ***   Global variable required   ***     
 //    ClusterSize      - the size of a cluster on the current disk
 //
 //    CurFat[Index]    - contains the starting FAT entry for the file
@@ -3180,9 +3228,9 @@ uint8 `$INSTANCE_NAME`_WriteSect(uint32 address)
 //-------------------------------------------------------------------------------------------------
 #ifdef ENABLE_FILESYSTEM
 
-uint8 `$INSTANCE_NAME`_ReadFileSect(uint8 Fptr)
+uchar `$INSTANCE_NAME`_ReadFileSect(uchar Fptr)
 {
-   uint8   status = 0;              // command status
+   uchar   status = 0;              // command status
 
    `$INSTANCE_NAME`_SetSize(512);                    // Set block length to a 512 sector (512)
 
@@ -3203,7 +3251,7 @@ uint8 `$INSTANCE_NAME`_ReadFileSect(uint8 Fptr)
 #endif
 
 //-------------------------------------------------------------------------------------------------
-// FUNCTION NAME:   uint8 `$INSTANCE_NAME`_ReadSect(uint32 address)
+// FUNCTION NAME:   uchar `$INSTANCE_NAME`_ReadSect(ulong address)
 //
 // DESCRIPTION:
 //   Routine that will read one absolute sector. Address must be set to the beginning
@@ -3224,9 +3272,9 @@ uint8 `$INSTANCE_NAME`_ReadFileSect(uint8 Fptr)
 //
 //-------------------------------------------------------------------------------------------------
 
-uint8 `$INSTANCE_NAME`_ReadSect(uint32 address)
+uchar `$INSTANCE_NAME`_ReadSect(ulong address)
 {
-   uint8  status = 0;         // command status
+   uchar  status = 0;         // command status
 
 #ifdef ENABLE_WRITE
    // If sector changes flush the buffer if dirty
@@ -3236,14 +3284,14 @@ uint8 `$INSTANCE_NAME`_ReadSect(uint32 address)
       `$INSTANCE_NAME`_DirtyFlag &= 0xFE;      // Clear dirty flag for buffer
    }
 #endif
-
+   
    if(address != `$INSTANCE_NAME`_BuffLoc)
    {
       // If the sector is not already loaded, read in one sector
       `$INSTANCE_NAME`_SetSize(512);           // Set block length to a 512 sector (512)
-
+               
       // CMD17 - Read single block command
-      // Byte String = 0x51 (uint32 Address) 0xFF
+      // Byte String = 0x51 (ulong Address) 0xFF 
 
       `$INSTANCE_NAME`_Cmd(`$INSTANCE_NAME`_CMD17, address);    // Send CMD17 command string
 
@@ -3252,7 +3300,7 @@ uint8 `$INSTANCE_NAME`_ReadSect(uint32 address)
       {
          if(`$INSTANCE_NAME`_CheckReply(0xFE) != `$INSTANCE_NAME`_FAIL)      // Set check to Single Block Read data token
          {
-             // Read an entire sector
+	         // Read an entire sector 
              `$INSTANCE_NAME`_ReadBuff256( `$INSTANCE_NAME`_Buffer1 );  // Read first half of sector
              `$INSTANCE_NAME`_ReadBuff256( `$INSTANCE_NAME`_Buffer2 );  // Read second half of sector
          }
@@ -3261,7 +3309,7 @@ uint8 `$INSTANCE_NAME`_ReadSect(uint32 address)
       }
       else
          status = `$INSTANCE_NAME`_FAIL;             // Set status to failed
-
+         
       `$INSTANCE_NAME`_EndCmd();                     // Finish the command cycle
       `$INSTANCE_NAME`_BuffLoc = address;            // Update write location
    }
@@ -3269,10 +3317,10 @@ uint8 `$INSTANCE_NAME`_ReadSect(uint32 address)
 }
 
 //-------------------------------------------------------------------------------------------------
-// FUNCTION NAME:   uint8 `$INSTANCE_NAME`_NewFile(uint8 Fptr, uint8 Filename[])
+// FUNCTION NAME:   uchar `$INSTANCE_NAME`_NewFile(uchar Fptr, uchar Filename[])
 //
 // DESCRIPTION:
-//   Create new file using filename
+//   Create new file using filename  
 //
 //-------------------------------------------------------------------------------------------------
 //
@@ -3291,12 +3339,12 @@ uint8 `$INSTANCE_NAME`_ReadSect(uint32 address)
 #ifdef ENABLE_FILESYSTEM
 #ifdef ENABLE_WRITE
 
-uint8 `$INSTANCE_NAME`_NewFile(uint8 Fptr, uint8 Filename[])
+uchar `$INSTANCE_NAME`_NewFile(uchar Fptr, uchar Filename[])
 {
-   uint8 x;                    // Temp counter
-   uint8 Tmp[11];              // Temp holder for filename
-   uint8 * Dptr;               // Create a temporary pointer for directory entry in the buffer
-
+   uchar x;                    // Temp counter
+   uchar Tmp[11];              // Temp holder for filename
+   uchar * Dptr;               // Create a temporary pointer for directory entry in the buffer
+   
    // Make temporary copy of the filename (buffer will be overwritten)
    for(x=0; x<11; x++)
       Tmp[x] = Filename[x];
@@ -3307,13 +3355,13 @@ uint8 `$INSTANCE_NAME`_NewFile(uint8 Fptr, uint8 Filename[])
    // Write the filename into the directory entry in the buffer
    for(x=0; x<11; x++)
       Dptr[x] = Tmp[x];
-
+   
    // Write the blank directory entry into the buffer
    for(x=11; x<32; x++)
       Dptr[x] = `$INSTANCE_NAME`_BlankDir[x];
 
    `$INSTANCE_NAME`_WriteDirSect(Fptr);         // Write directory sector from buffers
-
+   
    // Clear the file info fields accordingly
    `$INSTANCE_NAME`_CurAttr[Fptr]=0;
    `$INSTANCE_NAME`_CurStart[Fptr]=0;
@@ -3321,14 +3369,14 @@ uint8 `$INSTANCE_NAME`_NewFile(uint8 Fptr, uint8 Filename[])
    `$INSTANCE_NAME`_CurSize[Fptr]=0;
    `$INSTANCE_NAME`_CurOffset[Fptr]=0;
    `$INSTANCE_NAME`_CurSect[Fptr]=0;
-
+   
    return(Fptr);
 }
 #endif
 #endif
 
 //-------------------------------------------------------------------------------------------------
-// FUNCTION NAME:  uint8 `$INSTANCE_NAME`_FileZero(uint8 Fptr, uint8 Del)
+// FUNCTION NAME:  uchar `$INSTANCE_NAME`_FileZero(uchar Fptr, uchar Del)
 //
 // DESCRIPTION:
 //   Sets file size to zero and resets FAT entries or deletes and closes file
@@ -3352,23 +3400,23 @@ uint8 `$INSTANCE_NAME`_NewFile(uint8 Fptr, uint8 Filename[])
 #ifdef ENABLE_FILESYSTEM
 #ifdef ENABLE_WRITE
 
-uint8 `$INSTANCE_NAME`_FileZero(uint8 Fptr, uint8 Del)
+uchar `$INSTANCE_NAME`_FileZero(uchar Fptr, uchar Del)
 {
-   uint8 x;                                 // Temp counter
-   uint16 Offset;                           // Offset to Entry
-   uint8 * Dptr;                            // Create a temporary pointer for directory entry in the buffer
-   uint8 status = `$INSTANCE_NAME`_FAIL;              // Temp status
+   uchar x;                                 // Temp counter
+   uint Offset;                             // Offset to Entry
+   uchar * Dptr;                            // Create a temporary pointer for directory entry in the buffer
+   uchar status = `$INSTANCE_NAME`_FAIL;              // Temp status
 
    if(`$INSTANCE_NAME`_CurStart[Fptr] != 0)                  // Is there a starting FAT entry present?
       `$INSTANCE_NAME`_FatReclaim(`$INSTANCE_NAME`_CurStart[Fptr]);           // Yes, delete the fat chain
-
+   
    `$INSTANCE_NAME`_ReadSect(`$INSTANCE_NAME`_CurDir[Fptr] & 0xFFFFFE00);     // Read directory sector into buffers
 
-   Offset = ((uint16)(`$INSTANCE_NAME`_CurDir[Fptr] & 0x1FF)); // Figure out the offset
+   Offset = ((uint)(`$INSTANCE_NAME`_CurDir[Fptr] & 0x1FF)); // Figure out the offset
 
    Dptr = `$INSTANCE_NAME`_GetBuffPtr(Offset);               // Get the buffer pointer offset
-
-   if(Del == 0)                             // Should the file be deleted or just zeroed?
+   
+   if(Del == 0)                             // Should the file be deleted or just zeroed?   
    {
       // Zero the file
       for(x=0x1A; x<0x20; x++)              // Zero the FAT entry and size fields
@@ -3377,7 +3425,7 @@ uint8 `$INSTANCE_NAME`_FileZero(uint8 Fptr, uint8 Del)
       {
          Dptr[0x14] = 0;
          Dptr[0x15] = 0;
-      }
+      }   
 
       // Clear the file info fields accordingly
       `$INSTANCE_NAME`_CurStart[Fptr]=0;
@@ -3389,22 +3437,22 @@ uint8 `$INSTANCE_NAME`_FileZero(uint8 Fptr, uint8 Del)
    else
    {
       // Delete the file from the directory
-      Dptr[0] = 0xE5;                      // Mark entry as deleted
+      Dptr[0] = 0xE5;                      // Mark entry as deleted   
    }
-
+   
    `$INSTANCE_NAME`_WriteSect(`$INSTANCE_NAME`_CurDir[Fptr] & 0xFFFFFE00);   // Write directory sector from buffers
-
-   if(Del == 1)                            // If deleting, the file must be Closed
+   
+   if(Del == 1)                            // If deleting, the file must be Closed   
       status = `$INSTANCE_NAME`_fclose(Fptr);
-
+      
    return(status);
 }
 #endif
 #endif
 
 //-------------------------------------------------------------------------------------------------
-// FUNCTION NAME:   uint8 `$INSTANCE_NAME`_FatReclaim(uint32 FirstFat)
-//                  uint8 `$INSTANCE_NAME`_FatReclaim(uint16 FirstFat)
+// FUNCTION NAME:   uchar `$INSTANCE_NAME`_FatReclaim(ulong FirstFat)
+//                  uchar `$INSTANCE_NAME`_FatReclaim(uint FirstFat)
 //
 // DESCRIPTION:
 //   Zero FAT chain starting at first FAT entry
@@ -3428,20 +3476,20 @@ uint8 `$INSTANCE_NAME`_FileZero(uint8 Fptr, uint8 Del)
 #ifdef ENABLE_WRITE
 
 #ifdef ENABLE_FAT32
-uint8 `$INSTANCE_NAME`_FatReclaim(uint32 FirstFat)
+uchar `$INSTANCE_NAME`_FatReclaim(ulong FirstFat)
 #else
-uint8 `$INSTANCE_NAME`_FatReclaim(uint16 FirstFat)
+uchar `$INSTANCE_NAME`_FatReclaim(uint FirstFat)
 #endif
 {
-
+   
 #ifdef ENABLE_FAT32
-   uint32 NextEntry = 0;   // Start with next entry cleared
+   ulong NextEntry = 0;   // Start with next entry cleared
 #else
-   uint16 NextEntry = 0;    // Start with next entry cleared
+   uint NextEntry = 0;    // Start with next entry cleared
 #endif
-   uint16  Offset;          // Temp Buffer offset
-   uint8 x;               // Temp counter
-   uint8 * Dptr;          // Create a temporary pointer for FAT entry in the sector
+   uint  Offset;          // Temp Buffer offset
+   uchar x;               // Temp counter
+   uchar * Dptr;          // Create a temporary pointer for FAT entry in the sector
 
    // Figure out the current sector address the FAT entry is in and read it into the buffer
    `$INSTANCE_NAME`_ReadFatSect(FirstFat); // Read FAT sector
@@ -3451,7 +3499,7 @@ uint8 `$INSTANCE_NAME`_FatReclaim(uint16 FirstFat)
       // Get next entry and zero current entry
 
       // Figure out the current buffer offset
-      Offset = ((uint16)((FirstFat*`$INSTANCE_NAME`_FatEntrySize) & 0x1FF) );
+      Offset = ( (uint)((FirstFat*`$INSTANCE_NAME`_FatEntrySize) & 0x1FF) );
 
       Dptr = `$INSTANCE_NAME`_GetBuffPtr(Offset);         // Get the buffer pointer offset
       // Convert the FAT entry to a long
@@ -3472,12 +3520,12 @@ uint8 `$INSTANCE_NAME`_FatReclaim(uint16 FirstFat)
 #endif
       {
          `$INSTANCE_NAME`_WriteFatSect(FirstFat);            // Update current FAT sectors
-
+         
          if(NextEntry != `$INSTANCE_NAME`_FatEnd)
             `$INSTANCE_NAME`_ReadFatSect(NextEntry);         // Read new FAT sector
       }
       if(FirstFat < `$INSTANCE_NAME`_EmptyFat)               // Is the deleted block at a lower address than the last empty FAT entry?
-         `$INSTANCE_NAME`_EmptyFat = FirstFat;               // Yes, update start of empty FAT entry search
+         `$INSTANCE_NAME`_EmptyFat = FirstFat;               // Yes, update start of empty FAT entry search   
       FirstFat = NextEntry;                 // Set Next entry equal to current entry
    }
    return(0);
@@ -3486,7 +3534,7 @@ uint8 `$INSTANCE_NAME`_FatReclaim(uint16 FirstFat)
 #endif
 
 //-------------------------------------------------------------------------------------------------
-// FUNCTION NAME:   uint8 `$INSTANCE_NAME`_AddFat(uint8 Fptr)
+// FUNCTION NAME:   uchar `$INSTANCE_NAME`_AddFat(uchar Fptr)
 //
 // DESCRIPTION:
 //   Add a new FAT entry to the FAT chain (or create it)
@@ -3509,19 +3557,19 @@ uint8 `$INSTANCE_NAME`_FatReclaim(uint16 FirstFat)
 #ifdef ENABLE_FILESYSTEM
 #ifdef ENABLE_WRITE
 
-uint8 `$INSTANCE_NAME`_AddFat(uint8 Fptr)
+uchar `$INSTANCE_NAME`_AddFat(uchar Fptr)
 {
    // Add a new FAT entry to the FAT chain (or create it)
-
+   
 #ifdef ENABLE_FAT32
-   uint32 FreeNum;           // Number of the first available free FAT entry
-   uint32 LastNum;           // Number of the last FAT entry  in the existing chain
+   ulong FreeNum;           // Number of the first available free FAT entry
+   ulong LastNum;           // Number of the last FAT entry  in the existing chain
 #else
-   uint16 FreeNum;           // Number of the first available free FAT entry
-   uint16 LastNum;           // Number of the last FAT entry in the existing chain
+   uint FreeNum;            // Number of the first available free FAT entry
+   uint LastNum;            // Number of the last FAT entry in the existing chain
 #endif
-   uint8 x;                 // Temp counter
-   uint8 * Dptr;            // Create a temporary pointer for FAT entry in the sector
+   uchar x;                 // Temp counter
+   uchar * Dptr;            // Create a temporary pointer for FAT entry in the sector
 
    FreeNum = `$INSTANCE_NAME`_FatTrack(0);   // Get the next free FAT entry
    `$INSTANCE_NAME`_EmptyFat = FreeNum +1;   // Increment the empty FAT entry pointer - this one is now used
@@ -3535,31 +3583,31 @@ uint8 `$INSTANCE_NAME`_AddFat(uint8 Fptr)
       // Must add the new FAT chain to the file info
       `$INSTANCE_NAME`_CurStart[Fptr] = FreeNum;   // Update the starting FAT entry
       `$INSTANCE_NAME`_CurFat[Fptr] = FreeNum;     // Update the current FAT entry
-
+      
       // Update the directory listing for first file FAT
       Dptr = `$INSTANCE_NAME`_ReadDirSect(Fptr);   // Read in the directory sector
-
+      
       // Pass the value into the directory
-      Dptr[0x1A] = ((uint8)(FreeNum));
-      Dptr[0x1B] = ((uint8)(FreeNum >> 8));
+      Dptr[0x1A] = ((uchar)(FreeNum));
+      Dptr[0x1B] = ((uchar)(FreeNum >> 8));
 
 #ifdef ENABLE_FAT32
       if(`$INSTANCE_NAME`_FatEntrySize == 4)
       {
-         Dptr[0x14] = ((uint8)(FreeNum >> 16));
-         Dptr[0x15] = ((uint8)(FreeNum >> 24));
+         Dptr[0x14] = ((uchar)(FreeNum >> 16));
+         Dptr[0x15] = ((uchar)(FreeNum >> 24));
       }
 #endif
-
+      
       `$INSTANCE_NAME`_WriteDirSect(Fptr);         // Write the directory sector
    }
-
+      
    Dptr = `$INSTANCE_NAME`_ReadFatSect(FreeNum);   // Get the FAT sector buffer
-
+   
    // Copy the FAT end into the new FAT entry
    for(x=0; x<`$INSTANCE_NAME`_FatEntrySize; x++)
    {
-      Dptr[x] = ((uint8)(`$INSTANCE_NAME`_FatEnd >> (x*8)));
+      Dptr[x] = ((uchar)(`$INSTANCE_NAME`_FatEnd >> (x*8)));
    }
 
    if(LastNum == 0)               // Is there an old value to update?
@@ -3580,15 +3628,15 @@ uint8 `$INSTANCE_NAME`_AddFat(uint8 Fptr)
       else
       {
          // Yes still in same buffer, update the pointer
-         Dptr = `$INSTANCE_NAME`_GetBuffPtr((uint16)((LastNum*`$INSTANCE_NAME`_FatEntrySize) & 0x1FF));
+         Dptr = `$INSTANCE_NAME`_GetBuffPtr((uint)((LastNum*`$INSTANCE_NAME`_FatEntrySize) & 0x1FF));
       }
-
+      
       // Copy the new FAT entry into the old FAT entry
       for(x=0; x<`$INSTANCE_NAME`_FatEntrySize ; x++)
       {
-         Dptr[x] = ((uint8)(FreeNum >> (x*8)));
+         Dptr[x] = ((uchar)(FreeNum >> (x*8)));
       }
-
+      
       `$INSTANCE_NAME`_WriteFatSect(LastNum);         // Write FAT sector
       // Force a flush of the buffer just in case
       `$INSTANCE_NAME`_BuffLoc=0;
@@ -3599,7 +3647,7 @@ uint8 `$INSTANCE_NAME`_AddFat(uint8 Fptr)
 #endif
 
 //-------------------------------------------------------------------------------------------------
-// FUNCTION NAME:   uint8 * `$INSTANCE_NAME`_GetBuffPtr(uint16 Offset)
+// FUNCTION NAME:   uchar * `$INSTANCE_NAME`_GetBuffPtr(uint Offset)
 //
 // DESCRIPTION:
 //   Return the pointer to the read/write buffer indicated by offset
@@ -3620,28 +3668,28 @@ uint8 `$INSTANCE_NAME`_AddFat(uint8 Fptr)
 //-------------------------------------------------------------------------------------------------
 #ifdef ENABLE_FILESYSTEM
 
-uint8 * `$INSTANCE_NAME`_GetBuffPtr(uint16 Offset)
+uchar * `$INSTANCE_NAME`_GetBuffPtr(uint Offset)
 {
-   uint8 * Dptr;               // Pointer variable
-
+   uchar * Dptr;               // Pointer variable
+   
    Offset &= 0x1FF;            // Make sure offset is clean (0-511)
 
    if((Offset & 0x100)==0)
    {
       // Figure out offset into buffer 1 and set pointer
-      Dptr = &`$INSTANCE_NAME`_Buffer1[Offset];
+      Dptr = &`$INSTANCE_NAME`_Buffer1[Offset];   
    }
-   else
+   else 
    {
       // Figure out offset into buffer 1 and set pointer
-      Dptr = &`$INSTANCE_NAME`_Buffer2[Offset-0x100];
+      Dptr = &`$INSTANCE_NAME`_Buffer2[Offset-0x100];   
    }
    return(Dptr);               // Return the pointer
 }
 #endif
 
 //-------------------------------------------------------------------------------------------------
-// FUNCTION NAME:   char * `$INSTANCE_NAME`_ReadDirSect(uint8 Fptr)
+// FUNCTION NAME:   char * `$INSTANCE_NAME`_ReadDirSect(uchar Fptr)
 //
 // DESCRIPTION:
 //   Read directory entry sector into buffer and return buffer pointer
@@ -3662,19 +3710,19 @@ uint8 * `$INSTANCE_NAME`_GetBuffPtr(uint16 Offset)
 //-------------------------------------------------------------------------------------------------
 #ifdef ENABLE_FILESYSTEM
 
-uint8 * `$INSTANCE_NAME`_ReadDirSect(uint8 Fptr)
+char * `$INSTANCE_NAME`_ReadDirSect(uchar Fptr)
 {
-   uint16 Offset;                               // Temp for offset value
-
+   uint Offset;                               // Temp for offset value
+   
    `$INSTANCE_NAME`_ReadSect(`$INSTANCE_NAME`_CurDir[Fptr] & 0xFFFFFE00);       // Read  directory sector into buffers
-   Offset = ((uint16)(`$INSTANCE_NAME`_CurDir[Fptr] & 0x1FF));   // Figure out the offset
+   Offset = ((uint)(`$INSTANCE_NAME`_CurDir[Fptr] & 0x1FF));   // Figure out the offset
 
    return(`$INSTANCE_NAME`_GetBuffPtr(Offset));                // Return the buffer pointer offset
 }
 #endif
 
 //-------------------------------------------------------------------------------------------------
-// FUNCTION NAME:   void `$INSTANCE_NAME`_WriteDirSect(uint8 Fptr)
+// FUNCTION NAME:   void `$INSTANCE_NAME`_WriteDirSect(uchar Fptr)
 //
 // DESCRIPTION:
 //   Write directory entry sector from the buffer
@@ -3695,7 +3743,7 @@ uint8 * `$INSTANCE_NAME`_ReadDirSect(uint8 Fptr)
 #ifdef ENABLE_FILESYSTEM
 #ifdef ENABLE_WRITE
 
-void `$INSTANCE_NAME`_WriteDirSect(uint8 Fptr)
+void `$INSTANCE_NAME`_WriteDirSect(uchar Fptr)
 {
    `$INSTANCE_NAME`_WriteSect(`$INSTANCE_NAME`_CurDir[Fptr] & 0xFFFFFE00);   // Write directory sector from buffers
 }
@@ -3703,8 +3751,8 @@ void `$INSTANCE_NAME`_WriteDirSect(uint8 Fptr)
 #endif
 
 //-------------------------------------------------------------------------------------------------
-// FUNCTION NAME:   char * `$INSTANCE_NAME`_ReadFatSect(uint32 Fat)
-//                  char * `$INSTANCE_NAME`_ReadFatSect(uint16 Fat)
+// FUNCTION NAME:   char * `$INSTANCE_NAME`_ReadFatSect(ulong Fat)
+//                  char * `$INSTANCE_NAME`_ReadFatSect(uint Fat)
 //
 // DESCRIPTION:
 //    Read directory entry sector into buffer and return buffer pointer
@@ -3726,26 +3774,26 @@ void `$INSTANCE_NAME`_WriteDirSect(uint8 Fptr)
 #ifdef ENABLE_FILESYSTEM
 
 #ifdef ENABLE_FAT32
-uint8 * `$INSTANCE_NAME`_ReadFatSect(uint32 Fat)
+char * `$INSTANCE_NAME`_ReadFatSect(ulong Fat)
 #else
-uint8 * `$INSTANCE_NAME`_ReadFatSect(uint16 Fat)
+char * `$INSTANCE_NAME`_ReadFatSect(uint Fat)
 #endif
 {
-   uint16 Offset;                               // Temp for offset value
-   uint32 address;                              // Temp Address variable
-
+   uint Offset;                                // Temp for offset value
+   ulong address;                              // Temp Address variable
+   
    address = `$INSTANCE_NAME`_GetFatAddr(Fat);                  // Get the FAT entry address
-
+   
    `$INSTANCE_NAME`_ReadSect(address + `$INSTANCE_NAME`_Fat1Start);              // Read  FAT sector into buffers
-   Offset = ((uint16)((Fat*`$INSTANCE_NAME`_FatEntrySize) & 0x1FF));   // Figure out the offset
+   Offset = ((uint)((Fat*`$INSTANCE_NAME`_FatEntrySize) & 0x1FF));   // Figure out the offset
 
    return(`$INSTANCE_NAME`_GetBuffPtr(Offset));                 // Return the buffer pointer offset
 }
 #endif
 
 //-------------------------------------------------------------------------------------------------
-// FUNCTION NAME:   void `$INSTANCE_NAME`_WriteFatSect(uint32 Fat)
-//                  void `$INSTANCE_NAME`_WriteFatSect(uint16 Fat)
+// FUNCTION NAME:   void `$INSTANCE_NAME`_WriteFatSect(ulong Fat)
+//                  void `$INSTANCE_NAME`_WriteFatSect(uint Fat)
 //
 // DESCRIPTION:
 //   Write sector buffer back into the FAT tables
@@ -3767,15 +3815,15 @@ uint8 * `$INSTANCE_NAME`_ReadFatSect(uint16 Fat)
 #ifdef ENABLE_WRITE
 
 #ifdef ENABLE_FAT32
-void `$INSTANCE_NAME`_WriteFatSect(uint32 Fat)
+void `$INSTANCE_NAME`_WriteFatSect(ulong Fat)
 #else
-void `$INSTANCE_NAME`_WriteFatSect(uint16 Fat)
+void `$INSTANCE_NAME`_WriteFatSect(uint Fat)
 #endif
 {
-   uint32 address;                       // Temp Address variable
-
+   ulong address;                       // Temp Address variable
+   
    address = `$INSTANCE_NAME`_GetFatAddr(Fat);           // Get the FAT entry address
-
+   
    // Write sectors to both copies of the FAT from the buffer
    `$INSTANCE_NAME`_WriteSect(address + `$INSTANCE_NAME`_Fat1Start);      // Update current FAT 1 sector
    `$INSTANCE_NAME`_WriteSect(address + `$INSTANCE_NAME`_Fat2Start);      // Update current FAT 2 sector
@@ -3784,8 +3832,8 @@ void `$INSTANCE_NAME`_WriteFatSect(uint16 Fat)
 #endif
 
 //-------------------------------------------------------------------------------------------------
-// FUNCTION NAME:   uint32 `$INSTANCE_NAME`_GetFatAddr(uint32 Fat)
-//                  uint32 `$INSTANCE_NAME`_GetFatAddr(uint16 Fat)
+// FUNCTION NAME:   ulong `$INSTANCE_NAME`_GetFatAddr(ulong Fat)
+//                  ulong `$INSTANCE_NAME`_GetFatAddr(uint Fat)
 //
 // DESCRIPTION:
 //   Return the sector address for the FAT entry
@@ -3807,9 +3855,9 @@ void `$INSTANCE_NAME`_WriteFatSect(uint16 Fat)
 #ifdef ENABLE_FILESYSTEM
 
 #ifdef ENABLE_FAT32
-uint32 `$INSTANCE_NAME`_GetFatAddr(uint32 Fat)
+ulong `$INSTANCE_NAME`_GetFatAddr(ulong Fat)
 #else
-uint32 `$INSTANCE_NAME`_GetFatAddr(uint16 Fat)
+ulong `$INSTANCE_NAME`_GetFatAddr(uint Fat)
 #endif
 {
    return((Fat*`$INSTANCE_NAME`_FatEntrySize) & 0xFFFFFE00);    // Calculate sector offset
@@ -3817,7 +3865,7 @@ uint32 `$INSTANCE_NAME`_GetFatAddr(uint16 Fat)
 #endif
 
 //-------------------------------------------------------------------------------------------------
-// FUNCTION NAME:   void `$INSTANCE_NAME`_UpdateDir(uint8 Fptr)
+// FUNCTION NAME:   void `$INSTANCE_NAME`_UpdateDir(uchar Fptr)
 //
 // DESCRIPTION:
 //   Update the directory entry from the current file info
@@ -3840,22 +3888,22 @@ uint32 `$INSTANCE_NAME`_GetFatAddr(uint16 Fat)
 #ifdef ENABLE_FILESYSTEM
 #ifdef ENABLE_WRITE
 
-void `$INSTANCE_NAME`_UpdateDir(uint8 Fptr)
+void `$INSTANCE_NAME`_UpdateDir(uchar Fptr)
 {
-   uint8 x;                    // Temp loop variable
-   uint8 * Dptr;               // Pointer to directory entry in buffer
+   uchar x;                    // Temp loop variable
+   uchar * Dptr;               // Pointer to directory entry in buffer
 
-   uint32 TempSize;
+   ulong TempSize;
    TempSize = `$INSTANCE_NAME`_CurSize[Fptr];
-
+   
    Dptr = `$INSTANCE_NAME`_ReadDirSect(Fptr);   // Read  directory sector into buffers and return pointer
 
    Dptr[0x0B] = `$INSTANCE_NAME`_CurAttr[Fptr]; // Copy the attribute back to the directory
-
+   
                                // Copy the current size back to the directory
    for(x=0; x<4; x++)
    {
-      Dptr[0x1C + x] = ((uint8)(`$INSTANCE_NAME`_CurSize[Fptr]>>(x*8)));
+      Dptr[0x1C + x] = ((uchar)(`$INSTANCE_NAME`_CurSize[Fptr]>>(x*8)));
    }
 
    `$INSTANCE_NAME`_WriteDirSect(Fptr);         // Write directory sector from buffers
@@ -3863,9 +3911,9 @@ void `$INSTANCE_NAME`_UpdateDir(uint8 Fptr)
 }
 #endif
 #endif
-
+   
 //-------------------------------------------------------------------------------------------------
-// FUNCTION NAME:   uint8 `$INSTANCE_NAME`_ParseFilename(uint8 * Filename)
+// FUNCTION NAME:   uchar `$INSTANCE_NAME`_ParseFilename(uchar * Filename)
 //
 // DESCRIPTION:
 //   Parse the filename string and convert it into 8x3 dir format
@@ -3879,7 +3927,7 @@ void `$INSTANCE_NAME`_UpdateDir(uint8 Fptr)
 //    Pass/Fail status
 //
 //  SIDE EFFECTS:
-//    Note: Filename string must have 13 charcters resevered even
+//    Note: Filename string must have 13 charcters resevered even 
 //          if fewer characters are used (8 + dot + 3 + null = 13)
 //
 //  THEORY of OPERATON or PROCEDURE:
@@ -3888,31 +3936,31 @@ void `$INSTANCE_NAME`_UpdateDir(uint8 Fptr)
 //-------------------------------------------------------------------------------------------------
 #ifdef ENABLE_FILESYSTEM
 
-uint8 `$INSTANCE_NAME`_ParseFilename(uint8 * Filename)
-{
-
-   uint8 x = 0;        // Temp loop variable
-   uint8 y;            // Temp loop variable
-   uint8 status = 0;   // Temp status
-   uint8 Dot = 0;      // Dot present flag
-   uint8 Length;       // String length
-   uint8 Ext;          // the length of the extension
+uchar `$INSTANCE_NAME`_ParseFilename(uchar * Filename)
+{   
+         
+   uchar x = 0;        // Temp loop variable
+   uchar y;            // Temp loop variable
+   uchar status = 0;   // Temp status
+   uchar Dot = 0;      // Dot present flag
+   uchar Length;       // String length
+   uchar Ext;          // the length of the extension
 
    while(Filename[x] != 0)       // Loop through Filename until null is found
    {
       y = Filename[x];           // Temp store the character as array index is code intensive
-
+      
       if((y >= 'a')&&(y <= 'z')) //Convert ASCII characters to upper case
          Filename[x] -= 0x20;    // Convert lower to upper case
 
       if(y == '.')               // Is the a dot character?
-      {
+	  {
          if(Dot == 0)            // Yes, Is it the first dot character?
             Dot=x;               // Yes, save the position
          else
             status=`$INSTANCE_NAME`_FAIL;         // No, multiple dot characters are illegal
       }
-
+	  
       x++;                       // Increment count
    }
 
@@ -3926,13 +3974,13 @@ uint8 `$INSTANCE_NAME`_ParseFilename(uint8 * Filename)
       Length=x;                  // Save filename length (no dot present)
       Ext = 0;                   // No extension
    }
-
+   
    // See if the filename is valid
 
    // Check to make sure the first character is not a null (no string) and is valid upper case character
    if((Filename[0] < 'A')||(Filename[0] > 'Z'))    // Is the first character illegal?
       status = `$INSTANCE_NAME`_FAIL;                               // ERROR - Filename missing or starts with an illegal character
-
+   
    // Check to make sure the filename and extension are legal lengths
    if((Length>8)||(Ext>3))       // Are sizes valid?
       status = `$INSTANCE_NAME`_FAIL;             // No, ERROR - filename or extension too long
@@ -3955,7 +4003,7 @@ uint8 `$INSTANCE_NAME`_ParseFilename(uint8 * Filename)
                Filename[x]=Filename[x+1];
          }
       }
-
+      
       // Fill remainder of extension with spaces
       for(x=10; x>(7+Ext); x--)
          Filename[x]=' ';
@@ -3963,7 +4011,7 @@ uint8 `$INSTANCE_NAME`_ParseFilename(uint8 * Filename)
       // Fill remainder of filename with spaces
       for(x=Length; x<8; x++)
          Filename[x]=' ';
-
+         
       // Add the final null
       Filename[11]=0;
    }
@@ -3974,7 +4022,7 @@ uint8 `$INSTANCE_NAME`_ParseFilename(uint8 * Filename)
 
 
 //-------------------------------------------------------------------------------------------------
-// FUNCTION NAME:   void `$INSTANCE_NAME`_CopyDir(uint8 Fptr1, uint8 Fptr2 )
+// FUNCTION NAME:   void `$INSTANCE_NAME`_CopyDir(uchar Fptr1, uchar Fptr2 )
 //
 // DESCRIPTION:
 //   This routine copies the directory information from file 1 to file 2
@@ -3996,14 +4044,14 @@ uint8 `$INSTANCE_NAME`_ParseFilename(uint8 * Filename)
 #ifdef ENABLE_FILESYSTEM
 #ifdef ENABLE_WRITE
 
-void `$INSTANCE_NAME`_CopyDir(uint8 Fptr1, uint8 Fptr2 )
+void `$INSTANCE_NAME`_CopyDir(uchar Fptr1, uchar Fptr2 )
 {
-
+   
    // Copy file size, time, date, and attributes from the original file
-
-   `$INSTANCE_NAME`_CurSize[Fptr2] = `$INSTANCE_NAME`_CurSize[Fptr1];      // Copy file size
-   `$INSTANCE_NAME`_CurAttr[Fptr2] = `$INSTANCE_NAME`_CurAttr[Fptr1];      // Copy file attributes
-
+   
+   `$INSTANCE_NAME`_CurSize[Fptr2] = `$INSTANCE_NAME`_CurSize[Fptr1];      // Copy file size 
+   `$INSTANCE_NAME`_CurAttr[Fptr2] = `$INSTANCE_NAME`_CurAttr[Fptr1];      // Copy file attributes 
+   
    // Call update directory to save the new directory information
    `$INSTANCE_NAME`_UpdateDir(Fptr2);
 }
@@ -4011,7 +4059,7 @@ void `$INSTANCE_NAME`_CopyDir(uint8 Fptr1, uint8 Fptr2 )
 #endif
 
 //-------------------------------------------------------------------------------------------------
-// FUNCTION NAME:   void `$INSTANCE_NAME`_GetAddress(uint8 Fptr, uint8 mode)
+// FUNCTION NAME:   void `$INSTANCE_NAME`_GetAddress(uchar Fptr, uchar mode)
 //
 // DESCRIPTION:
 //    Calculate the address based on the current file/sub-directory position
@@ -4020,7 +4068,7 @@ void `$INSTANCE_NAME`_CopyDir(uint8 Fptr1, uint8 Fptr2 )
 //
 //  ARGUMENTS:
 //    Fptr => File pointer
-//    mode = 0 only the sector address is returned
+//    mode = 0 only the sector address is returned  
 //         = 1 sector and offset
 //
 //  RETURNS: NA
@@ -4035,27 +4083,27 @@ void `$INSTANCE_NAME`_CopyDir(uint8 Fptr1, uint8 Fptr2 )
 
 #ifdef ENABLE_FILESYSTEM
 
-void `$INSTANCE_NAME`_GetAddress(uint8 Fptr, uint8 mode)
+void `$INSTANCE_NAME`_GetAddress(uchar Fptr, uchar mode)
 {
    // Calculate the address based on the current file/sub-directory position
    // If mode = 0 only the sector address is returned, mode = 1 sector and offset
-
+   
    `$INSTANCE_NAME`_Address = `$INSTANCE_NAME`_CurFat[Fptr] - 2;            // FAT cluster - 2 (actual offset in clusters)
    `$INSTANCE_NAME`_Address *= `$INSTANCE_NAME`_ClusterSize;                // Multiply by cluster size to get sectors
    `$INSTANCE_NAME`_Address += `$INSTANCE_NAME`_CurSect[Fptr];              // Add current sector offset
    `$INSTANCE_NAME`_Address *= 512;                        // Multiply sectors by 512 to get bytes
    `$INSTANCE_NAME`_Address += `$INSTANCE_NAME`_DataStart;                  // Add the starting address of the data area
-
+   
    if(mode == 1)
    {
       // Add the offset stuff to the address
       `$INSTANCE_NAME`_Address += (`$INSTANCE_NAME`_CurOffset[Fptr]&0x000001FF);   // Add the significant part of the current offset (less than a sector)
-   }
+   }   
 }
 #endif
 
 //-------------------------------------------------------------------------------------------------
-// FUNCTION NAME:   void `$INSTANCE_NAME`_IncOffset(uint8 Fptr, uint8 mode)
+// FUNCTION NAME:   void `$INSTANCE_NAME`_IncOffset(uchar Fptr, uchar mode)
 //
 // DESCRIPTION:
 //    Increments the file position offset and updates trhe sector count and FAT information
@@ -4064,7 +4112,7 @@ void `$INSTANCE_NAME`_GetAddress(uint8 Fptr, uint8 mode)
 //
 //  ARGUMENTS:
 //    Fptr => File pointer
-//    mode = 0 increment the position offset, the sector count, and FAT
+//    mode = 0 increment the position offset, the sector count, and FAT  
 //         = 1 Same as mode 0 except FAT is added if needed for a write
 //
 //  RETURNS: NA
@@ -4077,11 +4125,11 @@ void `$INSTANCE_NAME`_GetAddress(uint8 Fptr, uint8 mode)
 //
 //-------------------------------------------------------------------------------------------------
 
-void `$INSTANCE_NAME`_IncOffset(uint8 Fptr, uint8 mode)
+void `$INSTANCE_NAME`_IncOffset(uchar Fptr, uchar mode)
 {
 
     // Increment file position (and update sector and FAT entries if FileSystem enabled)
-    `$INSTANCE_NAME`_CurOffset[Fptr]++;    // Advance the offset value
+    `$INSTANCE_NAME`_CurOffset[Fptr]++;    // Advance the offset value	
 
 #ifdef ENABLE_FILESYSTEM
     if((`$INSTANCE_NAME`_CurOffset[Fptr] != 0) && ((`$INSTANCE_NAME`_CurOffset[Fptr] & 0x1FF) == 0))
@@ -4096,7 +4144,7 @@ void `$INSTANCE_NAME`_IncOffset(uint8 Fptr, uint8 mode)
                 `$INSTANCE_NAME`_NextFat(Fptr);  // Get next FAT entry (and add it if needed)
         }
         else
-            `$INSTANCE_NAME`_CurSect[Fptr]++;    // Increment sector count
+            `$INSTANCE_NAME`_CurSect[Fptr]++;    // Increment sector count	
     }
 #endif
 }
@@ -4106,17 +4154,17 @@ void `$INSTANCE_NAME`_IncOffset(uint8 Fptr, uint8 mode)
 //=================================================================================================
 
 //-------------------------------------------------------------------------------------------------
-// FUNCTION NAME:   uint8 `$INSTANCE_NAME`_ACmd_13(void)
+// FUNCTION NAME:   uchar `$INSTANCE_NAME`_ACmd_13(void)
 //
 // DESCRIPTION:
 //   ACMD13 - SD card status command
-//   Byte String = 0x4D 0x00 0x00 0x00 0x00 0xFF
+//   Byte String = 0x4D 0x00 0x00 0x00 0x00 0xFF 
 //
 //-------------------------------------------------------------------------------------------------
 //
 //  ARGUMENTS:  NA
 //
-//  RETURNS:
+//  RETURNS: 
 //    Pass/Fail status
 //
 //  SIDE EFFECTS:
@@ -4128,36 +4176,39 @@ void `$INSTANCE_NAME`_IncOffset(uint8 Fptr, uint8 mode)
 //-------------------------------------------------------------------------------------------------
 #ifdef ENABLE_DEBUGFUNCT
 
-uint8 `$INSTANCE_NAME`_ACmd_13(void)
+uchar `$INSTANCE_NAME`_ACmd_13(void)
 {
-    uint8 status = 0;
+   uchar   status = 0;
+   uchar   x;
+   
+   `$INSTANCE_NAME`_Cmd(`$INSTANCE_NAME`_ACMD13, `$INSTANCE_NAME`_NOARGS);                   // Send ACMD13 command string
 
-    `$INSTANCE_NAME`_Cmd(`$INSTANCE_NAME`_ACMD13, `$INSTANCE_NAME`_NOARGS);     // Send ACMD13 command string
+   // Check response
+   if(`$INSTANCE_NAME`_CheckReply(0) != `$INSTANCE_NAME`_FAIL)              // Check for status good
+   {
+      if(`$INSTANCE_NAME`_CheckReply(0xFE) != `$INSTANCE_NAME`_FAIL)        // Set check to Single Block Read data token
+      {
+         // Get the 64 bytes and save them
+         `$INSTANCE_NAME`_ReadBuff(`$INSTANCE_NAME`_Buffer1, 32 );
+         `$INSTANCE_NAME`_ReadBuff(`$INSTANCE_NAME`_Buffer2, 32 );
+      }
+      else
+         status = `$INSTANCE_NAME`_FAIL;       // Set status to failed
+   }
+   else
+      status = `$INSTANCE_NAME`_FAIL;          // Set status to failed
 
-    // Check response
-    if(`$INSTANCE_NAME`_CheckReply(0) != `$INSTANCE_NAME`_FAIL) {               // Check for status good
-        if (`$INSTANCE_NAME`_CheckReply(0xFE) != `$INSTANCE_NAME`_FAIL) {       // Set check to Single Block Read data token
-            // Get the 64 bytes and save them
-            `$INSTANCE_NAME`_ReadBuff(`$INSTANCE_NAME`_Buffer1, 32 );
-            `$INSTANCE_NAME`_ReadBuff(`$INSTANCE_NAME`_Buffer2, 32 );
-        }
-        else
-            status = `$INSTANCE_NAME`_FAIL;                                     // Set status to failed
-    }
-    else
-        status = `$INSTANCE_NAME`_FAIL;                                         // Set status to failed
+   `$INSTANCE_NAME`_EndCmd();                  // Finish the command cycle
 
-    `$INSTANCE_NAME`_EndCmd();                                                  // Finish the command cycle
-
-    return(status);
+   return(status);
 }
 #endif
 
 //-------------------------------------------------------------------------------------------------
-// FUNCTION NAME:   uint8 `$INSTANCE_NAME`_GetCID(void)
+// FUNCTION NAME:   uchar `$INSTANCE_NAME`_GetCID(void)
 //
 // DESCRIPTION:
-//   Sends the get CID command (Byte String = 0x4A 0x00 0x00 0x00 0x00 0xFF)
+//   Sends the get CID command (Byte String = 0x4A 0x00 0x00 0x00 0x00 0xFF) 
 //
 //-------------------------------------------------------------------------------------------------
 //
@@ -4175,38 +4226,42 @@ uint8 `$INSTANCE_NAME`_ACmd_13(void)
 
 #ifdef ENABLE_DEBUGFUNCT
 
-uint8 `$INSTANCE_NAME`_GetCID(void)
+uchar `$INSTANCE_NAME`_GetCID(void)
 {
-    uint8 status = 0;
 
-    // CMD10 - Get CID command
-    // Byte String = 0x4A 0x00 0x00 0x00 0x00 0xFF
+   uchar   status = 0;
+   uint   x;
+   
+   // CMD10 - Get CID command
+   // Byte String = 0x4A 0x00 0x00 0x00 0x00 0xFF 
 
-    `$INSTANCE_NAME`_Cmd(`$INSTANCE_NAME`_CMD10, `$INSTANCE_NAME`_NOARGS);                    // Send CMD10 command string
+   `$INSTANCE_NAME`_Cmd(`$INSTANCE_NAME`_CMD10, `$INSTANCE_NAME`_NOARGS);                    // Send CMD10 command string
+   
+   // Check response
+   if(`$INSTANCE_NAME`_CheckReply(0) != `$INSTANCE_NAME`_FAIL)              // Check for status good
+   {
+      if(`$INSTANCE_NAME`_CheckReply(0xFE) != `$INSTANCE_NAME`_FAIL)        // Set check to Single Block Read data token
+      {
+         // Get CID data (16 bytes in SPI mode) and save them
+         `$INSTANCE_NAME`_ReadBuff(`$INSTANCE_NAME`_Buffer1, 16 );
+      }
+      else
+         status = `$INSTANCE_NAME`_FAIL;      // Set status to failed
+   }
+   else
+      status = `$INSTANCE_NAME`_FAIL;         // Set status to failed
 
-    // Check response
-    if (`$INSTANCE_NAME`_CheckReply(0) != `$INSTANCE_NAME`_FAIL) {          // Check for status good
-        if (`$INSTANCE_NAME`_CheckReply(0xFE) != `$INSTANCE_NAME`_FAIL) {   // Set check to Single Block Read data token
-            // Get CID data (16 bytes in SPI mode) and save them
-            `$INSTANCE_NAME`_ReadBuff(`$INSTANCE_NAME`_Buffer1, 16 );
-        }
-        else
-            status = `$INSTANCE_NAME`_FAIL;                                 // Set status to failed
-    }
-    else
-        status = `$INSTANCE_NAME`_FAIL;                                     // Set status to failed
+   `$INSTANCE_NAME`_EndCmd();                 // Finish the command cycle
 
-    `$INSTANCE_NAME`_EndCmd();                                              // Finish the command cycle
-
-    return(status);
+   return(status);
 }
 #endif
 
 //-------------------------------------------------------------------------------------------------
-// FUNCTION NAME:   uint8 `$INSTANCE_NAME`_GetOCR(void)
+// FUNCTION NAME:   uchar `$INSTANCE_NAME`_GetOCR(void)
 //
 // DESCRIPTION:
-//    Gets OCR data and puts it into Buffer1 (0-3]
+//    Gets OCR data and puts it into Buffer1 (0-3] 
 //
 //-------------------------------------------------------------------------------------------------
 //
@@ -4223,32 +4278,33 @@ uint8 `$INSTANCE_NAME`_GetCID(void)
 //-------------------------------------------------------------------------------------------------
 #ifdef ENABLE_DEBUGFUNCT
 
-uint8 `$INSTANCE_NAME`_GetOCR(void)
+uchar `$INSTANCE_NAME`_GetOCR(void)
 {
-    uint8 status = 0;
+   uchar   status = 0;
+   uchar   x;
+   
+   // CMD58 - Read OCR data command
+   // Byte String = 0x7A 0x00 0x00 0x00 0x00 0xFF 
 
-    // CMD58 - Read OCR data command
-    // Byte String = 0x7A 0x00 0x00 0x00 0x00 0xFF
+   `$INSTANCE_NAME`_Cmd(`$INSTANCE_NAME`_CMD58, `$INSTANCE_NAME`_NOARGS);             // Send CMD58 command string
+   
+   // Status bits: 0=Idle, 1=Erase Reset, 2=Illegal CMD, 3=CRC Error, 4=Erase_Seq_Error, 5=Address Error, 6=Param Error
+   status = `$INSTANCE_NAME`_GetR1();               // Get the R1 command response   
 
-    `$INSTANCE_NAME`_Cmd(`$INSTANCE_NAME`_CMD58, `$INSTANCE_NAME`_NOARGS);             // Send CMD58 command string
+   // Get OCR data 
+   `$INSTANCE_NAME`_ReadBuff(`$INSTANCE_NAME`_Buffer1, 4 );
 
-    // Status bits: 0=Idle, 1=Erase Reset, 2=Illegal CMD, 3=CRC Error, 4=Erase_Seq_Error, 5=Address Error, 6=Param Error
-    status = `$INSTANCE_NAME`_GetR1();               // Get the R1 command response
+   `$INSTANCE_NAME`_EndCmd();                       // Finish the command cycle
 
-    // Get OCR data
-    `$INSTANCE_NAME`_ReadBuff(`$INSTANCE_NAME`_Buffer1, 4 );
-
-    `$INSTANCE_NAME`_EndCmd();                       // Finish the command cycle
-
-    return(status);
+   return(status);
 }
 #endif
 
 //-------------------------------------------------------------------------------------------------
-// FUNCTION NAME:   uint8 `$INSTANCE_NAME`_GetCSD(void)
+// FUNCTION NAME:   uchar `$INSTANCE_NAME`_GetCSD(void)
 //
 // DESCRIPTION:
-//   Sends the get CSD command (Byte String = 0x49 0x00 0x00 0x00 0x00 0xFF)
+//   Sends the get CSD command (Byte String = 0x49 0x00 0x00 0x00 0x00 0xFF) 
 //
 //-------------------------------------------------------------------------------------------------
 //
@@ -4265,34 +4321,38 @@ uint8 `$INSTANCE_NAME`_GetOCR(void)
 //-------------------------------------------------------------------------------------------------
 #ifdef ENABLE_DEBUGFUNCT
 
-uint8 `$INSTANCE_NAME`_GetCSD(void)
+uchar `$INSTANCE_NAME`_GetCSD(void)
 {
-    uint8 status = 0;
 
-    // CMD9 - Get CSD command
-    // Byte String = 0x49 0x00 0x00 0x00 0x00 0xFF
+   uchar   status = 0;
+   uchar   x;
+   
+   // CMD9 - Get CSD command
+   // Byte String = 0x49 0x00 0x00 0x00 0x00 0xFF 
 
-    `$INSTANCE_NAME`_Cmd(`$INSTANCE_NAME`_CMD9, `$INSTANCE_NAME`_NOARGS);                     // Send CMD9 command string
+   `$INSTANCE_NAME`_Cmd(`$INSTANCE_NAME`_CMD9, `$INSTANCE_NAME`_NOARGS);                     // Send CMD9 command string
+   
+   // Check response
+   if(`$INSTANCE_NAME`_CheckReply(0) != `$INSTANCE_NAME`_FAIL)              // Check for status good
+   {
+      if(`$INSTANCE_NAME`_CheckReply(0xFE) != `$INSTANCE_NAME`_FAIL)        // Set check to Single Block Read data token
+      {
+         // Get CSD data (16 bytes in SPI mode) and save them
+         `$INSTANCE_NAME`_ReadBuff(`$INSTANCE_NAME`_Buffer1, 16 );
+      }
+      else
+         status = `$INSTANCE_NAME`_FAIL;       // Set status to failed
+   }
+   else
+      status = `$INSTANCE_NAME`_FAIL;          // Set status to failed
+   `$INSTANCE_NAME`_EndCmd();                  // Finish the command cycle
 
-    // Check response
-    if (`$INSTANCE_NAME`_CheckReply(0) != `$INSTANCE_NAME`_FAIL) {          // Check for status good
-        if (`$INSTANCE_NAME`_CheckReply(0xFE) != `$INSTANCE_NAME`_FAIL) {   // Set check to Single Block Read data token
-            // Get CSD data (16 bytes in SPI mode) and save them
-            `$INSTANCE_NAME`_ReadBuff(`$INSTANCE_NAME`_Buffer1, 16 );
-        }
-        else
-            status = `$INSTANCE_NAME`_FAIL;                                 // Set status to failed
-    }
-    else
-        status = `$INSTANCE_NAME`_FAIL;                                     // Set status to failed
-    `$INSTANCE_NAME`_EndCmd();                                              // Finish the command cycle
-
-    return(status);
+   return(status);
 }
 #endif
 
 //-------------------------------------------------------------------------------------------------
-// FUNCTION NAME:   uint8 `$INSTANCE_NAME`_ReadByte(uint32 address)
+// FUNCTION NAME:   uchar `$INSTANCE_NAME`_ReadByte(ulong address)
 //
 // DESCRIPTION:
 //   Return the byte pointed to by the absolute address
@@ -4314,36 +4374,39 @@ uint8 `$INSTANCE_NAME`_GetCSD(void)
 //-------------------------------------------------------------------------------------------------
 #ifdef ENABLE_DEBUGFUNCT
 
-uint8 `$INSTANCE_NAME`_ReadByte(uint32 address)
+uchar `$INSTANCE_NAME`_ReadByte(ulong address)
 {
-    uint8 output = 0;                                                       // Data variable
+   uchar output = 0;                   // Data variable
+   
+   `$INSTANCE_NAME`_SetSize(1);                         // Set block length to read a single byte
 
-    `$INSTANCE_NAME`_SetSize(1);                                            // Set block length to read a single byte
+   // CMD17 - Read single block command
+   // Byte String = 0x51 (ulong Address) 0xFF 
 
-    // CMD17 - Read single block command
-    // Byte String = 0x51 (uint32 Address) 0xFF
+   `$INSTANCE_NAME`_Cmd(`$INSTANCE_NAME`_CMD17, address);                // Send CMD17 command string
+   
+   // Check response
+   if(`$INSTANCE_NAME`_CheckReply(0) != `$INSTANCE_NAME`_FAIL)           // Check for status good
+   {
+      if(`$INSTANCE_NAME`_CheckReply(0xFE) != `$INSTANCE_NAME`_FAIL)     // Set check to Single Block Read data token
+      {
+         // Get one byte
 
-    `$INSTANCE_NAME`_Cmd(`$INSTANCE_NAME`_CMD17, address);                  // Send CMD17 command string
+         // Send a null byte to shift for btye read
+         `$INSTANCE_NAME`_SendTxData( 0xFF );
+         `$INSTANCE_NAME`_XferWait();                  // Wait for transfer to complete
+      
+         // Read data byte and output it
+         output = `$INSTANCE_NAME`_bReadRxData();  // Read the data byte and save it
 
-    // Check response
-    if (`$INSTANCE_NAME`_CheckReply(0) != `$INSTANCE_NAME`_FAIL) {          // Check for status good
-        if (`$INSTANCE_NAME`_CheckReply(0xFE) != `$INSTANCE_NAME`_FAIL) {   // Set check to Single Block Read data token
-            // Get one byte
-            // Send a null byte to shift for btye read
-            `$INSTANCE_NAME`_SendTxData( 0xFF );
-            `$INSTANCE_NAME`_XferWait();                                    // Wait for transfer to complete
-
-            // Read data byte and output it
-            output = `$INSTANCE_NAME`_bReadRxData();                        // Read the data byte and save it
-
-            `$INSTANCE_NAME`_EndCmd();                                      // Finish the command cycle
-        }
-    }
-
-    return(output);
+         `$INSTANCE_NAME`_EndCmd();                     // Finish the command cycle
+      }
+   }
+   return(output);
 }
 #endif
 
-// ============================================================================
-
+//=================================================================================================
+// END of debug functions
+//=================================================================================================
 
