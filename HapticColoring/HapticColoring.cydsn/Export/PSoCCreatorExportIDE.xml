@@ -27,7 +27,7 @@
   </Toolchains>
   <Project Name="HapticColoring" Path="D:\Development\EC2799\HapticColoring\HapticColoring.cydsn" Version="4.20" Type="Bootloadable">
     <CMSIS_SVD_File>HapticColoring.svd</CMSIS_SVD_File>
-    <Datasheet>HapticColoring_datasheet.pdf</Datasheet>
+    <Datasheet />
     <LinkerFiles>
       <LinkerFile Toolchain="ARM GCC Generic">.\Generated_Source\PSoC4\cm0gcc.ld</LinkerFile>
       <LinkerFile Toolchain="ARM MDK Generic">.\Generated_Source\PSoC4\Cm0RealView.scat</LinkerFile>

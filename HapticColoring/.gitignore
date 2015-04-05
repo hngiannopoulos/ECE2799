@@ -11,5 +11,6 @@
 *.cydsn/DP8051
 *.cydsn/Generated_Source
 
-*.cydsn/Generated_Source/(chip name)/*
-!.cydsn/Generated_Source/(chip name)/*.hex
+*.cydsn/Generated_Source/CortexM0/*
+!.cydsn/Generated_Source/CortexM0/*.hex
+/Archive/
