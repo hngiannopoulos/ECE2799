@@ -66,7 +66,7 @@ uint32_t i2c_read_reg(uint32_t dev_addr, uint8_t reg){
 
     /* For the last read make sure to send a NACK */
     data =  I2C_I2CMasterReadByte(I2C_I2C_NAK_DATA);
-    LOG_TRACE( "Read %x" , data);
+    LOG_TRACE( "Read Reg: %02x %02x" , reg, data);
     I2C_I2CMasterSendStop();
     
     return data;
@@ -82,7 +82,7 @@ uint32_t i2c_write_reg(uint32_t dev_addr, uint8_t reg, uint8_t dat){
     
  
     I2C_I2CMasterWriteByte( dat );
-    LOG_TRACE( "Transfering %02x" , dat);
+    LOG_TRACE( "Transfering Reg: %02x %02x" ,reg,  dat);
 
     /* Send the stop bit */
     I2C_I2CMasterSendStop();
