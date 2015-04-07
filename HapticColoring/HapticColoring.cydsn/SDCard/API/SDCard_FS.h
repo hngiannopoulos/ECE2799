@@ -44,9 +44,9 @@
 //---------------------------------
 // Type #defines used for this UM
 //---------------------------------
-#define uchar   unsigned char   
-#define uint    unsigned int
-#define ulong   uint32
+typedef unsigned char  uchar;    
+typedef unsigned int uint ;  
+typedef uint32 ulong;
 
 
 //--------------------------------------------------------------
