@@ -19,8 +19,15 @@ uint32_t i2c_read_buff(uint32_t dev_addr, uint8_t reg, uint8_t * dat, uint8_t n)
     uint32 rc = 0;
     int i = 0;
     
-    I2C_I2CMasterSendStart(dev_addr, I2C_I2C_WRITE_XFER_MODE);
-    /* TODO; Add error checking so i2c doesnt fly into the weeds */
+    rc = I2C_I2CMasterSendStart(dev_addr, I2C_I2C_WRITE_XFER_MODE);
+    
+    /* Error Checking */
+    if(rc != I2C_I2C_MSTR_NO_ERROR){
+        LOG_ERROR("Device Not On Bus %02x rc = %i", dev_addr, rc);
+        I2C_I2CMasterSendStop();
+        return HAPTIC_WRITE_ERROR;
+    }
+    
     I2C_I2CMasterWriteByte( reg);
     I2C_I2CMasterSendRestart(dev_addr, I2C_I2C_READ_XFER_MODE);
     
@@ -41,15 +48,17 @@ uint32_t i2c_write_buff(uint32_t dev_addr, uint8_t reg, uint8_t * dat, uint8_t n
     int i = 0;
     
     /* Start the i2c Connection */
-    I2C_I2CMasterSendStart(dev_addr, I2C_I2C_WRITE_XFER_MODE);
-    /* TODO; Add error checking so i2c doesnt fly into the weeds */
-    I2C_I2CMasterWriteByte( reg );
-    
-    /* Copy In the Approprate ammount of data */
-    for(i = 0; i < n; i++){
-        I2C_I2CMasterWriteByte( dat[i] );
-        log_log(LOG_LEVEL_INFO, __func__, "Transfering %i %x", i, dat[i]);
+    rc = I2C_I2CMasterSendStart(dev_addr, I2C_I2C_WRITE_XFER_MODE);
+   
+    /* Error Checking */
+    if(rc != I2C_I2C_MSTR_NO_ERROR){
+        LOG_ERROR("Device Not On Bus %02x rc = %i", dev_addr, rc);
+        I2C_I2CMasterSendStop();
+        return HAPTIC_WRITE_ERROR;
     }
+    
+    I2C_I2CMasterWriteByte( reg );
+    I2C_I2CMasterWriteByte( dat[i] );
     
     /* Send the stop bit */
     rc = I2C_I2CMasterSendStop();
@@ -58,9 +67,17 @@ uint32_t i2c_write_buff(uint32_t dev_addr, uint8_t reg, uint8_t * dat, uint8_t n
 
 uint32_t i2c_read_reg(uint32_t dev_addr, uint8_t reg){
     uint32_t data = 0;
+    uint32_t rc; 
     
-    I2C_I2CMasterSendStart(dev_addr, I2C_I2C_WRITE_XFER_MODE);
-    /* TODO; Add error checking so i2c doesnt fly into the weeds */
+    rc = I2C_I2CMasterSendStart(dev_addr, I2C_I2C_WRITE_XFER_MODE);
+
+    /* Error Checking */
+    if(rc != I2C_I2C_MSTR_NO_ERROR){
+        LOG_ERROR("Device Not On Bus %02x rc = %i", dev_addr, rc);
+        I2C_I2CMasterSendStop();
+        return HAPTIC_WRITE_ERROR;
+    }
+    
     I2C_I2CMasterWriteByte( reg);
     I2C_I2CMasterSendRestart(dev_addr, I2C_I2C_READ_XFER_MODE);
 
@@ -77,10 +94,15 @@ uint32_t i2c_write_reg(uint32_t dev_addr, uint8_t reg, uint8_t dat){
     int rc = 0;
     /* Start the i2c Connection */
     rc = I2C_I2CMasterSendStart(dev_addr, I2C_I2C_WRITE_XFER_MODE);
-    /* TODO; Add error checking so i2c doesnt fly into the weeds */
+   
+    /* Error Checking */
+    if(rc != I2C_I2C_MSTR_NO_ERROR){
+        LOG_ERROR("Device Not On Bus %02x rc = %i", dev_addr, rc);
+        I2C_I2CMasterSendStop();
+        return HAPTIC_WRITE_ERROR;
+    }
+
     I2C_I2CMasterWriteByte( reg );
-    
- 
     I2C_I2CMasterWriteByte( dat );
     LOG_TRACE( "Transfering Reg: %02x %02x" ,reg,  dat);
 
