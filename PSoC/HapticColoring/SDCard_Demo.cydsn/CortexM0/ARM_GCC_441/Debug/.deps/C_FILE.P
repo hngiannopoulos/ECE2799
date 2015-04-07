@@ -1,0 +1,80 @@
+C:/myProjects/Hobby/100_day_100_projects/Mine/SDCard_Demo/SDCard_Demo.cydsn/CortexM0/ARM_GCC_441/Debug/main.o : C:/myProjects/Hobby/100_day_100_projects/Mine/SDCard_Demo/SDCard_Demo.cydsn/Generated_Source/PSoC4/CyFlash.h C:/myProjects/Hobby/100_day_100_projects/Mine/SDCard_Demo/SDCard_Demo.cydsn/Generated_Source/PSoC4/CyLib.h C:/myProjects/Hobby/100_day_100_projects/Mine/SDCard_Demo/SDCard_Demo.cydsn/Generated_Source/PSoC4/SDCard.h C:/myProjects/Hobby/100_day_100_projects/Mine/SDCard_Demo/SDCard_Demo.cydsn/Generated_Source/PSoC4/SDCard_FS.h C:/myProjects/Hobby/100_day_100_projects/Mine/SDCard_Demo/SDCard_Demo.cydsn/Generated_Source/PSoC4/SDCard_SD_CD.h C:/myProjects/Hobby/100_day_100_projects/Mine/SDCard_Demo/SDCard_Demo.cydsn/Generated_Source/PSoC4/SDCard_SD_CD_aliases.h C:/myProjects/Hobby/100_day_100_projects/Mine/SDCard_Demo/SDCard_Demo.cydsn/Generated_Source/PSoC4/SDCard_SD_CS.h C:/myProjects/Hobby/100_day_100_projects/Mine/SDCard_Demo/SDCard_Demo.cydsn/Generated_Source/PSoC4/SDCard_SD_CS_aliases.h C:/myProjects/Hobby/100_day_100_projects/Mine/SDCard_Demo/SDCard_Demo.cydsn/Generated_Source/PSoC4/SDCard_SD_Clock.h C:/myProjects/Hobby/100_day_100_projects/Mine/SDCard_Demo/SDCard_Demo.cydsn/Generated_Source/PSoC4/SDCard_SD_PWR.h C:/myProjects/Hobby/100_day_100_projects/Mine/SDCard_Demo/SDCard_Demo.cydsn/Generated_Source/PSoC4/SDCard_SD_PWR_aliases.h C:/myProjects/Hobby/100_day_100_projects/Mine/SDCard_Demo/SDCard_Demo.cydsn/Generated_Source/PSoC4/SDCard_SD_WP.h C:/myProjects/Hobby/100_day_100_projects/Mine/SDCard_Demo/SDCard_Demo.cydsn/Generated_Source/PSoC4/SDCard_SD_WP_aliases.h C:/myProjects/Hobby/100_day_100_projects/Mine/SDCard_Demo/SDCard_Demo.cydsn/Generated_Source/PSoC4/SDCard_SPI.h C:/myProjects/Hobby/100_day_100_projects/Mine/SDCard_Demo/SDCard_Demo.cydsn/Generated_Source/PSoC4/SDCard_SPIM.h C:/myProjects/Hobby/100_day_100_projects/Mine/SDCard_Demo/SDCard_Demo.cydsn/Generated_Source/PSoC4/SDCard_SPIM_PINS.h C:/myProjects/Hobby/100_day_100_projects/Mine/SDCard_Demo/SDCard_Demo.cydsn/Generated_Source/PSoC4/SDCard_SPIM_PVT.h C:/myProjects/Hobby/100_day_100_projects/Mine/SDCard_Demo/SDCard_Demo.cydsn/Generated_Source/PSoC4/SDCard_SPIM_SCB_IRQ.h C:/myProjects/Hobby/100_day_100_projects/Mine/SDCard_Demo/SDCard_Demo.cydsn/Generated_Source/PSoC4/SDCard_SPIM_SPI_UART.h C:/myProjects/Hobby/100_day_100_projects/Mine/SDCard_Demo/SDCard_Demo.cydsn/Generated_Source/PSoC4/SDCard_SPIM_SPI_UART_PVT.h C:/myProjects/Hobby/100_day_100_projects/Mine/SDCard_Demo/SDCard_Demo.cydsn/Generated_Source/PSoC4/SDCard_SPIM_miso_m.h C:/myProjects/Hobby/100_day_100_projects/Mine/SDCard_Demo/SDCard_Demo.cydsn/Generated_Source/PSoC4/SDCard_SPIM_miso_m_aliases.h C:/myProjects/Hobby/100_day_100_projects/Mine/SDCard_Demo/SDCard_Demo.cydsn/Generated_Source/PSoC4/SDCard_SPIM_mosi_m.h C:/myProjects/Hobby/100_day_100_projects/Mine/SDCard_Demo/SDCard_Demo.cydsn/Generated_Source/PSoC4/SDCard_SPIM_mosi_m_aliases.h C:/myProjects/Hobby/100_day_100_projects/Mine/SDCard_Demo/SDCard_Demo.cydsn/Generated_Source/PSoC4/SDCard_SPIM_sclk_m.h C:/myProjects/Hobby/100_day_100_projects/Mine/SDCard_Demo/SDCard_Demo.cydsn/Generated_Source/PSoC4/SDCard_SPIM_sclk_m_aliases.h C:/myProjects/Hobby/100_day_100_projects/Mine/SDCard_Demo/SDCard_Demo.cydsn/Generated_Source/PSoC4/SDCard_SPIM_ss0_m.h C:/myProjects/Hobby/100_day_100_projects/Mine/SDCard_Demo/SDCard_Demo.cydsn/Generated_Source/PSoC4/SDCard_SPIM_ss0_m_aliases.h C:/myProjects/Hobby/100_day_100_projects/Mine/SDCard_Demo/SDCard_Demo.cydsn/Generated_Source/PSoC4/core_cm0.h C:/myProjects/Hobby/100_day_100_projects/Mine/SDCard_Demo/SDCard_Demo.cydsn/Generated_Source/PSoC4/core_cm0_psoc4.h C:/myProjects/Hobby/100_day_100_projects/Mine/SDCard_Demo/SDCard_Demo.cydsn/Generated_Source/PSoC4/cyPm.h C:/myProjects/Hobby/100_day_100_projects/Mine/SDCard_Demo/SDCard_Demo.cydsn/Generated_Source/PSoC4/cydevice_trm.h C:/myProjects/Hobby/100_day_100_projects/Mine/SDCard_Demo/SDCard_Demo.cydsn/Generated_Source/PSoC4/cyfitter.h C:/myProjects/Hobby/100_day_100_projects/Mine/SDCard_Demo/SDCard_Demo.cydsn/Generated_Source/PSoC4/cyfitter_cfg.h C:/myProjects/Hobby/100_day_100_projects/Mine/SDCard_Demo/SDCard_Demo.cydsn/Generated_Source/PSoC4/cypins.h C:/myProjects/Hobby/100_day_100_projects/Mine/SDCard_Demo/SDCard_Demo.cydsn/Generated_Source/PSoC4/cytypes.h C:/myProjects/Hobby/100_day_100_projects/Mine/SDCard_Demo/SDCard_Demo.cydsn/Generated_Source/PSoC4/project.h C:/myProjects/Hobby/100_day_100_projects/Mine/SDCard_Demo/SDCard_Demo.cydsn/device.h C:/myProjects/Hobby/100_day_100_projects/Mine/SDCard_Demo/SDCard_Demo.cydsn/main.c 
+
+C:/myProjects/Hobby/100_day_100_projects/Mine/SDCard_Demo/SDCard_Demo.cydsn/Generated_Source/PSoC4/CyFlash.h : 
+
+C:/myProjects/Hobby/100_day_100_projects/Mine/SDCard_Demo/SDCard_Demo.cydsn/Generated_Source/PSoC4/CyLib.h : 
+
+C:/myProjects/Hobby/100_day_100_projects/Mine/SDCard_Demo/SDCard_Demo.cydsn/Generated_Source/PSoC4/SDCard.h : 
+
+C:/myProjects/Hobby/100_day_100_projects/Mine/SDCard_Demo/SDCard_Demo.cydsn/Generated_Source/PSoC4/SDCard_FS.h : 
+
+C:/myProjects/Hobby/100_day_100_projects/Mine/SDCard_Demo/SDCard_Demo.cydsn/Generated_Source/PSoC4/SDCard_SD_CD.h : 
+
+C:/myProjects/Hobby/100_day_100_projects/Mine/SDCard_Demo/SDCard_Demo.cydsn/Generated_Source/PSoC4/SDCard_SD_CD_aliases.h : 
+
+C:/myProjects/Hobby/100_day_100_projects/Mine/SDCard_Demo/SDCard_Demo.cydsn/Generated_Source/PSoC4/SDCard_SD_CS.h : 
+
+C:/myProjects/Hobby/100_day_100_projects/Mine/SDCard_Demo/SDCard_Demo.cydsn/Generated_Source/PSoC4/SDCard_SD_CS_aliases.h : 
+
+C:/myProjects/Hobby/100_day_100_projects/Mine/SDCard_Demo/SDCard_Demo.cydsn/Generated_Source/PSoC4/SDCard_SD_Clock.h : 
+
+C:/myProjects/Hobby/100_day_100_projects/Mine/SDCard_Demo/SDCard_Demo.cydsn/Generated_Source/PSoC4/SDCard_SD_PWR.h : 
+
+C:/myProjects/Hobby/100_day_100_projects/Mine/SDCard_Demo/SDCard_Demo.cydsn/Generated_Source/PSoC4/SDCard_SD_PWR_aliases.h : 
+
+C:/myProjects/Hobby/100_day_100_projects/Mine/SDCard_Demo/SDCard_Demo.cydsn/Generated_Source/PSoC4/SDCard_SD_WP.h : 
+
+C:/myProjects/Hobby/100_day_100_projects/Mine/SDCard_Demo/SDCard_Demo.cydsn/Generated_Source/PSoC4/SDCard_SD_WP_aliases.h : 
+
+C:/myProjects/Hobby/100_day_100_projects/Mine/SDCard_Demo/SDCard_Demo.cydsn/Generated_Source/PSoC4/SDCard_SPI.h : 
+
+C:/myProjects/Hobby/100_day_100_projects/Mine/SDCard_Demo/SDCard_Demo.cydsn/Generated_Source/PSoC4/SDCard_SPIM.h : 
+
+C:/myProjects/Hobby/100_day_100_projects/Mine/SDCard_Demo/SDCard_Demo.cydsn/Generated_Source/PSoC4/SDCard_SPIM_PINS.h : 
+
+C:/myProjects/Hobby/100_day_100_projects/Mine/SDCard_Demo/SDCard_Demo.cydsn/Generated_Source/PSoC4/SDCard_SPIM_PVT.h : 
+
+C:/myProjects/Hobby/100_day_100_projects/Mine/SDCard_Demo/SDCard_Demo.cydsn/Generated_Source/PSoC4/SDCard_SPIM_SCB_IRQ.h : 
+
+C:/myProjects/Hobby/100_day_100_projects/Mine/SDCard_Demo/SDCard_Demo.cydsn/Generated_Source/PSoC4/SDCard_SPIM_SPI_UART.h : 
+
+C:/myProjects/Hobby/100_day_100_projects/Mine/SDCard_Demo/SDCard_Demo.cydsn/Generated_Source/PSoC4/SDCard_SPIM_SPI_UART_PVT.h : 
+
+C:/myProjects/Hobby/100_day_100_projects/Mine/SDCard_Demo/SDCard_Demo.cydsn/Generated_Source/PSoC4/SDCard_SPIM_miso_m.h : 
+
+C:/myProjects/Hobby/100_day_100_projects/Mine/SDCard_Demo/SDCard_Demo.cydsn/Generated_Source/PSoC4/SDCard_SPIM_miso_m_aliases.h : 
+
+C:/myProjects/Hobby/100_day_100_projects/Mine/SDCard_Demo/SDCard_Demo.cydsn/Generated_Source/PSoC4/SDCard_SPIM_mosi_m.h : 
+
+C:/myProjects/Hobby/100_day_100_projects/Mine/SDCard_Demo/SDCard_Demo.cydsn/Generated_Source/PSoC4/SDCard_SPIM_mosi_m_aliases.h : 
+
+C:/myProjects/Hobby/100_day_100_projects/Mine/SDCard_Demo/SDCard_Demo.cydsn/Generated_Source/PSoC4/SDCard_SPIM_sclk_m.h : 
+
+C:/myProjects/Hobby/100_day_100_projects/Mine/SDCard_Demo/SDCard_Demo.cydsn/Generated_Source/PSoC4/SDCard_SPIM_sclk_m_aliases.h : 
+
+C:/myProjects/Hobby/100_day_100_projects/Mine/SDCard_Demo/SDCard_Demo.cydsn/Generated_Source/PSoC4/SDCard_SPIM_ss0_m.h : 
+
+C:/myProjects/Hobby/100_day_100_projects/Mine/SDCard_Demo/SDCard_Demo.cydsn/Generated_Source/PSoC4/SDCard_SPIM_ss0_m_aliases.h : 
+
+C:/myProjects/Hobby/100_day_100_projects/Mine/SDCard_Demo/SDCard_Demo.cydsn/Generated_Source/PSoC4/core_cm0.h : 
+
+C:/myProjects/Hobby/100_day_100_projects/Mine/SDCard_Demo/SDCard_Demo.cydsn/Generated_Source/PSoC4/core_cm0_psoc4.h : 
+
+C:/myProjects/Hobby/100_day_100_projects/Mine/SDCard_Demo/SDCard_Demo.cydsn/Generated_Source/PSoC4/cyPm.h : 
+
+C:/myProjects/Hobby/100_day_100_projects/Mine/SDCard_Demo/SDCard_Demo.cydsn/Generated_Source/PSoC4/cydevice_trm.h : 
+
+C:/myProjects/Hobby/100_day_100_projects/Mine/SDCard_Demo/SDCard_Demo.cydsn/Generated_Source/PSoC4/cyfitter.h : 
+
+C:/myProjects/Hobby/100_day_100_projects/Mine/SDCard_Demo/SDCard_Demo.cydsn/Generated_Source/PSoC4/cyfitter_cfg.h : 
+
+C:/myProjects/Hobby/100_day_100_projects/Mine/SDCard_Demo/SDCard_Demo.cydsn/Generated_Source/PSoC4/cypins.h : 
+
+C:/myProjects/Hobby/100_day_100_projects/Mine/SDCard_Demo/SDCard_Demo.cydsn/Generated_Source/PSoC4/cytypes.h : 
+
+C:/myProjects/Hobby/100_day_100_projects/Mine/SDCard_Demo/SDCard_Demo.cydsn/Generated_Source/PSoC4/project.h : 
+
+C:/myProjects/Hobby/100_day_100_projects/Mine/SDCard_Demo/SDCard_Demo.cydsn/device.h : 
+
+C:/myProjects/Hobby/100_day_100_projects/Mine/SDCard_Demo/SDCard_Demo.cydsn/main.c : 
+

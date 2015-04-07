@@ -1,0 +1,1137 @@
+ARM GAS  C:\Users\srvs\AppData\Local\Temp\ccYq4Mps.s 			page 1
+
+
+   1              		.cpu cortex-m0
+   2              		.fpu softvfp
+   3              		.eabi_attribute 20, 1
+   4              		.eabi_attribute 21, 1
+   5              		.eabi_attribute 23, 3
+   6              		.eabi_attribute 24, 1
+   7              		.eabi_attribute 25, 1
+   8              		.eabi_attribute 26, 1
+   9              		.eabi_attribute 30, 6
+  10              		.eabi_attribute 18, 4
+  11              		.code	16
+  12              		.file	"SDCard_SPIM_SPI.c"
+  13              		.section	.debug_abbrev,"",%progbits
+  14              	.Ldebug_abbrev0:
+  15              		.section	.debug_info,"",%progbits
+  16              	.Ldebug_info0:
+  17              		.section	.debug_line,"",%progbits
+  18              	.Ldebug_line0:
+  19 0000 C7000000 		.text
+  19      02006800 
+  19      00000201 
+  19      FB0E0D00 
+  19      01010101 
+  20              	.Ltext0:
+  21              		.cfi_sections	.debug_frame
+  22              		.section	.text.SDCard_SPIM_SpiInit,"ax",%progbits
+  23              		.align	2
+  24              		.global	SDCard_SPIM_SpiInit
+  25              		.code	16
+  26              		.thumb_func
+  27              		.type	SDCard_SPIM_SpiInit, %function
+  28              	SDCard_SPIM_SpiInit:
+  29              	.LFB0:
+  30              		.file 1 ".\\Generated_Source\\PSoC4\\SDCard_SPIM_SPI.c"
+   1:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c **** /*******************************************************************************
+   2:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c **** * File Name: SDCard_SPIM_SPI.c
+   3:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c **** * Version 1.0
+   4:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c **** *
+   5:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c **** * Description:
+   6:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c **** *  This file provides the source code to the API for the SCB Component in
+   7:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c **** *  SPI mode.
+   8:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c **** *
+   9:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c **** * Note:
+  10:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c **** *
+  11:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c **** *******************************************************************************
+  12:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c **** * Copyright 2013, Cypress Semiconductor Corporation.  All rights reserved.
+  13:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c **** * You may use this file only in accordance with the license, terms, conditions,
+  14:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c **** * disclaimers, and limitations in the end user license agreement accompanying
+  15:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c **** * the software package with which this file was provided.
+  16:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c **** *******************************************************************************/
+  17:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c **** 
+  18:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c **** #include "SDCard_SPIM_PVT.h"
+  19:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c **** #include "SDCard_SPIM_SPI_UART_PVT.h"
+  20:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c **** 
+  21:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c **** #if(SDCard_SPIM_SCB_MODE_UNCONFIG_CONST_CFG)
+  22:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c **** 
+  23:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c ****     /***************************************
+ARM GAS  C:\Users\srvs\AppData\Local\Temp\ccYq4Mps.s 			page 2
+
+
+  24:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c ****     *  Config Structure Initialization
+  25:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c ****     ***************************************/
+  26:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c **** 
+  27:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c ****     const SDCard_SPIM_SPI_INIT_STRUCT SDCard_SPIM_configSpi =
+  28:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c ****     {
+  29:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c ****         SDCard_SPIM_SPI_MODE,
+  30:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c ****         SDCard_SPIM_SPI_SUB_MODE,
+  31:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c ****         SDCard_SPIM_SPI_CLOCK_MODE,
+  32:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c ****         SDCard_SPIM_SPI_OVS_FACTOR,
+  33:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c ****         SDCard_SPIM_SPI_MEDIAN_FILTER_ENABLE,
+  34:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c ****         SDCard_SPIM_SPI_LATE_MISO_SAMPLE_ENABLE,
+  35:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c ****         SDCard_SPIM_SPI_WAKE_ENABLE,
+  36:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c ****         SDCard_SPIM_SPI_RX_DATA_BITS_NUM,
+  37:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c ****         SDCard_SPIM_SPI_TX_DATA_BITS_NUM,
+  38:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c ****         SDCard_SPIM_SPI_BITS_ORDER,
+  39:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c ****         SDCard_SPIM_SPI_TRANSFER_SEPARATION,
+  40:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c ****         0u,
+  41:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c ****         NULL,
+  42:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c ****         0u,
+  43:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c ****         NULL,
+  44:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c ****         SDCard_SPIM_SPI_INTERRUPT_ENABLE,
+  45:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c ****         SDCard_SPIM_SPI_INTR_RX_MASK,
+  46:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c ****         SDCard_SPIM_SPI_RX_TRIGGER_LEVEL,
+  47:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c ****         SDCard_SPIM_SPI_INTR_TX_MASK,
+  48:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c ****         SDCard_SPIM_SPI_TX_TRIGGER_LEVEL
+  49:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c ****     };
+  50:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c **** 
+  51:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c **** 
+  52:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c ****     /*******************************************************************************
+  53:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c ****     * Function Name: SDCard_SPIM_SpiInit
+  54:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c ****     ********************************************************************************
+  55:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c ****     *
+  56:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c ****     * Summary:
+  57:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c ****     *  Configures the SCB for SPI operation.
+  58:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c ****     *
+  59:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c ****     * Parameters:
+  60:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c ****     *  config:  Pointer to a structure that contains the following ordered list of
+  61:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c ****     *           fields. These fields match the selections available in the
+  62:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c ****     *           customizer.
+  63:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c ****     *
+  64:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c ****     * Return:
+  65:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c ****     *  None
+  66:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c ****     *
+  67:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c ****     *******************************************************************************/
+  68:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c ****     void SDCard_SPIM_SpiInit(const SDCard_SPIM_SPI_INIT_STRUCT *config)
+  69:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c ****     {
+  70:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c ****         if(NULL == config)
+  71:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c ****         {
+  72:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c ****             CYASSERT(0u != 0u); /* Halt execution due bad fucntion parameter */
+  73:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c ****         }
+  74:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c ****         else
+  75:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c ****         {
+  76:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c ****             /* Configure pins */
+  77:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c ****             SDCard_SPIM_SetPins(SDCard_SPIM_SCB_MODE_SPI, config->mode, SDCard_SPIM_DUMMY_PARAM);
+  78:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c **** 
+  79:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c ****             /* Store internal configuration */
+  80:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c ****             SDCard_SPIM_scbMode       = (uint8) SDCard_SPIM_SCB_MODE_SPI;
+ARM GAS  C:\Users\srvs\AppData\Local\Temp\ccYq4Mps.s 			page 3
+
+
+  81:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c ****             SDCard_SPIM_scbEnableWake = (uint8) config->enableWake;
+  82:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c **** 
+  83:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c ****             /* Set RX direction internal variables */
+  84:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c ****             SDCard_SPIM_rxBuffer      =         config->rxBuffer;
+  85:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c ****             SDCard_SPIM_rxDataBits    = (uint8) config->rxDataBits;
+  86:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c ****             SDCard_SPIM_rxBufferSize  = (uint8) config->rxBufferSize;
+  87:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c **** 
+  88:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c ****             /* Set TX direction internal variables */
+  89:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c ****             SDCard_SPIM_txBuffer      =         config->txBuffer;
+  90:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c ****             SDCard_SPIM_txDataBits    = (uint8) config->txDataBits;
+  91:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c ****             SDCard_SPIM_txBufferSize  = (uint8) config->txBufferSize;
+  92:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c **** 
+  93:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c **** 
+  94:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c ****             /* Configure SPI interface */
+  95:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c ****             SDCard_SPIM_CTRL_REG     = SDCard_SPIM_GET_CTRL_OVS(config->oversample)        |
+  96:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c ****                                             SDCard_SPIM_GET_CTRL_EC_AM_MODE(config->enableWake) |
+  97:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c ****                                             SDCard_SPIM_CTRL_SPI;
+  98:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c **** 
+  99:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c ****             SDCard_SPIM_SPI_CTRL_REG = SDCard_SPIM_GET_SPI_CTRL_CONTINUOUS    (config->transferSepe
+ 100:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c ****                                             SDCard_SPIM_GET_SPI_CTRL_SELECT_PRECEDE(config->submode
+ 101:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c ****                                                                           SDCard_SPIM_SPI_MODE_TI_P
+ 102:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c ****                                             SDCard_SPIM_GET_SPI_CTRL_SCLK_MODE     (config->sclkMod
+ 103:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c ****                                             SDCard_SPIM_GET_SPI_CTRL_LATE_MISO_SAMPLE(config->enabl
+ 104:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c ****                                             SDCard_SPIM_GET_SPI_CTRL_SUB_MODE      (config->submode
+ 105:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c ****                                             SDCard_SPIM_GET_SPI_CTRL_MASTER_MODE   (config->mode);
+ 106:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c **** 
+ 107:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c ****             /* Configure RX direction */
+ 108:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c ****             SDCard_SPIM_RX_CTRL_REG     =  SDCard_SPIM_GET_RX_CTRL_DATA_WIDTH(config->rxDataBits)  
+ 109:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c ****                                                 SDCard_SPIM_GET_RX_CTRL_BIT_ORDER (config->bitOrder
+ 110:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c ****                                                 SDCard_SPIM_GET_RX_CTRL_MEDIAN    (config->enableMe
+ 111:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c ****                                                 SDCard_SPIM_SPI_RX_CTRL;
+ 112:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c **** 
+ 113:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c ****             SDCard_SPIM_RX_FIFO_CTRL_REG = SDCard_SPIM_GET_RX_FIFO_CTRL_TRIGGER_LEVEL(config->rxTri
+ 114:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c **** 
+ 115:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c ****             /* Configure TX direction */
+ 116:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c ****             SDCard_SPIM_TX_CTRL_REG      = SDCard_SPIM_GET_TX_CTRL_DATA_WIDTH(config->txDataBits) |
+ 117:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c ****                                                 SDCard_SPIM_GET_TX_CTRL_BIT_ORDER (config->bitOrder
+ 118:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c ****                                                 SDCard_SPIM_SPI_TX_CTRL;
+ 119:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c **** 
+ 120:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c ****             SDCard_SPIM_TX_FIFO_CTRL_REG = SDCard_SPIM_GET_TX_FIFO_CTRL_TRIGGER_LEVEL(config->txTri
+ 121:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c **** 
+ 122:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c ****             /* Configure interrupt sources */
+ 123:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c ****             SDCard_SPIM_INTR_I2C_EC_MASK_REG = SDCard_SPIM_NO_INTR_SOURCES;
+ 124:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c ****             SDCard_SPIM_INTR_SPI_EC_MASK_REG = SDCard_SPIM_NO_INTR_SOURCES;
+ 125:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c ****             SDCard_SPIM_INTR_SLAVE_MASK_REG  = SDCard_SPIM_GET_SPI_INTR_SLAVE_MASK(config->rxInterr
+ 126:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c ****             SDCard_SPIM_INTR_MASTER_MASK_REG = SDCard_SPIM_GET_SPI_INTR_MASTER_MASK(config->txInter
+ 127:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c ****             SDCard_SPIM_INTR_RX_MASK_REG     = SDCard_SPIM_GET_SPI_INTR_RX_MASK(config->rxInterrupt
+ 128:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c ****             SDCard_SPIM_INTR_TX_MASK_REG     = SDCard_SPIM_GET_SPI_INTR_TX_MASK(config->txInterrupt
+ 129:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c **** 
+ 130:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c ****             /* Configure interrupt source */
+ 131:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c ****             SDCard_SPIM_SCB_IRQ_StartEx(&SDCard_SPIM_SPI_UART_ISR);
+ 132:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c ****             if(0u == config->enableInterrupt)
+ 133:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c ****             {
+ 134:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c ****                 SDCard_SPIM_SCB_IRQ_Disable();
+ 135:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c ****             }
+ 136:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c **** 
+ 137:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c **** 
+ARM GAS  C:\Users\srvs\AppData\Local\Temp\ccYq4Mps.s 			page 4
+
+
+ 138:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c ****             /* Clear RX buffer indexes */
+ 139:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c ****             SDCard_SPIM_rxBufferHead     = 0u;
+ 140:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c ****             SDCard_SPIM_rxBufferTail     = 0u;
+ 141:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c ****             SDCard_SPIM_rxBufferOverflow = 0u;
+ 142:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c **** 
+ 143:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c ****             /* Clrea TX buffer indexes */
+ 144:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c ****             SDCard_SPIM_txBufferHead = 0u;
+ 145:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c ****             SDCard_SPIM_txBufferTail = 0u;
+ 146:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c ****         }
+ 147:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c ****     }
+ 148:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c **** 
+ 149:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c **** #else
+ 150:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c **** 
+ 151:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c ****     /*******************************************************************************
+ 152:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c ****     * Function Name: SDCard_SPIM_SpiInit
+ 153:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c ****     ********************************************************************************
+ 154:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c ****     *
+ 155:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c ****     * Summary:
+ 156:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c ****     *  Configures the SCB for SPI operation.
+ 157:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c ****     *
+ 158:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c ****     * Parameters:
+ 159:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c ****     *  None
+ 160:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c ****     *
+ 161:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c ****     * Return:
+ 162:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c ****     *  None
+ 163:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c ****     *
+ 164:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c ****     *******************************************************************************/
+ 165:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c ****     void SDCard_SPIM_SpiInit(void)
+ 166:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c ****     {
+  31              		.loc 1 166 0
+  32              		.cfi_startproc
+  33 0000 80B5     		push	{r7, lr}
+  34              	.LCFI0:
+  35              		.cfi_def_cfa_offset 8
+  36              		.cfi_offset 7, -8
+  37              		.cfi_offset 14, -4
+  38 0002 00AF     		add	r7, sp, #0
+  39              	.LCFI1:
+  40              		.cfi_def_cfa_register 7
+ 167:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c ****         /* Configure SPI interface */
+ 168:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c ****         SDCard_SPIM_CTRL_REG     = SDCard_SPIM_SPI_DEFAULT_CTRL;
+  41              		.loc 1 168 0
+  42 0004 144B     		ldr	r3, .L3
+  43 0006 154A     		ldr	r2, .L3+4
+  44 0008 1A60     		str	r2, [r3]
+ 169:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c ****         SDCard_SPIM_SPI_CTRL_REG = SDCard_SPIM_SPI_DEFAULT_SPI_CTRL;
+  45              		.loc 1 169 0
+  46 000a 154B     		ldr	r3, .L3+8
+  47 000c 154A     		ldr	r2, .L3+12
+  48 000e 1A60     		str	r2, [r3]
+ 170:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c **** 
+ 171:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c ****         /* Configure TX and RX direction */
+ 172:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c ****         SDCard_SPIM_RX_CTRL_REG      = SDCard_SPIM_SPI_DEFAULT_RX_CTRL;
+  49              		.loc 1 172 0
+  50 0010 154B     		ldr	r3, .L3+16
+  51 0012 164A     		ldr	r2, .L3+20
+  52 0014 1A60     		str	r2, [r3]
+ARM GAS  C:\Users\srvs\AppData\Local\Temp\ccYq4Mps.s 			page 5
+
+
+ 173:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c ****         SDCard_SPIM_RX_FIFO_CTRL_REG = SDCard_SPIM_SPI_DEFAULT_RX_FIFO_CTRL;
+  53              		.loc 1 173 0
+  54 0016 164B     		ldr	r3, .L3+24
+  55 0018 0722     		mov	r2, #7
+  56 001a 1A60     		str	r2, [r3]
+ 174:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c **** 
+ 175:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c ****         /* Configure TX and RX direction */
+ 176:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c ****         SDCard_SPIM_TX_CTRL_REG      = SDCard_SPIM_SPI_DEFAULT_TX_CTRL;
+  57              		.loc 1 176 0
+  58 001c 154B     		ldr	r3, .L3+28
+  59 001e 134A     		ldr	r2, .L3+20
+  60 0020 1A60     		str	r2, [r3]
+ 177:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c ****         SDCard_SPIM_TX_FIFO_CTRL_REG = SDCard_SPIM_SPI_DEFAULT_TX_FIFO_CTRL;
+  61              		.loc 1 177 0
+  62 0022 154B     		ldr	r3, .L3+32
+  63 0024 0022     		mov	r2, #0
+  64 0026 1A60     		str	r2, [r3]
+ 178:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c **** 
+ 179:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c ****         /* Configure interrupt sources */
+ 180:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c ****         SDCard_SPIM_INTR_I2C_EC_MASK_REG = SDCard_SPIM_SPI_DEFAULT_INTR_I2C_EC_MASK;
+  65              		.loc 1 180 0
+  66 0028 144B     		ldr	r3, .L3+36
+  67 002a 0022     		mov	r2, #0
+  68 002c 1A60     		str	r2, [r3]
+ 181:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c ****         SDCard_SPIM_INTR_SPI_EC_MASK_REG = SDCard_SPIM_SPI_DEFAULT_INTR_SPI_EC_MASK;
+  69              		.loc 1 181 0
+  70 002e 144B     		ldr	r3, .L3+40
+  71 0030 0022     		mov	r2, #0
+  72 0032 1A60     		str	r2, [r3]
+ 182:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c ****         SDCard_SPIM_INTR_SLAVE_MASK_REG  = SDCard_SPIM_SPI_DEFAULT_INTR_SLAVE_MASK;
+  73              		.loc 1 182 0
+  74 0034 134B     		ldr	r3, .L3+44
+  75 0036 0022     		mov	r2, #0
+  76 0038 1A60     		str	r2, [r3]
+ 183:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c ****         SDCard_SPIM_INTR_MASTER_MASK_REG = SDCard_SPIM_SPI_DEFAULT_INTR_MASTER_MASK;
+  77              		.loc 1 183 0
+  78 003a 134B     		ldr	r3, .L3+48
+  79 003c 0022     		mov	r2, #0
+  80 003e 1A60     		str	r2, [r3]
+ 184:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c ****         SDCard_SPIM_INTR_RX_MASK_REG     = SDCard_SPIM_SPI_DEFAULT_INTR_RX_MASK;
+  81              		.loc 1 184 0
+  82 0040 124B     		ldr	r3, .L3+52
+  83 0042 0022     		mov	r2, #0
+  84 0044 1A60     		str	r2, [r3]
+ 185:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c ****         SDCard_SPIM_INTR_TX_MASK_REG     = SDCard_SPIM_SPI_DEFAULT_INTR_TX_MASK;
+  85              		.loc 1 185 0
+  86 0046 124B     		ldr	r3, .L3+56
+  87 0048 0022     		mov	r2, #0
+  88 004a 1A60     		str	r2, [r3]
+ 186:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c **** 
+ 187:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c **** 
+ 188:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c ****         /* Configure interrupt source */
+ 189:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c ****         #if(SDCard_SPIM_SCB_IRQ_INTERNAL)
+ 190:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c ****             SDCard_SPIM_SCB_IRQ_StartEx(&SDCard_SPIM_SPI_UART_ISR);
+  89              		.loc 1 190 0
+  90 004c 114B     		ldr	r3, .L3+60
+  91 004e 181C     		mov	r0, r3
+ARM GAS  C:\Users\srvs\AppData\Local\Temp\ccYq4Mps.s 			page 6
+
+
+  92 0050 FFF7FEFF 		bl	SDCard_SPIM_SCB_IRQ_StartEx
+ 191:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c **** 
+ 192:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c ****             #if(SDCard_SPIM_SPI_INTERRUPT_DISABLE)
+ 193:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c ****                 SDCard_SPIM_SCB_IRQ_Disable();
+ 194:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c ****             #endif /* (SDCard_SPIM_SPI_INTERRUPT_DISABLE) */
+ 195:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c ****         #endif /* (SDCard_SPIM_SCB_IRQ_INTERNAL) */
+ 196:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c **** 
+ 197:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c **** 
+ 198:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c ****         #if(SDCard_SPIM_INTERNAL_RX_SW_BUFFER_CONST)
+ 199:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c ****             SDCard_SPIM_rxBufferHead     = 0u;
+ 200:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c ****             SDCard_SPIM_rxBufferTail     = 0u;
+ 201:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c ****             SDCard_SPIM_rxBufferOverflow = 0u;
+ 202:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c ****         #endif /* (SDCard_SPIM_INTERNAL_RX_SW_BUFFER_CONST) */
+ 203:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c **** 
+ 204:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c ****         #if(SDCard_SPIM_INTERNAL_TX_SW_BUFFER_CONST)
+ 205:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c ****             SDCard_SPIM_txBufferHead = 0u;
+ 206:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c ****             SDCard_SPIM_txBufferTail = 0u;
+ 207:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c ****         #endif /* (SDCard_SPIM_INTERNAL_TX_SW_BUFFER_CONST) */
+ 208:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c ****     }
+  93              		.loc 1 208 0
+  94 0054 BD46     		mov	sp, r7
+  95              		@ sp needed for prologue
+  96 0056 80BD     		pop	{r7, pc}
+  97              	.L4:
+  98              		.align	2
+  99              	.L3:
+ 100 0058 00000740 		.word	1074200576
+ 101 005c 05000001 		.word	16777221
+ 102 0060 20000740 		.word	1074200608
+ 103 0064 11000080 		.word	-2147483631
+ 104 0068 00030740 		.word	1074201344
+ 105 006c 07010080 		.word	-2147483385
+ 106 0070 04030740 		.word	1074201348
+ 107 0074 00020740 		.word	1074201088
+ 108 0078 04020740 		.word	1074201092
+ 109 007c 880E0740 		.word	1074204296
+ 110 0080 C80E0740 		.word	1074204360
+ 111 0084 480F0740 		.word	1074204488
+ 112 0088 080F0740 		.word	1074204424
+ 113 008c C80F0740 		.word	1074204616
+ 114 0090 880F0740 		.word	1074204552
+ 115 0094 00000000 		.word	SDCard_SPIM_SPI_UART_ISR
+ 116              		.cfi_endproc
+ 117              	.LFE0:
+ 118              		.size	SDCard_SPIM_SpiInit, .-SDCard_SPIM_SpiInit
+ 119              		.section	.text.SDCard_SPIM_SpiSetActiveSlaveSelect,"ax",%progbits
+ 120              		.align	2
+ 121              		.global	SDCard_SPIM_SpiSetActiveSlaveSelect
+ 122              		.code	16
+ 123              		.thumb_func
+ 124              		.type	SDCard_SPIM_SpiSetActiveSlaveSelect, %function
+ 125              	SDCard_SPIM_SpiSetActiveSlaveSelect:
+ 126              	.LFB1:
+ 209:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c **** 
+ 210:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c **** #endif /* (SDCard_SPIM_SCB_MODE_UNCONFIG_CONST_CFG) */
+ 211:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c **** 
+ 212:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c **** 
+ARM GAS  C:\Users\srvs\AppData\Local\Temp\ccYq4Mps.s 			page 7
+
+
+ 213:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c **** /*******************************************************************************
+ 214:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c **** * Function Name: SDCard_SPIM_SetActiveSlaveSelect
+ 215:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c **** ********************************************************************************
+ 216:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c **** *
+ 217:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c **** * Summary:
+ 218:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c **** *  Selects one of the four SPI slave select signals.
+ 219:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c **** *  The component should be in one of the following states to change the active
+ 220:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c **** *  slave select signal source correctly:
+ 221:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c **** *   - the component is disabled
+ 222:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c **** *   - the component has completed all transactions (TX FIFO is empty and the
+ 223:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c **** *     SpiDone flag is set)
+ 224:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c **** *  This function does not check that these conditions are met.
+ 225:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c **** *  At initialization time the active slave select line is slave select 0.
+ 226:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c **** *
+ 227:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c **** * Parameters:
+ 228:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c **** *  activeSelect: The four lines available to utilize Slave Select function.
+ 229:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c **** *
+ 230:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c **** * Return:
+ 231:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c **** *  None
+ 232:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c **** *
+ 233:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c **** *******************************************************************************/
+ 234:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c **** void SDCard_SPIM_SpiSetActiveSlaveSelect(uint32 activeSelect)
+ 235:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c **** {
+ 127              		.loc 1 235 0
+ 128              		.cfi_startproc
+ 129 0000 80B5     		push	{r7, lr}
+ 130              	.LCFI2:
+ 131              		.cfi_def_cfa_offset 8
+ 132              		.cfi_offset 7, -8
+ 133              		.cfi_offset 14, -4
+ 134 0002 84B0     		sub	sp, sp, #16
+ 135              	.LCFI3:
+ 136              		.cfi_def_cfa_offset 24
+ 137 0004 00AF     		add	r7, sp, #0
+ 138              	.LCFI4:
+ 139              		.cfi_def_cfa_register 7
+ 140 0006 7860     		str	r0, [r7, #4]
+ 236:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c ****     uint32 spiCtrl;
+ 237:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c ****     
+ 238:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c ****     spiCtrl = SDCard_SPIM_SPI_CTRL_REG;
+ 141              		.loc 1 238 0
+ 142 0008 0A4B     		ldr	r3, .L7
+ 143 000a 1B68     		ldr	r3, [r3]
+ 144 000c FB60     		str	r3, [r7, #12]
+ 239:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c ****     
+ 240:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c ****     spiCtrl &= (uint32) ~SDCard_SPIM_SPI_CTRL_SLAVE_SELECT_MASK; /* Clear SS bits */
+ 145              		.loc 1 240 0
+ 146 000e FA68     		ldr	r2, [r7, #12]
+ 147 0010 094B     		ldr	r3, .L7+4
+ 148 0012 1340     		and	r3, r3, r2
+ 149 0014 FB60     		str	r3, [r7, #12]
+ 241:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c ****     spiCtrl |= (uint32)  SDCard_SPIM_GET_SPI_CTRL_SS(activeSelect);
+ 150              		.loc 1 241 0
+ 151 0016 7B68     		ldr	r3, [r7, #4]
+ 152 0018 9A06     		lsl	r2, r3, #26
+ 153 001a C023     		mov	r3, #192
+ 154 001c 1B05     		lsl	r3, r3, #20
+ARM GAS  C:\Users\srvs\AppData\Local\Temp\ccYq4Mps.s 			page 8
+
+
+ 155 001e 1340     		and	r3, r3, r2
+ 156 0020 FA68     		ldr	r2, [r7, #12]
+ 157 0022 1343     		orr	r3, r3, r2
+ 158 0024 FB60     		str	r3, [r7, #12]
+ 242:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c ****     
+ 243:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c ****     SDCard_SPIM_SPI_CTRL_REG = spiCtrl;
+ 159              		.loc 1 243 0
+ 160 0026 034B     		ldr	r3, .L7
+ 161 0028 FA68     		ldr	r2, [r7, #12]
+ 162 002a 1A60     		str	r2, [r3]
+ 244:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c **** }
+ 163              		.loc 1 244 0
+ 164 002c BD46     		mov	sp, r7
+ 165 002e 04B0     		add	sp, sp, #16
+ 166              		@ sp needed for prologue
+ 167 0030 80BD     		pop	{r7, pc}
+ 168              	.L8:
+ 169 0032 C046     		.align	2
+ 170              	.L7:
+ 171 0034 20000740 		.word	1074200608
+ 172 0038 FFFFFFF3 		.word	-201326593
+ 173              		.cfi_endproc
+ 174              	.LFE1:
+ 175              		.size	SDCard_SPIM_SpiSetActiveSlaveSelect, .-SDCard_SPIM_SpiSetActiveSlaveSelect
+ 176              		.section	.text.SDCard_SPIM_SpiSaveConfig,"ax",%progbits
+ 177              		.align	2
+ 178              		.global	SDCard_SPIM_SpiSaveConfig
+ 179              		.code	16
+ 180              		.thumb_func
+ 181              		.type	SDCard_SPIM_SpiSaveConfig, %function
+ 182              	SDCard_SPIM_SpiSaveConfig:
+ 183              	.LFB2:
+ 245:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c **** 
+ 246:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c **** 
+ 247:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c **** /*******************************************************************************
+ 248:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c **** * Function Name: SDCard_SPIM_SpiSaveConfig
+ 249:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c **** ********************************************************************************
+ 250:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c **** *
+ 251:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c **** * Summary:
+ 252:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c **** *  Wakeup disabled: does nothing.
+ 253:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c **** *  Wakeup  enabled: clears SCB_backup.enableState to keep component enabled
+ 254:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c **** *  while DeepSleep. The SCB_INTR_SPI_EC_WAKE_UP enabled while initialization
+ 255:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c **** *  and tracks in active mode therefore it does not require to be cleared.
+ 256:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c **** *
+ 257:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c **** * Parameters:
+ 258:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c **** *  None
+ 259:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c **** *
+ 260:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c **** * Return:
+ 261:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c **** *  None
+ 262:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c **** *
+ 263:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c **** * Global variables:
+ 264:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c **** *  None
+ 265:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c **** *
+ 266:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c **** *******************************************************************************/
+ 267:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c **** void SDCard_SPIM_SpiSaveConfig(void)
+ 268:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c **** {
+ 184              		.loc 1 268 0
+ARM GAS  C:\Users\srvs\AppData\Local\Temp\ccYq4Mps.s 			page 9
+
+
+ 185              		.cfi_startproc
+ 186 0000 80B5     		push	{r7, lr}
+ 187              	.LCFI5:
+ 188              		.cfi_def_cfa_offset 8
+ 189              		.cfi_offset 7, -8
+ 190              		.cfi_offset 14, -4
+ 191 0002 00AF     		add	r7, sp, #0
+ 192              	.LCFI6:
+ 193              		.cfi_def_cfa_register 7
+ 269:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c ****     #if(SDCard_SPIM_CHECK_SPI_WAKE_ENABLE)
+ 270:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c ****     {
+ 271:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c ****         SDCard_SPIM_backup.enableState = 0u; /* Keep SCB enabled */
+ 272:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c ****         
+ 273:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c ****         /* Clear wake-up before enable */
+ 274:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c ****         SDCard_SPIM_ClearSpiExtClkInterruptSource(SDCard_SPIM_INTR_SPI_EC_WAKE_UP);
+ 275:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c ****         
+ 276:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c ****         /* Enable interrupt to wakeup the device */
+ 277:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c ****         SDCard_SPIM_SetSpiExtClkInterruptMode(SDCard_SPIM_INTR_SPI_EC_WAKE_UP);
+ 278:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c ****     }
+ 279:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c ****     #endif
+ 280:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c **** }
+ 194              		.loc 1 280 0
+ 195 0004 BD46     		mov	sp, r7
+ 196              		@ sp needed for prologue
+ 197 0006 80BD     		pop	{r7, pc}
+ 198              		.cfi_endproc
+ 199              	.LFE2:
+ 200              		.size	SDCard_SPIM_SpiSaveConfig, .-SDCard_SPIM_SpiSaveConfig
+ 201              		.section	.text.SDCard_SPIM_SpiRestoreConfig,"ax",%progbits
+ 202              		.align	2
+ 203              		.global	SDCard_SPIM_SpiRestoreConfig
+ 204              		.code	16
+ 205              		.thumb_func
+ 206              		.type	SDCard_SPIM_SpiRestoreConfig, %function
+ 207              	SDCard_SPIM_SpiRestoreConfig:
+ 208              	.LFB3:
+ 281:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c **** 
+ 282:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c **** 
+ 283:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c **** /*******************************************************************************
+ 284:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c **** * Function Name: SDCard_SPIM_SpiRestoreConfig
+ 285:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c **** ********************************************************************************
+ 286:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c **** *
+ 287:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c **** * Summary:
+ 288:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c **** *  Does nothing.
+ 289:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c **** *
+ 290:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c **** * Parameters:
+ 291:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c **** *  None
+ 292:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c **** *
+ 293:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c **** * Return:
+ 294:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c **** *  None
+ 295:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c **** *
+ 296:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c **** * Global variables:
+ 297:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c **** *  None
+ 298:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c **** *
+ 299:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c **** *******************************************************************************/
+ 300:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c **** void SDCard_SPIM_SpiRestoreConfig(void)
+ 301:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c **** {
+ARM GAS  C:\Users\srvs\AppData\Local\Temp\ccYq4Mps.s 			page 10
+
+
+ 209              		.loc 1 301 0
+ 210              		.cfi_startproc
+ 211 0000 80B5     		push	{r7, lr}
+ 212              	.LCFI7:
+ 213              		.cfi_def_cfa_offset 8
+ 214              		.cfi_offset 7, -8
+ 215              		.cfi_offset 14, -4
+ 216 0002 00AF     		add	r7, sp, #0
+ 217              	.LCFI8:
+ 218              		.cfi_def_cfa_register 7
+ 302:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c ****     #if(SDCard_SPIM_CHECK_SPI_WAKE_ENABLE)
+ 303:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c ****     {
+ 304:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c ****         /* Disable interrupt to wakeup the device */
+ 305:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c ****         SDCard_SPIM_SetSpiExtClkInterruptMode(SDCard_SPIM_NO_INTR_SOURCES);
+ 306:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c ****     }
+ 307:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c ****     #endif
+ 308:.\Generated_Source\PSoC4/SDCard_SPIM_SPI.c **** }
+ 219              		.loc 1 308 0
+ 220 0004 BD46     		mov	sp, r7
+ 221              		@ sp needed for prologue
+ 222 0006 80BD     		pop	{r7, pc}
+ 223              		.cfi_endproc
+ 224              	.LFE3:
+ 225              		.size	SDCard_SPIM_SpiRestoreConfig, .-SDCard_SPIM_SpiRestoreConfig
+ 226              		.text
+ 227              	.Letext0:
+ 228              		.section	.debug_loc,"",%progbits
+ 229              	.Ldebug_loc0:
+ 230              	.LLST0:
+ 231 0000 00000000 		.4byte	.LFB0
+ 232 0004 02000000 		.4byte	.LCFI0
+ 233 0008 0100     		.2byte	0x1
+ 234 000a 5D       		.byte	0x5d
+ 235 000b 02000000 		.4byte	.LCFI0
+ 236 000f 04000000 		.4byte	.LCFI1
+ 237 0013 0200     		.2byte	0x2
+ 238 0015 7D       		.byte	0x7d
+ 239 0016 08       		.sleb128 8
+ 240 0017 04000000 		.4byte	.LCFI1
+ 241 001b 98000000 		.4byte	.LFE0
+ 242 001f 0200     		.2byte	0x2
+ 243 0021 77       		.byte	0x77
+ 244 0022 08       		.sleb128 8
+ 245 0023 00000000 		.4byte	0x0
+ 246 0027 00000000 		.4byte	0x0
+ 247              	.LLST1:
+ 248 002b 00000000 		.4byte	.LFB1
+ 249 002f 02000000 		.4byte	.LCFI2
+ 250 0033 0100     		.2byte	0x1
+ 251 0035 5D       		.byte	0x5d
+ 252 0036 02000000 		.4byte	.LCFI2
+ 253 003a 04000000 		.4byte	.LCFI3
+ 254 003e 0200     		.2byte	0x2
+ 255 0040 7D       		.byte	0x7d
+ 256 0041 08       		.sleb128 8
+ 257 0042 04000000 		.4byte	.LCFI3
+ 258 0046 06000000 		.4byte	.LCFI4
+ARM GAS  C:\Users\srvs\AppData\Local\Temp\ccYq4Mps.s 			page 11
+
+
+ 259 004a 0200     		.2byte	0x2
+ 260 004c 7D       		.byte	0x7d
+ 261 004d 18       		.sleb128 24
+ 262 004e 06000000 		.4byte	.LCFI4
+ 263 0052 3C000000 		.4byte	.LFE1
+ 264 0056 0200     		.2byte	0x2
+ 265 0058 77       		.byte	0x77
+ 266 0059 18       		.sleb128 24
+ 267 005a 00000000 		.4byte	0x0
+ 268 005e 00000000 		.4byte	0x0
+ 269              	.LLST2:
+ 270 0062 00000000 		.4byte	.LFB2
+ 271 0066 02000000 		.4byte	.LCFI5
+ 272 006a 0100     		.2byte	0x1
+ 273 006c 5D       		.byte	0x5d
+ 274 006d 02000000 		.4byte	.LCFI5
+ 275 0071 04000000 		.4byte	.LCFI6
+ 276 0075 0200     		.2byte	0x2
+ 277 0077 7D       		.byte	0x7d
+ 278 0078 08       		.sleb128 8
+ 279 0079 04000000 		.4byte	.LCFI6
+ 280 007d 08000000 		.4byte	.LFE2
+ 281 0081 0200     		.2byte	0x2
+ 282 0083 77       		.byte	0x77
+ 283 0084 08       		.sleb128 8
+ 284 0085 00000000 		.4byte	0x0
+ 285 0089 00000000 		.4byte	0x0
+ 286              	.LLST3:
+ 287 008d 00000000 		.4byte	.LFB3
+ 288 0091 02000000 		.4byte	.LCFI7
+ 289 0095 0100     		.2byte	0x1
+ 290 0097 5D       		.byte	0x5d
+ 291 0098 02000000 		.4byte	.LCFI7
+ 292 009c 04000000 		.4byte	.LCFI8
+ 293 00a0 0200     		.2byte	0x2
+ 294 00a2 7D       		.byte	0x7d
+ 295 00a3 08       		.sleb128 8
+ 296 00a4 04000000 		.4byte	.LCFI8
+ 297 00a8 08000000 		.4byte	.LFE3
+ 298 00ac 0200     		.2byte	0x2
+ 299 00ae 77       		.byte	0x77
+ 300 00af 08       		.sleb128 8
+ 301 00b0 00000000 		.4byte	0x0
+ 302 00b4 00000000 		.4byte	0x0
+ 303              		.file 2 ".\\Generated_Source\\PSoC4\\/cytypes.h"
+ 304              		.section	.debug_info
+ 305 0000 06010000 		.4byte	0x106
+ 306 0004 0200     		.2byte	0x2
+ 307 0006 00000000 		.4byte	.Ldebug_abbrev0
+ 308 000a 04       		.byte	0x4
+ 309 000b 01       		.uleb128 0x1
+ 310 000c EC000000 		.4byte	.LASF15
+ 311 0010 01       		.byte	0x1
+ 312 0011 14010000 		.4byte	.LASF16
+ 313 0015 A0000000 		.4byte	.LASF17
+ 314 0019 00000000 		.4byte	0x0
+ 315 001d 00000000 		.4byte	0x0
+ARM GAS  C:\Users\srvs\AppData\Local\Temp\ccYq4Mps.s 			page 12
+
+
+ 316 0021 00000000 		.4byte	.Ldebug_ranges0+0x0
+ 317 0025 00000000 		.4byte	.Ldebug_line0
+ 318 0029 02       		.uleb128 0x2
+ 319 002a 01       		.byte	0x1
+ 320 002b 06       		.byte	0x6
+ 321 002c 59010000 		.4byte	.LASF0
+ 322 0030 02       		.uleb128 0x2
+ 323 0031 01       		.byte	0x1
+ 324 0032 08       		.byte	0x8
+ 325 0033 F8000000 		.4byte	.LASF1
+ 326 0037 02       		.uleb128 0x2
+ 327 0038 02       		.byte	0x2
+ 328 0039 05       		.byte	0x5
+ 329 003a 9A010000 		.4byte	.LASF2
+ 330 003e 02       		.uleb128 0x2
+ 331 003f 02       		.byte	0x2
+ 332 0040 07       		.byte	0x7
+ 333 0041 46010000 		.4byte	.LASF3
+ 334 0045 02       		.uleb128 0x2
+ 335 0046 04       		.byte	0x4
+ 336 0047 05       		.byte	0x5
+ 337 0048 0B010000 		.4byte	.LASF4
+ 338 004c 02       		.uleb128 0x2
+ 339 004d 04       		.byte	0x4
+ 340 004e 07       		.byte	0x7
+ 341 004f 53000000 		.4byte	.LASF5
+ 342 0053 02       		.uleb128 0x2
+ 343 0054 08       		.byte	0x8
+ 344 0055 05       		.byte	0x5
+ 345 0056 00000000 		.4byte	.LASF6
+ 346 005a 02       		.uleb128 0x2
+ 347 005b 08       		.byte	0x8
+ 348 005c 07       		.byte	0x7
+ 349 005d 65000000 		.4byte	.LASF7
+ 350 0061 03       		.uleb128 0x3
+ 351 0062 04       		.byte	0x4
+ 352 0063 05       		.byte	0x5
+ 353 0064 696E7400 		.ascii	"int\000"
+ 354 0068 02       		.uleb128 0x2
+ 355 0069 04       		.byte	0x4
+ 356 006a 07       		.byte	0x7
+ 357 006b 15000000 		.4byte	.LASF8
+ 358 006f 04       		.uleb128 0x4
+ 359 0070 0E000000 		.4byte	.LASF18
+ 360 0074 02       		.byte	0x2
+ 361 0075 4E       		.byte	0x4e
+ 362 0076 4C000000 		.4byte	0x4c
+ 363 007a 02       		.uleb128 0x2
+ 364 007b 04       		.byte	0x4
+ 365 007c 04       		.byte	0x4
+ 366 007d 8C010000 		.4byte	.LASF9
+ 367 0081 02       		.uleb128 0x2
+ 368 0082 08       		.byte	0x8
+ 369 0083 04       		.byte	0x4
+ 370 0084 3F010000 		.4byte	.LASF10
+ 371 0088 02       		.uleb128 0x2
+ 372 0089 01       		.byte	0x1
+ARM GAS  C:\Users\srvs\AppData\Local\Temp\ccYq4Mps.s 			page 13
+
+
+ 373 008a 08       		.byte	0x8
+ 374 008b 06010000 		.4byte	.LASF11
+ 375 008f 05       		.uleb128 0x5
+ 376 0090 04       		.byte	0x4
+ 377 0091 07       		.byte	0x7
+ 378 0092 06       		.uleb128 0x6
+ 379 0093 01       		.byte	0x1
+ 380 0094 3F000000 		.4byte	.LASF12
+ 381 0098 01       		.byte	0x1
+ 382 0099 A5       		.byte	0xa5
+ 383 009a 01       		.byte	0x1
+ 384 009b 00000000 		.4byte	.LFB0
+ 385 009f 98000000 		.4byte	.LFE0
+ 386 00a3 00000000 		.4byte	.LLST0
+ 387 00a7 07       		.uleb128 0x7
+ 388 00a8 01       		.byte	0x1
+ 389 00a9 7C000000 		.4byte	.LASF19
+ 390 00ad 01       		.byte	0x1
+ 391 00ae EA       		.byte	0xea
+ 392 00af 01       		.byte	0x1
+ 393 00b0 00000000 		.4byte	.LFB1
+ 394 00b4 3C000000 		.4byte	.LFE1
+ 395 00b8 2B000000 		.4byte	.LLST1
+ 396 00bc DD000000 		.4byte	0xdd
+ 397 00c0 08       		.uleb128 0x8
+ 398 00c1 7F010000 		.4byte	.LASF20
+ 399 00c5 01       		.byte	0x1
+ 400 00c6 EA       		.byte	0xea
+ 401 00c7 6F000000 		.4byte	0x6f
+ 402 00cb 02       		.byte	0x2
+ 403 00cc 91       		.byte	0x91
+ 404 00cd 6C       		.sleb128 -20
+ 405 00ce 09       		.uleb128 0x9
+ 406 00cf 92010000 		.4byte	.LASF21
+ 407 00d3 01       		.byte	0x1
+ 408 00d4 EC       		.byte	0xec
+ 409 00d5 6F000000 		.4byte	0x6f
+ 410 00d9 02       		.byte	0x2
+ 411 00da 91       		.byte	0x91
+ 412 00db 74       		.sleb128 -12
+ 413 00dc 00       		.byte	0x0
+ 414 00dd 0A       		.uleb128 0xa
+ 415 00de 01       		.byte	0x1
+ 416 00df 65010000 		.4byte	.LASF13
+ 417 00e3 01       		.byte	0x1
+ 418 00e4 0B01     		.2byte	0x10b
+ 419 00e6 01       		.byte	0x1
+ 420 00e7 00000000 		.4byte	.LFB2
+ 421 00eb 08000000 		.4byte	.LFE2
+ 422 00ef 62000000 		.4byte	.LLST2
+ 423 00f3 0A       		.uleb128 0xa
+ 424 00f4 01       		.byte	0x1
+ 425 00f5 22000000 		.4byte	.LASF14
+ 426 00f9 01       		.byte	0x1
+ 427 00fa 2C01     		.2byte	0x12c
+ 428 00fc 01       		.byte	0x1
+ 429 00fd 00000000 		.4byte	.LFB3
+ARM GAS  C:\Users\srvs\AppData\Local\Temp\ccYq4Mps.s 			page 14
+
+
+ 430 0101 08000000 		.4byte	.LFE3
+ 431 0105 8D000000 		.4byte	.LLST3
+ 432 0109 00       		.byte	0x0
+ 433              		.section	.debug_abbrev
+ 434 0000 01       		.uleb128 0x1
+ 435 0001 11       		.uleb128 0x11
+ 436 0002 01       		.byte	0x1
+ 437 0003 25       		.uleb128 0x25
+ 438 0004 0E       		.uleb128 0xe
+ 439 0005 13       		.uleb128 0x13
+ 440 0006 0B       		.uleb128 0xb
+ 441 0007 03       		.uleb128 0x3
+ 442 0008 0E       		.uleb128 0xe
+ 443 0009 1B       		.uleb128 0x1b
+ 444 000a 0E       		.uleb128 0xe
+ 445 000b 11       		.uleb128 0x11
+ 446 000c 01       		.uleb128 0x1
+ 447 000d 52       		.uleb128 0x52
+ 448 000e 01       		.uleb128 0x1
+ 449 000f 55       		.uleb128 0x55
+ 450 0010 06       		.uleb128 0x6
+ 451 0011 10       		.uleb128 0x10
+ 452 0012 06       		.uleb128 0x6
+ 453 0013 00       		.byte	0x0
+ 454 0014 00       		.byte	0x0
+ 455 0015 02       		.uleb128 0x2
+ 456 0016 24       		.uleb128 0x24
+ 457 0017 00       		.byte	0x0
+ 458 0018 0B       		.uleb128 0xb
+ 459 0019 0B       		.uleb128 0xb
+ 460 001a 3E       		.uleb128 0x3e
+ 461 001b 0B       		.uleb128 0xb
+ 462 001c 03       		.uleb128 0x3
+ 463 001d 0E       		.uleb128 0xe
+ 464 001e 00       		.byte	0x0
+ 465 001f 00       		.byte	0x0
+ 466 0020 03       		.uleb128 0x3
+ 467 0021 24       		.uleb128 0x24
+ 468 0022 00       		.byte	0x0
+ 469 0023 0B       		.uleb128 0xb
+ 470 0024 0B       		.uleb128 0xb
+ 471 0025 3E       		.uleb128 0x3e
+ 472 0026 0B       		.uleb128 0xb
+ 473 0027 03       		.uleb128 0x3
+ 474 0028 08       		.uleb128 0x8
+ 475 0029 00       		.byte	0x0
+ 476 002a 00       		.byte	0x0
+ 477 002b 04       		.uleb128 0x4
+ 478 002c 16       		.uleb128 0x16
+ 479 002d 00       		.byte	0x0
+ 480 002e 03       		.uleb128 0x3
+ 481 002f 0E       		.uleb128 0xe
+ 482 0030 3A       		.uleb128 0x3a
+ 483 0031 0B       		.uleb128 0xb
+ 484 0032 3B       		.uleb128 0x3b
+ 485 0033 0B       		.uleb128 0xb
+ 486 0034 49       		.uleb128 0x49
+ARM GAS  C:\Users\srvs\AppData\Local\Temp\ccYq4Mps.s 			page 15
+
+
+ 487 0035 13       		.uleb128 0x13
+ 488 0036 00       		.byte	0x0
+ 489 0037 00       		.byte	0x0
+ 490 0038 05       		.uleb128 0x5
+ 491 0039 24       		.uleb128 0x24
+ 492 003a 00       		.byte	0x0
+ 493 003b 0B       		.uleb128 0xb
+ 494 003c 0B       		.uleb128 0xb
+ 495 003d 3E       		.uleb128 0x3e
+ 496 003e 0B       		.uleb128 0xb
+ 497 003f 00       		.byte	0x0
+ 498 0040 00       		.byte	0x0
+ 499 0041 06       		.uleb128 0x6
+ 500 0042 2E       		.uleb128 0x2e
+ 501 0043 00       		.byte	0x0
+ 502 0044 3F       		.uleb128 0x3f
+ 503 0045 0C       		.uleb128 0xc
+ 504 0046 03       		.uleb128 0x3
+ 505 0047 0E       		.uleb128 0xe
+ 506 0048 3A       		.uleb128 0x3a
+ 507 0049 0B       		.uleb128 0xb
+ 508 004a 3B       		.uleb128 0x3b
+ 509 004b 0B       		.uleb128 0xb
+ 510 004c 27       		.uleb128 0x27
+ 511 004d 0C       		.uleb128 0xc
+ 512 004e 11       		.uleb128 0x11
+ 513 004f 01       		.uleb128 0x1
+ 514 0050 12       		.uleb128 0x12
+ 515 0051 01       		.uleb128 0x1
+ 516 0052 40       		.uleb128 0x40
+ 517 0053 06       		.uleb128 0x6
+ 518 0054 00       		.byte	0x0
+ 519 0055 00       		.byte	0x0
+ 520 0056 07       		.uleb128 0x7
+ 521 0057 2E       		.uleb128 0x2e
+ 522 0058 01       		.byte	0x1
+ 523 0059 3F       		.uleb128 0x3f
+ 524 005a 0C       		.uleb128 0xc
+ 525 005b 03       		.uleb128 0x3
+ 526 005c 0E       		.uleb128 0xe
+ 527 005d 3A       		.uleb128 0x3a
+ 528 005e 0B       		.uleb128 0xb
+ 529 005f 3B       		.uleb128 0x3b
+ 530 0060 0B       		.uleb128 0xb
+ 531 0061 27       		.uleb128 0x27
+ 532 0062 0C       		.uleb128 0xc
+ 533 0063 11       		.uleb128 0x11
+ 534 0064 01       		.uleb128 0x1
+ 535 0065 12       		.uleb128 0x12
+ 536 0066 01       		.uleb128 0x1
+ 537 0067 40       		.uleb128 0x40
+ 538 0068 06       		.uleb128 0x6
+ 539 0069 01       		.uleb128 0x1
+ 540 006a 13       		.uleb128 0x13
+ 541 006b 00       		.byte	0x0
+ 542 006c 00       		.byte	0x0
+ 543 006d 08       		.uleb128 0x8
+ARM GAS  C:\Users\srvs\AppData\Local\Temp\ccYq4Mps.s 			page 16
+
+
+ 544 006e 05       		.uleb128 0x5
+ 545 006f 00       		.byte	0x0
+ 546 0070 03       		.uleb128 0x3
+ 547 0071 0E       		.uleb128 0xe
+ 548 0072 3A       		.uleb128 0x3a
+ 549 0073 0B       		.uleb128 0xb
+ 550 0074 3B       		.uleb128 0x3b
+ 551 0075 0B       		.uleb128 0xb
+ 552 0076 49       		.uleb128 0x49
+ 553 0077 13       		.uleb128 0x13
+ 554 0078 02       		.uleb128 0x2
+ 555 0079 0A       		.uleb128 0xa
+ 556 007a 00       		.byte	0x0
+ 557 007b 00       		.byte	0x0
+ 558 007c 09       		.uleb128 0x9
+ 559 007d 34       		.uleb128 0x34
+ 560 007e 00       		.byte	0x0
+ 561 007f 03       		.uleb128 0x3
+ 562 0080 0E       		.uleb128 0xe
+ 563 0081 3A       		.uleb128 0x3a
+ 564 0082 0B       		.uleb128 0xb
+ 565 0083 3B       		.uleb128 0x3b
+ 566 0084 0B       		.uleb128 0xb
+ 567 0085 49       		.uleb128 0x49
+ 568 0086 13       		.uleb128 0x13
+ 569 0087 02       		.uleb128 0x2
+ 570 0088 0A       		.uleb128 0xa
+ 571 0089 00       		.byte	0x0
+ 572 008a 00       		.byte	0x0
+ 573 008b 0A       		.uleb128 0xa
+ 574 008c 2E       		.uleb128 0x2e
+ 575 008d 00       		.byte	0x0
+ 576 008e 3F       		.uleb128 0x3f
+ 577 008f 0C       		.uleb128 0xc
+ 578 0090 03       		.uleb128 0x3
+ 579 0091 0E       		.uleb128 0xe
+ 580 0092 3A       		.uleb128 0x3a
+ 581 0093 0B       		.uleb128 0xb
+ 582 0094 3B       		.uleb128 0x3b
+ 583 0095 05       		.uleb128 0x5
+ 584 0096 27       		.uleb128 0x27
+ 585 0097 0C       		.uleb128 0xc
+ 586 0098 11       		.uleb128 0x11
+ 587 0099 01       		.uleb128 0x1
+ 588 009a 12       		.uleb128 0x12
+ 589 009b 01       		.uleb128 0x1
+ 590 009c 40       		.uleb128 0x40
+ 591 009d 06       		.uleb128 0x6
+ 592 009e 00       		.byte	0x0
+ 593 009f 00       		.byte	0x0
+ 594 00a0 00       		.byte	0x0
+ 595              		.section	.debug_pubnames,"",%progbits
+ 596 0000 8D000000 		.4byte	0x8d
+ 597 0004 0200     		.2byte	0x2
+ 598 0006 00000000 		.4byte	.Ldebug_info0
+ 599 000a 0A010000 		.4byte	0x10a
+ 600 000e 92000000 		.4byte	0x92
+ARM GAS  C:\Users\srvs\AppData\Local\Temp\ccYq4Mps.s 			page 17
+
+
+ 601 0012 53444361 		.ascii	"SDCard_SPIM_SpiInit\000"
+ 601      72645F53 
+ 601      50494D5F 
+ 601      53706949 
+ 601      6E697400 
+ 602 0026 A7000000 		.4byte	0xa7
+ 603 002a 53444361 		.ascii	"SDCard_SPIM_SpiSetActiveSlaveSelect\000"
+ 603      72645F53 
+ 603      50494D5F 
+ 603      53706953 
+ 603      65744163 
+ 604 004e DD000000 		.4byte	0xdd
+ 605 0052 53444361 		.ascii	"SDCard_SPIM_SpiSaveConfig\000"
+ 605      72645F53 
+ 605      50494D5F 
+ 605      53706953 
+ 605      61766543 
+ 606 006c F3000000 		.4byte	0xf3
+ 607 0070 53444361 		.ascii	"SDCard_SPIM_SpiRestoreConfig\000"
+ 607      72645F53 
+ 607      50494D5F 
+ 607      53706952 
+ 607      6573746F 
+ 608 008d 00000000 		.4byte	0x0
+ 609              		.section	.debug_aranges,"",%progbits
+ 610 0000 34000000 		.4byte	0x34
+ 611 0004 0200     		.2byte	0x2
+ 612 0006 00000000 		.4byte	.Ldebug_info0
+ 613 000a 04       		.byte	0x4
+ 614 000b 00       		.byte	0x0
+ 615 000c 0000     		.2byte	0x0
+ 616 000e 0000     		.2byte	0x0
+ 617 0010 00000000 		.4byte	.LFB0
+ 618 0014 98000000 		.4byte	.LFE0-.LFB0
+ 619 0018 00000000 		.4byte	.LFB1
+ 620 001c 3C000000 		.4byte	.LFE1-.LFB1
+ 621 0020 00000000 		.4byte	.LFB2
+ 622 0024 08000000 		.4byte	.LFE2-.LFB2
+ 623 0028 00000000 		.4byte	.LFB3
+ 624 002c 08000000 		.4byte	.LFE3-.LFB3
+ 625 0030 00000000 		.4byte	0x0
+ 626 0034 00000000 		.4byte	0x0
+ 627              		.section	.debug_ranges,"",%progbits
+ 628              	.Ldebug_ranges0:
+ 629 0000 00000000 		.4byte	.Ltext0
+ 630 0004 00000000 		.4byte	.Letext0
+ 631 0008 00000000 		.4byte	.LFB0
+ 632 000c 98000000 		.4byte	.LFE0
+ 633 0010 00000000 		.4byte	.LFB1
+ 634 0014 3C000000 		.4byte	.LFE1
+ 635 0018 00000000 		.4byte	.LFB2
+ 636 001c 08000000 		.4byte	.LFE2
+ 637 0020 00000000 		.4byte	.LFB3
+ 638 0024 08000000 		.4byte	.LFE3
+ 639 0028 00000000 		.4byte	0x0
+ 640 002c 00000000 		.4byte	0x0
+ 641              		.section	.debug_str,"MS",%progbits,1
+ARM GAS  C:\Users\srvs\AppData\Local\Temp\ccYq4Mps.s 			page 18
+
+
+ 642              	.LASF6:
+ 643 0000 6C6F6E67 		.ascii	"long long int\000"
+ 643      206C6F6E 
+ 643      6720696E 
+ 643      7400
+ 644              	.LASF18:
+ 645 000e 75696E74 		.ascii	"uint32\000"
+ 645      333200
+ 646              	.LASF8:
+ 647 0015 756E7369 		.ascii	"unsigned int\000"
+ 647      676E6564 
+ 647      20696E74 
+ 647      00
+ 648              	.LASF14:
+ 649 0022 53444361 		.ascii	"SDCard_SPIM_SpiRestoreConfig\000"
+ 649      72645F53 
+ 649      50494D5F 
+ 649      53706952 
+ 649      6573746F 
+ 650              	.LASF12:
+ 651 003f 53444361 		.ascii	"SDCard_SPIM_SpiInit\000"
+ 651      72645F53 
+ 651      50494D5F 
+ 651      53706949 
+ 651      6E697400 
+ 652              	.LASF5:
+ 653 0053 6C6F6E67 		.ascii	"long unsigned int\000"
+ 653      20756E73 
+ 653      69676E65 
+ 653      6420696E 
+ 653      7400
+ 654              	.LASF7:
+ 655 0065 6C6F6E67 		.ascii	"long long unsigned int\000"
+ 655      206C6F6E 
+ 655      6720756E 
+ 655      7369676E 
+ 655      65642069 
+ 656              	.LASF19:
+ 657 007c 53444361 		.ascii	"SDCard_SPIM_SpiSetActiveSlaveSelect\000"
+ 657      72645F53 
+ 657      50494D5F 
+ 657      53706953 
+ 657      65744163 
+ 658              	.LASF17:
+ 659 00a0 433A5C6D 		.ascii	"C:\\myProjects\\Hobby\\100_day_100_projects\\Mine\\"
+ 659      7950726F 
+ 659      6A656374 
+ 659      735C486F 
+ 659      6262795C 
+ 660 00ce 53444361 		.ascii	"SDCard_Demo\\SDCard_Demo.cydsn\000"
+ 660      72645F44 
+ 660      656D6F5C 
+ 660      53444361 
+ 660      72645F44 
+ 661              	.LASF15:
+ 662 00ec 474E5520 		.ascii	"GNU C 4.4.1\000"
+ 662      4320342E 
+ARM GAS  C:\Users\srvs\AppData\Local\Temp\ccYq4Mps.s 			page 19
+
+
+ 662      342E3100 
+ 663              	.LASF1:
+ 664 00f8 756E7369 		.ascii	"unsigned char\000"
+ 664      676E6564 
+ 664      20636861 
+ 664      7200
+ 665              	.LASF11:
+ 666 0106 63686172 		.ascii	"char\000"
+ 666      00
+ 667              	.LASF4:
+ 668 010b 6C6F6E67 		.ascii	"long int\000"
+ 668      20696E74 
+ 668      00
+ 669              	.LASF16:
+ 670 0114 2E5C4765 		.ascii	".\\Generated_Source\\PSoC4\\SDCard_SPIM_SPI.c\000"
+ 670      6E657261 
+ 670      7465645F 
+ 670      536F7572 
+ 670      63655C50 
+ 671              	.LASF10:
+ 672 013f 646F7562 		.ascii	"double\000"
+ 672      6C6500
+ 673              	.LASF3:
+ 674 0146 73686F72 		.ascii	"short unsigned int\000"
+ 674      7420756E 
+ 674      7369676E 
+ 674      65642069 
+ 674      6E7400
+ 675              	.LASF0:
+ 676 0159 7369676E 		.ascii	"signed char\000"
+ 676      65642063 
+ 676      68617200 
+ 677              	.LASF13:
+ 678 0165 53444361 		.ascii	"SDCard_SPIM_SpiSaveConfig\000"
+ 678      72645F53 
+ 678      50494D5F 
+ 678      53706953 
+ 678      61766543 
+ 679              	.LASF20:
+ 680 017f 61637469 		.ascii	"activeSelect\000"
+ 680      76655365 
+ 680      6C656374 
+ 680      00
+ 681              	.LASF9:
+ 682 018c 666C6F61 		.ascii	"float\000"
+ 682      7400
+ 683              	.LASF21:
+ 684 0192 73706943 		.ascii	"spiCtrl\000"
+ 684      74726C00 
+ 685              	.LASF2:
+ 686 019a 73686F72 		.ascii	"short int\000"
+ 686      7420696E 
+ 686      7400
+ 687              		.ident	"GCC: (Sourcery G++ Lite 2010q1-188) 4.4.1"
