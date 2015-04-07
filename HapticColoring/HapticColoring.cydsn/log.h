@@ -24,6 +24,11 @@
 #define LOG_LEVEL_INFO    2
 #define LOG_LEVEL_TRACE   1
     
+/* Error Codes */
+#define HAPTIC_SUCCESS      0
+#define HAPTIC_WRITE_ERROR  1
+#define HAPTIC_READ_ERROR   2
+
 /* Define Log Level */
 #define LOG_LEVEL LOG_LEVEL_INFO
 
@@ -57,12 +62,6 @@
 #define LOG_H_
     
 inline uint32_t log_log(uint8_t level, const char* function, char * format, ...);
-    
-
-    
-
-    
-    
     
     
 #endif
