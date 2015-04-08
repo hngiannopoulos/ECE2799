@@ -44,6 +44,10 @@
           <File BuildType="BUILD" Toolchain="">.\stmpe610.h</File>
           <File BuildType="BUILD" Toolchain="">.\DRV2605.c</File>
           <File BuildType="BUILD" Toolchain="">.\DRV2605.h</File>
+          <File BuildType="BUILD" Toolchain="">.\mcp23008.h</File>
+          <File BuildType="BUILD" Toolchain="">.\mcp23008.c</File>
+          <File BuildType="BUILD" Toolchain="">.\lcd.h</File>
+          <File BuildType="BUILD" Toolchain="">.\lcd.c</File>
           <File BuildType="BUILD" Toolchain="">.\device.h</File>
         </Files>
       </Folder>
@@ -137,9 +141,6 @@
           <File BuildType="BUILD" Toolchain="">.\Generated_Source\PSoC4\SDCard_SPIM_BOOT.h</File>
           <File BuildType="BUILD" Toolchain="">.\Generated_Source\PSoC4\SDCard_SD_Clock.c</File>
           <File BuildType="BUILD" Toolchain="">.\Generated_Source\PSoC4\SDCard_SD_Clock.h</File>
-          <File BuildType="BUILD" Toolchain="">.\Generated_Source\PSoC4\SDCard_SD_PWR.c</File>
-          <File BuildType="BUILD" Toolchain="">.\Generated_Source\PSoC4\SDCard_SD_PWR.h</File>
-          <File BuildType="BUILD" Toolchain="">.\Generated_Source\PSoC4\SDCard_SD_PWR_aliases.h</File>
           <File BuildType="BUILD" Toolchain="">.\Generated_Source\PSoC4\SDCard_SD_CS.c</File>
           <File BuildType="BUILD" Toolchain="">.\Generated_Source\PSoC4\SDCard_SD_CS.h</File>
           <File BuildType="BUILD" Toolchain="">.\Generated_Source\PSoC4\SDCard_SD_CS_aliases.h</File>
@@ -172,12 +173,6 @@
           <File BuildType="BUILD" Toolchain="">.\Generated_Source\PSoC4\CapSense_Sns_aliases.h</File>
           <File BuildType="BUILD" Toolchain="">.\Generated_Source\PSoC4\CapSense_SenseClk.c</File>
           <File BuildType="BUILD" Toolchain="">.\Generated_Source\PSoC4\CapSense_SenseClk.h</File>
-          <File BuildType="BUILD" Toolchain="">.\Generated_Source\PSoC4\SDCard_SD_WP.c</File>
-          <File BuildType="BUILD" Toolchain="">.\Generated_Source\PSoC4\SDCard_SD_WP.h</File>
-          <File BuildType="BUILD" Toolchain="">.\Generated_Source\PSoC4\SDCard_SD_WP_aliases.h</File>
-          <File BuildType="BUILD" Toolchain="">.\Generated_Source\PSoC4\SDCard_SD_CD.c</File>
-          <File BuildType="BUILD" Toolchain="">.\Generated_Source\PSoC4\SDCard_SD_CD.h</File>
-          <File BuildType="BUILD" Toolchain="">.\Generated_Source\PSoC4\SDCard_SD_CD_aliases.h</File>
           <File BuildType="BUILD" Toolchain="">.\Generated_Source\PSoC4\SDCard_SPIM_SCB_IRQ.c</File>
           <File BuildType="BUILD" Toolchain="">.\Generated_Source\PSoC4\SDCard_SPIM_SCB_IRQ.h</File>
         </Files>

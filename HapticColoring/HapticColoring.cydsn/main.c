@@ -13,6 +13,8 @@
 #include "log.h"
 /* TODO: Remove i2c Driver from main */
 #include "i2c_driver.h"
+// #include "mcp23008.h"
+#include "lcd.h"
 
 #include "stmpe610.h"
 #include "drv2605.h"
@@ -24,21 +26,26 @@
 /**  Initializes the i2c Interface 
  *  @return 1 - Success 0 - Failure
 */
-int i2c_init(){
+void i2c_init(){
     uint32 rc;
     I2C_Start();
     
     /* Initialize the Touchscreen Controller */
-    stmpe_init();
+    // stmpe_init();
     
     /* Log the Chip Address */
-    LOG_INFO( "STMP Chip Addr %04X", stmpe_version());
+    // LOG_INFO( "STMP Chip Addr %04X", stmpe_version());
     
     /* Initiallize the Haptic Controller */
-    drv2605_init();
+    // drv2605_init();
     
-    LOG_INFO("drv2605 Setup", 0);
-    
+    // LOG_INFO("drv2605 Setup", 0);
+    char hello[] = "HELLO12345678909ABCDEFG";
+    char world[] = "WORLD";
+    LOG_INFO("lcd_init rc: %i", lcd_init());
+    LOG_INFO("MCP23008 rc: %i", lcd_print(hello, 0, 0));
+    LOG_INFO("MCP23008 rc: %i", lcd_print(world, 1, 0));
+
     
     
     
@@ -56,8 +63,7 @@ int i2c_init(){
     
     /* And Read back the value */
     /* end of working Implementation */
-    
-    return rc;
+
 }
 
 int main()
@@ -84,6 +90,7 @@ int main()
         /* end of code */
         
         /* Code to Test Haptic Feedback */
+        /*
         uint8_t i;
         for(i = 0; i < 0x7F; i++){
             drv2605_set_rtp(i);
@@ -92,6 +99,7 @@ int main()
             LOG_INFO("Vibe Strength: %i", i);
             
         }
+        */
      
     }
 }

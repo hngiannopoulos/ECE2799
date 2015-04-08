@@ -58,7 +58,10 @@ uint32_t i2c_write_buff(uint32_t dev_addr, uint8_t reg, uint8_t * dat, uint8_t n
     }
     
     I2C_I2CMasterWriteByte( reg );
-    I2C_I2CMasterWriteByte( dat[i] );
+    /* Copy In the Approprate ammount of data */
+    for(i = 0; i < (n - 1); i++){
+        I2C_I2CMasterWriteByte(dat[i]);
+    }
     
     /* Send the stop bit */
     rc = I2C_I2CMasterSendStop();
