@@ -10,6 +10,7 @@
  * ========================================
 */
 #include <project.h>
+#include <stdio.h>
 #include "log.h"
 /* TODO: Remove i2c Driver from main */
 #include "i2c_driver.h"
@@ -31,10 +32,10 @@ void i2c_init(){
     I2C_Start();
     
     /* Initialize the Touchscreen Controller */
-    // stmpe_init();
+    stmpe_init();
     
     /* Log the Chip Address */
-    // LOG_INFO( "STMP Chip Addr %04X", stmpe_version());
+    LOG_INFO( "STMP Chip Addr %04X", stmpe_version());
     
     /* Initiallize the Haptic Controller */
     // drv2605_init();
@@ -76,21 +77,34 @@ int main()
     pos16_t pos;
     int rc;
 
-    LED_Write(1);
     
+    
+    char posStr[16] = {0};
+    char vibeStr [16] = {0};
+    lcd_clrScreen();
     /* CyGlobalIntEnable; */ /* Uncomment this line to enable global interrupts. */
     for(;;)
     {
         /* Code to print out touchscreen Pos */
-        /*
+        
         rc = stmpe_getPos(&pos);
-        if(rc == 0)
+        if(rc == 0){
+            LED_Write(1);
             LOG_INFO("Pos x =  %05i y = %05i z = %05i", pos.x, pos.y, pos.z);
-        */ 
+            /* only run sometimes */
+            if((pos.x & 0x3) == 0x03){
+                snprintf(posStr, 16, "X=%04x Y=%04x", pos.x, pos.y);
+                
+                lcd_print(posStr, 0, 0);
+            }
+        }
+        else{
+            LED_Write(0);
+        }
+        
         /* end of code */
         
-        /* Code to Test Haptic Feedback */
-        /*
+        /* Code to Test Haptic Feedback *//*
         uint8_t i;
         for(i = 0; i < 0x7F; i++){
             drv2605_set_rtp(i);
@@ -100,6 +114,7 @@ int main()
             
         }
         */
+        
      
     }
 }
