@@ -66,13 +66,14 @@ def main():
 
 	out_img.save(open("out.jpg", "w+"))
 
-	sd_img.save(open("sdout.jpg", "w+"))
+	# option to save the image sent to the sd card
+	# sd_img.save(open("sdout.jpg", "w+"))
 
 	print sd_img.size
 	# write data to the output file
-	out.write(str(args.x_pos))
-	out.write(',')
-	out.write(str(args.y_pos))
+	# out.write(str(args.x_pos))
+	# out.write(',')
+	# out.write(str(args.y_pos))
 	out.write(sd_img.tostring())
 	out.close()
 
