@@ -16,6 +16,7 @@
 #include "i2c_driver.h"
 // #include "mcp23008.h"
 #include "lcd.h"
+#include "pff.h"
 
 #include "stmpe610.h"
 #include "drv2605.h"
@@ -67,54 +68,55 @@ void i2c_init(){
 
 }
 
+void die (		/* Stop with dying message */
+	FRESULT rc	/* FatFs return value */
+)
+{
+	LOG_ERROR("Failed with rc=%u.", rc);
+	for (;;) ;
+}
+
 int main()
 {
+    
+    FATFS fatfs;			/* File system object */
+	DIR dir;				/* Directory object */
+	FILINFO fno;			/* File information object */
+	UINT bw, br, i;
+	BYTE buff[64];
+    
     /* Place your initialization/startup code here (e.g. MyInst_Start()) */
     LED_Write(0);
-    i2c_init();
+   // i2c_init();
     log_log(LOG_LEVEL_INFO, __func__, "Enter Main");
     
-    pos16_t pos;
     int rc;
 
+    LOG_WARN("Mounting Volume", 0);
+	rc = pf_mount(&fatfs);
+	if (rc) die(rc);
     
+    LOG_WARN("Open root directory.", 0);
+    rc = pf_opendir(&dir, "");
+    if (rc) die(rc);
+	LOG_WARN("Directory listing...", 0);
+	for (;;) {
+
+		rc = pf_readdir(&dir, &fno);	/* Read a directory item */
+		if (rc || !fno.fname[0]) break;	/* Error or end of dir */
+		if (fno.fattrib & AM_DIR){
+			LOG_WARN("   <dir>  %s\n", fno.fname);
+        }
+		else{
+			LOG_WARN("%8lu  %s\n", fno.fsize, fno.fname);
+        }
+	}
+	if (rc) die(rc);
     
-    char posStr[16] = {0};
-    char vibeStr [16] = {0};
-    lcd_clrScreen();
-    /* CyGlobalIntEnable; */ /* Uncomment this line to enable global interrupts. */
+ 
     for(;;)
     {
-        /* Code to print out touchscreen Pos */
-        
-        rc = stmpe_getPos(&pos);
-        if(rc == 0){
-            LED_Write(1);
-            LOG_INFO("Pos x =  %05i y = %05i z = %05i", pos.x, pos.y, pos.z);
-            /* only run sometimes */
-            if((pos.x & 0x3) == 0x03){
-                snprintf(posStr, 16, "X=%04x Y=%04x", pos.x, pos.y);
-                
-                lcd_print(posStr, 0, 0);
-            }
-        }
-        else{
-            LED_Write(0);
-        }
-        
-        /* end of code */
-        
-        /* Code to Test Haptic Feedback *//*
-        uint8_t i;
-        for(i = 0; i < 0x7F; i++){
-            drv2605_set_rtp(i);
-            CyDelay(50);
-            drv2605_go();
-            LOG_INFO("Vibe Strength: %i", i);
-            
-        }
-        */
-        
+      
      
     }
 }

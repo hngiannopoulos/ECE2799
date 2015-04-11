@@ -40,7 +40,7 @@
 #define	CK_L()			SPI_SCLK_Write(0)   /* Set MMC SCLK "low" */
 #define DI_H()			SPI_MOSI_Write(1)   /* Set MMC DI "high" */
 #define DI_L()			SPI_MOSI_Write(0)   /* Set MMC DI "low" */
-#define DO				SPI_MOSI_Read()     /* Test MMC DO (high:true, low:false) */
+#define DO				SPI_MISO_Read()     /* Test MMC DO (high:true, low:false) */
 
 
 
