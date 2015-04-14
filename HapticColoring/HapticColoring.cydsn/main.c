@@ -79,47 +79,47 @@ void die (		/* Stop with dying message */
 int main()
 {
     
-    FATFS fatfs;			/* File system object */
-	DIR dir;				/* Directory object */
-	FILINFO fno;			/* File information object */
-	UINT bw, br, i;
-	BYTE buff[64];
-    
     /* Place your initialization/startup code here (e.g. MyInst_Start()) */
     LED_Write(0);
    // i2c_init();
     log_log(LOG_LEVEL_INFO, __func__, "Enter Main");
     
-    int rc;
-
-    LOG_WARN("Mounting Volume", 0);
-	rc = pf_mount(&fatfs);
-	if (rc) die(rc);
+    /* Enable global interrupts */
+    CyGlobalIntEnable;
     
-    LOG_WARN("Open root directory.", 0);
-    rc = pf_opendir(&dir, "");
-    if (rc) die(rc);
-	LOG_WARN("Directory listing...", 0);
-	for (;;) {
-
-		rc = pf_readdir(&dir, &fno);	/* Read a directory item */
-		if (rc || !fno.fname[0]) break;	/* Error or end of dir */
-		if (fno.fattrib & AM_DIR){
-			LOG_WARN("   <dir>  %s\n", fno.fname);
-        }
-		else{
-			LOG_WARN("%8lu  %s\n", fno.fsize, fno.fname);
-        }
-	}
-	if (rc) die(rc);
+    /* Initialize baselines */ 
     
- 
-    for(;;)
+    
+    CapSense_Start();	
+
+    LOG_WARN("Baselines ", 0);
+    /* Initialize baselines */ 
+    CapSense_InitializeAllBaselines();
+    
+    LOG_WARN("Baselines ", 0);
+    
+    while(1u)
     {
-      
-     
+        /* Update all baselines */
+        CapSense_UpdateEnabledBaselines();
+        
+   		/* Start scanning all enabled sensors */
+    	CapSense_ScanEnabledWidgets();
+    
+        /* Wait for scanning to complete */
+		while(CapSense_IsBusy() != 0)
+		{
+			/* Loop until condition true */
+		}
+        
+        CyDelay(5);
+		/* Display CapSense state using LEDs */
+         LOG_WARN("A: %i ", 
+            CapSense_GetCentroidPos(CapSense_LINEARSLIDER0__LS));
     }
+     
 }
+
 
 
 
