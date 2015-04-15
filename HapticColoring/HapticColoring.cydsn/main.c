@@ -39,28 +39,25 @@ void i2c_init(){
     LOG_INFO( "STMP Chip Addr %04X", stmpe_version());
     
     /* Initiallize the Haptic Controller */
-    // drv2605_init();
+    drv2605_init();
     
-    // LOG_INFO("drv2605 Setup", 0);
+    LOG_INFO("drv2605 Setup", 0);
     char hello[] = "HELLO12345678909ABCDEFG";
     char world[] = "WORLD";
+    
+    
     LOG_INFO("lcd_init rc: %i", lcd_init());
     LOG_INFO("MCP23008 rc: %i", lcd_print(hello, 0, 0));
     LOG_INFO("MCP23008 rc: %i", lcd_print(world, 1, 0));
-
     
     
-    
-    
+    CyDelay(1000);
     /* Working Implementatyion */
    // LOG_TRACE("i2c REG READ %02X, %02X", i2c_read_reg(STMPE610_I2C_ADDR, 0x00), i2c_read_reg(STMPE610_I2C_ADDR, 0x01));
     
     /* Write To Touchscreen */
 //    i2c_write_reg(STMPE610_I2C_ADDR, 0x10, 0x02);
 //    LOG_TRACE("i2c STMP READ %02X", i2c_read_reg(STMPE610_I2C_ADDR, 0xF0));
-    
-
-    
     
     
     /* And Read back the value */
@@ -79,6 +76,9 @@ void die (		/* Stop with dying message */
 int main()
 {
     
+    i2c_init();
+    char lcd0[16] = {0};
+    char lcd1[16] = {0};
     /* Place your initialization/startup code here (e.g. MyInst_Start()) */
     LED_Write(0);
    // i2c_init();
@@ -97,7 +97,8 @@ int main()
     CapSense_InitializeAllBaselines();
     
     LOG_WARN("Baselines ", 0);
-    
+    uint16_t lastpos = 0;
+    lcd_clrScreen();
     while(1u)
     {
         /* Update all baselines */
@@ -112,10 +113,12 @@ int main()
 			/* Loop until condition true */
 		}
         
-        CyDelay(5);
-		/* Display CapSense state using LEDs */
-         LOG_WARN("A: %i ", 
-            CapSense_GetCentroidPos(CapSense_LINEARSLIDER0__LS));
+        if(lastpos != CapSense_GetCentroidPos(CapSense_LINEARSLIDER0__LS)){
+    		/* Display CapSense state using LEDs */
+            lastpos =  CapSense_GetCentroidPos(CapSense_LINEARSLIDER0__LS);
+            snprintf(lcd0, 16, "S: %05i", lastpos);
+            lcd_print(lcd0, 0, 0); 
+        }
     }
      
 }
