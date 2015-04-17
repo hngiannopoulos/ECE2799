@@ -17,8 +17,8 @@
 #define LCD_MEM
 
 /* Change these for diffrent size LCDs */
-#define LCD_WIDTH 16
-#define LCD_HEIGHT 2
+#define LCD_WIDTH 20
+#define LCD_HEIGHT 4
 
 /* @note not all rows are valid */
 #define LCD_ADDR_ROW_1 0x00

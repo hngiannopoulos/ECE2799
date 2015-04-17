@@ -23,6 +23,7 @@ extern "C" {
 
 #include "integer.h"
 #include "pffconf.h"
+#include "project.h"
 
 
 #if _PFATFS != _PFFCONF
@@ -151,6 +152,14 @@ FRESULT pf_readdir (DIR* dj, FILINFO* fno);					/* Read a directory item from th
 #define	ST_WORD(ptr,val)	*(BYTE*)(ptr)=(BYTE)(val); *((BYTE*)(ptr)+1)=(BYTE)((WORD)(val)>>8)
 #define	ST_DWORD(ptr,val)	*(BYTE*)(ptr)=(BYTE)(val); *((BYTE*)(ptr)+1)=(BYTE)((WORD)(val)>>8); *((BYTE*)(ptr)+2)=(BYTE)((DWORD)(val)>>16); *((BYTE*)(ptr)+3)=(BYTE)((DWORD)(val)>>24)
 #endif
+
+/* 2799 Custom Functions */
+
+/** Returns the number of files in a given directory.
+ * @param folder String to a folder to look in.
+ * @return The number of files in the directory.
+ */
+uint16_t sdfs_numfiles(char* folder);
 
 
 #ifdef __cplusplus

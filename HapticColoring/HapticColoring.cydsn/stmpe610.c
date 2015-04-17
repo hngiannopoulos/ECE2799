@@ -17,7 +17,10 @@ int stmpe_init(){
     int rc = 0;
     
     /* Trigger a soft Reset */
-    i2c_write_reg(STMPE610_I2C_ADDR, STMPE_SYS_CTRL1, STMPE_SYS_CTRL1_RESET);
+    rc = i2c_write_reg(STMPE610_I2C_ADDR, STMPE_SYS_CTRL1, STMPE_SYS_CTRL1_RESET);
+    if(rc != HAPTIC_SUCCESS){
+        return rc;   
+    }
     
     /* Wait for STMPE610 To come up */
     CyDelay(10);

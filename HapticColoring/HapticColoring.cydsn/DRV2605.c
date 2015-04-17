@@ -15,11 +15,16 @@
 
 
 int drv2605_init(){
-    
+    int rc;
     /* Throw in delay */
     CyDelay(10);
+    
+    
     /* Reset the device and put into RTP Mode */
-    i2c_write_reg(DRV2605_ADDR, DRV2605_REG_MODE, DRV2605_DEV_RESET); 
+    rc = i2c_write_reg(DRV2605_ADDR, DRV2605_REG_MODE, DRV2605_DEV_RESET); 
+    if(rc != HAPTIC_SUCCESS)
+        return rc;
+    
     CyDelay(10);
   
     LOG_INFO("DRV2605 Device ID: 0x%02x", drv2605_id());

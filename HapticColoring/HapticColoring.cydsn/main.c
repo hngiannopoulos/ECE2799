@@ -17,6 +17,8 @@
 // #include "mcp23008.h"
 #include "lcd.h"
 #include "pff.h"
+#include "slider.h"
+
 
 #include "stmpe610.h"
 #include "drv2605.h"
@@ -24,44 +26,67 @@
 #define STMPE610_I2C_ADDR (0x82 >> 1)
 #define DRV2605L_I2C_ADDR (0xB4 >> 1)
 
+FATFS fatfs;			/* File system object */
+DIR dir;				/* Directory object */
+FILINFO fno;			/* File information object */
+
 
 /**  Initializes the i2c Interface 
  *  @return 1 - Success 0 - Failure
 */
-void i2c_init(){
-    uint32 rc;
+void init(){
+    int rc;
     I2C_Start();
     
-    /* Initialize the Touchscreen Controller */
-    stmpe_init();
+    /* initiallize the LCD */
+    rc = lcd_init();
+    if(rc != HAPTIC_SUCCESS){
+        LOG_ERROR("LCD Init FAIL rc = %i", rc);   
+    }
     
-    /* Log the Chip Address */
-    LOG_INFO( "STMP Chip Addr %04X", stmpe_version());
+    
+    /* Initialize the Touchscreen Controller */
+    rc = stmpe_init();
+    if(rc != HAPTIC_SUCCESS){
+        LOG_ERROR("STMPE Init FAIL rc = %i", rc);
+        lcd_print("TOUCHSCREEN: ERR", 0, 0); 
+        
+    }
+    else{
+        lcd_print("TOUCHSCREEN: OK", 0, 0); 
+    }
     
     /* Initiallize the Haptic Controller */
     drv2605_init();
+    rc = drv2605_init();
+    if(rc != HAPTIC_SUCCESS){
+        LOG_ERROR("DRV2605 Init FAIL rc = %i", rc);
+        lcd_print("DRV2605: ERR", 1, 0);
+    }
+    else{
+        lcd_print("DRV2605 : OK", 1, 0); 
+    }
     
-    LOG_INFO("drv2605 Setup", 0);
-    char hello[] = "HELLO12345678909ABCDEFG";
-    char world[] = "WORLD";
+    /* Initiallize SD Card */
+    LOG_INFO("Mount a volume.", 0);
+	rc = pf_mount(&fatfs);
+	if (rc != FR_OK){
+        lcd_print("SD CARD: ERR", 2, 0);
+        LOG_ERROR("SD CARD MOUNT FAILED", 0);
+    }
+    else{
+        lcd_print("SD CARD: SUCCESS", 2, 0);
+        
+        /* Show the number of files */
+        char lcd[20] = {0};
+        snprintf(lcd, 20, "SD Card Files: %i", sdfs_numfiles("") );
+        lcd_print(lcd, 3, 0);
+        LOG_INFO("SD CARD MOUNT Success", 0);
+    }
     
-    
-    LOG_INFO("lcd_init rc: %i", lcd_init());
-    LOG_INFO("MCP23008 rc: %i", lcd_print(hello, 0, 0));
-    LOG_INFO("MCP23008 rc: %i", lcd_print(world, 1, 0));
     
     
     CyDelay(1000);
-    /* Working Implementatyion */
-   // LOG_TRACE("i2c REG READ %02X, %02X", i2c_read_reg(STMPE610_I2C_ADDR, 0x00), i2c_read_reg(STMPE610_I2C_ADDR, 0x01));
-    
-    /* Write To Touchscreen */
-//    i2c_write_reg(STMPE610_I2C_ADDR, 0x10, 0x02);
-//    LOG_TRACE("i2c STMP READ %02X", i2c_read_reg(STMPE610_I2C_ADDR, 0xF0));
-    
-    
-    /* And Read back the value */
-    /* end of working Implementation */
 
 }
 
@@ -75,29 +100,29 @@ void die (		/* Stop with dying message */
 
 int main()
 {
+    /* Start Initilization routine */
+    init();
     
-    i2c_init();
+    
     char lcd0[16] = {0};
     char lcd1[16] = {0};
-    /* Place your initialization/startup code here (e.g. MyInst_Start()) */
+    
     LED_Write(0);
-   // i2c_init();
+    
+    
     log_log(LOG_LEVEL_INFO, __func__, "Enter Main");
     
     /* Enable global interrupts */
-    CyGlobalIntEnable;
-    
-    /* Initialize baselines */ 
-    
-    
+    CyGlobalIntEnable;    
     CapSense_Start();	
-
-    LOG_WARN("Baselines ", 0);
+    
     /* Initialize baselines */ 
     CapSense_InitializeAllBaselines();
     
-    LOG_WARN("Baselines ", 0);
-    uint16_t lastpos = 0;
+    LOG_INFO("Baselines ", 0);
+    
+    int currentPos;
+    
     lcd_clrScreen();
     while(1u)
     {
@@ -113,12 +138,12 @@ int main()
 			/* Loop until condition true */
 		}
         
-        if(lastpos != CapSense_GetCentroidPos(CapSense_LINEARSLIDER0__LS)){
-    		/* Display CapSense state using LEDs */
-            lastpos =  CapSense_GetCentroidPos(CapSense_LINEARSLIDER0__LS);
-            snprintf(lcd0, 16, "S: %05i", lastpos);
-            lcd_print(lcd0, 0, 0); 
-        }
+        
+        currentPos = slider_update(CapSense_GetCentroidPos(CapSense_LINEARSLIDER0__LS));
+        snprintf(lcd1, 16, "Master: %i                ", currentPos);
+        lcd_print(lcd1, 0, 0);
+        
+        
     }
      
 }
