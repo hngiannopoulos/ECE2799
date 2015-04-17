@@ -13,27 +13,17 @@
 #include <stdio.h>
 #include "log.h"
 /* TODO: Remove i2c Driver from main */
-#include "i2c_driver.h"
-// #include "mcp23008.h"
 #include "lcd.h"
 #include "pff.h"
 #include "slider.h"
-
-
 #include "stmpe610.h"
 #include "drv2605.h"
 
-#define STMPE610_I2C_ADDR (0x82 >> 1)
-#define DRV2605L_I2C_ADDR (0xB4 >> 1)
 
 FATFS fatfs;			/* File system object */
 DIR dir;				/* Directory object */
 FILINFO fno;			/* File information object */
 
-
-/**  Initializes the i2c Interface 
- *  @return 1 - Success 0 - Failure
-*/
 void init(){
     int rc;
     I2C_Start();
@@ -137,7 +127,6 @@ int main()
 		{
 			/* Loop until condition true */
 		}
-        
         
         currentPos = slider_update(CapSense_GetCentroidPos(CapSense_LINEARSLIDER0__LS));
         snprintf(lcd1, 16, "Master: %i                ", currentPos);
