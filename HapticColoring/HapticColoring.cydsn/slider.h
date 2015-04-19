@@ -22,7 +22,7 @@
  * @param pos 16-Bit number for slider position.
  * @return master slider pos.
  */  
-int slider_update(uint16_t pos);
+int slider_update(uint16_t pos, uint16_t max);
 
 /** Sets the Master Slider Value.
  * @param pos Position to set the master value to.

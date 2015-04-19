@@ -13,6 +13,10 @@
 #ifndef DEVICE_H
 #define DEVICE_H
 #include "project.h"
+    
+#define SCROLL_PER_FILE 60
+    
+#define constrain(amt,low,high) ((amt)<(low)?(low):((amt)>(high)?(high):(amt)))
 
 #endif
 /* [] END OF FILE */

@@ -12,6 +12,8 @@
 */
 
 #include "lcd.h"
+#include <stdarg.h>
+#include <stdio.h>
 
 /* -- High Level LCD Functions -- */
 
@@ -80,19 +82,22 @@ uint32_t lcd_writeCmd(uint8_t cmd){
     return mcp_lcdWriteCmd(cmd);   
 }
 
-uint32_t lcd_print(const char * msg, uint8_t pos_x, uint8_t pos_y){
+uint32_t lcd_print(uint8_t pos_x, uint8_t pos_y, const char * msg, ... ){
     uint8_t i = 0;
     uint32_t rc = 0;
+    char buf[LCD_WIDTH] = {0}; 
+    
+    va_list ap;
+    va_start(ap, msg);
     
     if( lcd_moveCursor(pos_x, pos_y) != HAPTIC_SUCCESS ){
         return HAPTIC_READ_ERROR;
     }
     
-    for(i = 0; i < (LCD_WIDTH - pos_y); i++){
-        if(msg[i] == 0){
-            break;
-         }
-        rc |= mcp_lcdWriteChar(msg[i]);
+    rc = vsnprintf(buf, LCD_WIDTH, msg, ap);
+    
+    for(i = 0; i < rc ; i++){
+        rc |= mcp_lcdWriteChar(buf[i]);
     }
     
     return rc;

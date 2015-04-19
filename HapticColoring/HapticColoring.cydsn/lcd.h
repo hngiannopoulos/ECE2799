@@ -56,7 +56,7 @@ uint32_t lcd_writeCmd(uint8_t cmd);
  * @return HAPTIC_SUCCESS or HAPTIC_ERROR.
  * @note this will only copy the same number of bits as LCD_WIDTH.
  */
-uint32_t lcd_print(const char * msg, uint8_t pos_x, uint8_t pos_y);
+uint32_t lcd_print(uint8_t pos_x, uint8_t pos_y, const char * msg, ... );
 
 /** Moves the cursor.
  * @param row row.

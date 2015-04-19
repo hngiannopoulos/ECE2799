@@ -161,6 +161,10 @@ FRESULT pf_readdir (DIR* dj, FILINFO* fno);					/* Read a directory item from th
  */
 uint16_t sdfs_numfiles(char* folder);
 
+FILINFO sdfs_getFileNum(char * folder, uint8_t file);
+
+int sdfs_fileNameList(char * folder, uint8_t startFile, uint8_t len, char ** list);
+
 
 #ifdef __cplusplus
 }
