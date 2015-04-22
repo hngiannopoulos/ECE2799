@@ -13,10 +13,21 @@
 #ifndef DEVICE_H
 #define DEVICE_H
 #include "project.h"
+#include "stmpe610.h"
+#include "pff.h"
     
 #define SCROLL_PER_FILE 60
+#define RESOLUTION_X_PX  160 
+#define RESOLUTION_Y_PX  96
     
 #define constrain(amt,low,high) ((amt)<(low)?(low):((amt)>(high)?(high):(amt)))
 
+    
+uint16_t map(uint16_t x, uint16_t in_min, uint16_t in_max, uint16_t out_min, uint16_t out_max);
+pos16_t map_pos(pos16_t  in, pos16_t min, pos16_t max);
+void update_capsense();
+FILINFO selectFile(char * dir);
+void tc_callibrate(pos16_t * max, pos16_t * min);
+    
 #endif
 /* [] END OF FILE */

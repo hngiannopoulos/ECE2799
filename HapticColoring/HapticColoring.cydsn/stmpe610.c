@@ -131,5 +131,64 @@ int stmpe_fifo_len(){
     
 }
 
+int stmpe_windowTR(pos16_t * pos){
+    int rc = 0;
+    uint8_t cord[2] = {0};
+    
+    /* Send X */
+    
+    /* Send top first */
+    cord[0] = ((pos->x) >> 8) & 0x0F;
+    
+    /* Then the bottom */
+    cord[1] = ((pos->x) & 0xFF);
+    
+    rc = i2c_write_buff(STMPE610_I2C_ADDR, STMPE_WDW_TR_X, cord, 2);
+    if(rc != 0) return rc;
+    
+    
+    /* Send y */
+    
+    /* Send top first */
+    cord[0] = ((pos->y) >> 8) & 0x0F;
+    
+    /* Then the bottom */
+    cord[1] = ((pos->y) & 0xFF);
+    
+    rc = i2c_write_buff(STMPE610_I2C_ADDR, STMPE_WDW_TR_Y, cord, 2);
+    return rc; 
+   
+}
+
+
+int stmpe_windowBL(pos16_t * pos){
+    int rc = 0;
+    uint8_t cord[2] = {0};
+    
+    /* Send X */
+    
+    /* Send top first */
+    cord[0] = ((pos->x) >> 8) & 0x0F;
+    
+    /* Then the bottom */
+    cord[1] = ((pos->x) & 0xFF);
+    
+    rc = i2c_write_buff(STMPE610_I2C_ADDR, STMPE_WDW_BL_X, cord, 2);
+    if(rc != 0) return rc;
+    
+    
+    /* Send y */
+    
+    /* Send top first */
+    cord[0] = ((pos->y) >> 8) & 0x0F;
+    
+    /* Then the bottom */
+    cord[1] = ((pos->y) & 0xFF);
+    
+    rc = i2c_write_buff(STMPE610_I2C_ADDR, STMPE_WDW_BL_Y, cord, 2);
+    return rc;
+    
+}
+
 
 /* [] END OF FILE */

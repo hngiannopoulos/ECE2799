@@ -24,22 +24,7 @@
 FATFS fatfs;			/* File system object */
 DIR dir;				/* Directory object */
 FILINFO fno;			/* File information object */
-
-
-void update_capsense(){
-    /* Update all baselines */
-    CapSense_UpdateEnabledBaselines();
-
-    /* Start scanning all enabled sensors */
-    CapSense_ScanEnabledWidgets();
-
-    /* Wait for scanning to complete */
-    while(CapSense_IsBusy() != 0)
-    {
-    	/* Loop until condition true */
-    }
-}
-
+FRESULT res;
 
 void init(){
     int rc;
@@ -86,90 +71,18 @@ void init(){
         lcd_print( 3, 0, "SD Card Files %i ", sdfs_numfiles(""));
         LOG_INFO("SD CARD MOUNT Success", 0);
     }
-    
-//    /* Dump the number of files on the sd card */
-//    uint16_t filenum = sdfs_numfiles("");
-//    FILINFO file;
-//    uint16_t i = 0;
-//    for(i = 0; i <= filenum; i++){
-//        file = sdfs_getFileNum("", i);
-//        LOG_WARN("FILE %s", file.fname);
-//        
-//    }
-    
-    
     CyDelay(1000);
 
 }
 
-
-FILINFO selectFile(char * dir){
-    uint8_t i = 0;
-    uint8_t j = 0;
-    uint8_t old_j = 99;
-    FILINFO fno; 
-    uint8_t sdNumfiles = sdfs_numfiles(dir);
-    
-    uint8_t old_scrollPos = 0; 
-    uint16_t scrollPos;
-    
-    char files[3][LCD_WIDTH];
-
-    while(1){
-        /* ===== Deal Checking Capsense ====== */
-        
-        update_capsense();
-
-        scrollPos = slider_update(CapSense_GetCentroidPos(CapSense_LINEARSLIDER0__LS), (SCROLL_PER_FILE * sdNumfiles));
-        
-        /* Check to see if the scroll position changed */
-        if(scrollPos != old_scrollPos){
-            old_scrollPos = scrollPos;
-            
-            j = scrollPos / SCROLL_PER_FILE;
-            
-            /* Draw updated fileselect screen */
-            if(j != old_j){
-            
-                memset(files, 0 , sizeof(files));
-                LOG_INFO(" J = %i",  j);
-                lcd_clrScreen();
-                lcd_print(0,0, "Select Img:");
-                
-                /* Set J to approprate # */
-                for(i = 0; ((i + j )<= sdNumfiles) && (i < 3) ; i++){
-                    fno = sdfs_getFileNum(dir, i + j);
-                    strncpy(files[i], fno.fname, LCD_WIDTH);
-                    
-                    lcd_print(i+1 , 1, files[i]);
-                    LOG_INFO(fno.fname, 0);
-                    
-                }
-                
-                /* Draw the Selector thing */
-                lcd_print( 2, 0, ">");
-                old_j = j;
-                
-            }   /* END: Draw Updated Fileselect screen */
-            
-        }   /* END: Update for Scroll Pos */
-        
-        
-        /* Check Select Button Status */
-        
-        if(CapSense_CheckIsWidgetActive(CapSense_BUTTON0__BTN)){
-            /* set fno to the right file */
-            return sdfs_getFileNum(dir, j + 1);
-        }
-
-    }
-    LOG_WARN("NEXT", 0);
-    
-    return fno;   
-}
-
 int main()
 {
+    /* Declare Local Variables */
+    int rc;
+    pos16_t pos;
+    pos16_t pos_max;
+    pos16_t pos_min;
+    
     /* Start Initilization routine */
     init();
     
@@ -190,21 +103,66 @@ int main()
     while(1){
         FILINFO fno = selectFile("");
         
+        /* Open the file */
+        rc = pf_open(fno.fname);
+        if(rc != 0){
+            lcd_clrScreen();
+            lcd_print(0, 0, "FILE OPEN ERR");
+            CyDelay(5000);
+        }
+        
+        /*                  y x */
+        uint8_t file_buff[12][20] = {{0}};
+        uint br;
+        
+        res = pf_read((uint8_t *)file_buff, 240, &br);
+        
+        LOG_WARN("%i bytes read", br);
+        LOG_WARN((char*)file_buff, 0);
+        
+        
+        
+        
         /* TODO: Load Image from memory */
         
-        lcd_clrScreen();
-        lcd_print(0,0, fno.fname);        
+        /* TODO NEXT: Convert to return POS16_t */
         
-        /* TODO: Setup Callibration for specific Image */
+        /* Reset the touchscreen controller */
+        /* TODO: more gracefully reset controller */
+        stmpe_init();
+        tc_callibrate(&pos_max, 
+                    &pos_min);
+        
+        lcd_clrScreen();
+        lcd_print(0, 0, "Callibrated!");
+        lcd_print(1, 0, "Max:(%i, %i)", pos_max.x, pos_max.y);
+        lcd_print(2, 0, "Min:(%i, %i)", pos_min.x, pos_min.y);
+        CyDelay(3000); 
+        
         
         while(1){
-            
+
             /* Check Back Button */
             update_capsense();
             if(CapSense_CheckIsWidgetActive(CapSense_BUTTON1__BTN)){
+                LOG_WARN("OK", 0);
                 break;   
             }
-            
+
+            /* Code to print out touchscreen Pos */
+            rc = stmpe_getPos(&pos);
+            if(rc == 0){
+                pos = map_pos(pos, pos_min, pos_max);
+                
+                
+                /* Do image Processing here */
+                LED_Write(1);
+                LOG_INFO("Pos x =  %05i y = %05i z = %05i", pos.x, pos.y, pos.z);
+            }
+            else{
+                LED_Write(0);
+            }
+         
             /* TODO: IMG Processing HERE */
                
         }

@@ -109,6 +109,11 @@
 #define STMPE_GPIO_CLR_PIN 0x11
 #define STMPE_GPIO_DIR 0x13
 #define STMPE_GPIO_ALT_FUNCT 0x17
+    
+#define STMPE_WDW_TR_X 0x42
+#define STMPE_WDW_TR_Y 0x44
+#define STMPE_WDW_BL_X 0x46
+#define STMPE_WDW_BL_Y 0x48
 
 #define STMPE_REG_TSC_DATA 0xD7
 /* end #defines */
@@ -154,6 +159,13 @@ int stmpe_clearFifo();
  * @return the number of entries in the fifo 
  */
 int stmpe_fifo_len();
+
+
+/* Sets Moving window top right */
+int stmpe_windowTR(pos16_t * pos);
+
+/* Sets moving window top left */
+int stmpe_windowBL(pos16_t * pos);
 
 #endif
 /* [] END OF FILE */

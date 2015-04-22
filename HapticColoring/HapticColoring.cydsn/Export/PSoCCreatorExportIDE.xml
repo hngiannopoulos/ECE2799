@@ -56,6 +56,7 @@
           <File BuildType="BUILD" Toolchain="">.\main.c</File>
           <File BuildType="BUILD" Toolchain="">.\slider.h</File>
           <File BuildType="BUILD" Toolchain="">.\slider.c</File>
+          <File BuildType="BUILD" Toolchain="">.\helper.c</File>
           <File BuildType="BUILD" Toolchain="">.\device.h</File>
         </Files>
       </Folder>
