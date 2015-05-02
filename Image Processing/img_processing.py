@@ -31,7 +31,7 @@ def main():
 	print "Format: ", im.format
 	print "Color Mode: ", im.mode
 
-	out = open(args.filename.name[0:-3] + "ECE", "w+")
+	out = open(args.filename.name[0:-3] + "ECE", "wb+")
 
 	# Resize and convert to greyscale for sd card
 	sd_img = im.resize((args.x_pos, args.y_pos), 3).convert('1')
@@ -64,7 +64,7 @@ def main():
 
 
 
-	out_img.save(open("out.jpg", "w+"))
+	out_img.save(open("out.jpg", "wb+"))
 
 	# option to save the image sent to the sd card
 	# sd_img.save(open("sdout.jpg", "w+"))
