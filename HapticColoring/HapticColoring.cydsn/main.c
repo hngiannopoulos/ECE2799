@@ -112,7 +112,7 @@ int main()
         }
         
         /*                  y x */
-        uint8_t file_buff[12][20] = {{0}};
+      uint8_t file_buff[12][20] = {{0}};
         uint br;
         
         res = pf_read((uint8_t *)file_buff, 240, &br);
@@ -137,9 +137,8 @@ int main()
         lcd_print(0, 0, "Callibrated!");
         lcd_print(1, 0, "Max:(%i, %i)", pos_max.x, pos_max.y);
         lcd_print(2, 0, "Min:(%i, %i)", pos_min.x, pos_min.y);
-        CyDelay(3000); 
         
-        
+        uint8_t f_buff[2];
         while(1){
 
             /* Check Back Button */
@@ -151,23 +150,58 @@ int main()
 
             /* Code to print out touchscreen Pos */
             rc = stmpe_getPos(&pos);
+            
+            pos16_t lastPos;
             if(rc == 0){
                 pos = map_pos(pos, pos_min, pos_max);
                 
                 
+                /* If the position changes */
+                if(pos.x != lastPos.x || pos.y != lastPos.y){
+                    lastPos = pos;
+                    /* lookup the pos in the file */
+                    LOG_WARN("FPOS %i", ((RESOLUTION_X_BYTE ) * pos.y)  +  (pos.x / 8));
+                    rc = pf_lseek(((RESOLUTION_X_BYTE ) * pos.y)  +  (pos.x / 8));      
+                    if(rc != 0){
+                        /* handdle the error */   
+                        LOG_ERROR("SD READ ERROR ", 0);
+                    }
+                    else{
+                        rc = pf_read(f_buff, 1, &br);
+                        if(rc != 0 || br == 0 ){
+                            LOG_WARN("RC %i, read %i %i", rc, br, f_buff[0]);
+                            
+                        }
+                        
+                        
+                        if(f_buff[0] != 0xFF){
+                            LOG_WARN("FB: %i", f_buff[0]);
+                            drv2605_set_rtp(126);
+                            LED_Write(1);   
+                        }
+                        else{
+                            LED_Write(0);
+                            drv2605_set_rtp(0);
+                            
+                        }
+                    }
+                    drv2605_go();
+                }
+                
                 /* Do image Processing here */
-                LED_Write(1);
-                LOG_INFO("Pos x =  %05i y = %05i z = %05i", pos.x, pos.y, pos.z);
+                LOG_WARN("Pos x =  %05i y = %05i z = %05i", pos.x, pos.y, pos.z);
             }
             else{
+                drv2605_set_rtp(0);
                 LED_Write(0);
+                drv2605_go();
+                
             }
-         
-            /* TODO: IMG Processing HERE */
+
                
         }
         
-        
+        //
     } /* END: Main While(1) */
 
      

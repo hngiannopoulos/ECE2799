@@ -16,9 +16,11 @@
 #include "stmpe610.h"
 #include "pff.h"
     
-#define SCROLL_PER_FILE 60
-#define RESOLUTION_X_PX  160 
-#define RESOLUTION_Y_PX  96
+#define SCROLL_PER_FILE     60
+#define RESOLUTION_X_PX     160 
+#define RESOLUTION_X_BYTE   (RESOLUTION_X_PX / 8)
+#define RESOLUTION_Y_PX     96
+#define RESOLUTION_Y_BYTE   (RESOLUTION_Y_PX / 8)
     
 #define constrain(amt,low,high) ((amt)<(low)?(low):((amt)>(high)?(high):(amt)))
 
